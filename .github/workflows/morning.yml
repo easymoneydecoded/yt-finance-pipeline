@@ -7,9 +7,9 @@ on:
   workflow_dispatch:  # Permite lanzarlo manualmente desde la web
 
 jobs:
-  generate-ideas:
+  generate-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -23,15 +23,20 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Ejecutar pipeline matinal
+      - name: Etapa 1 - Generar ideas
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python morning_pipeline.py
 
-      - name: Guardar las ideas generadas como artefacto
+      - name: Etapa 2 - Escribir guion
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python script_writer.py
+
+      - name: Guardar ideas y guion como artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: ideas-${{ github.run_id }}
+          name: content-${{ github.run_id }}
           path: data/
           retention-days: 30
