@@ -217,16 +217,27 @@ def generate_script(idea: dict) -> dict:
         "response_format": {"type": "json_object"},
     }
 
-    r = requests.post(
-        GROQ_ENDPOINT,
-        headers = {
-            "Authorization": f"Bearer {GROQ_API_KEY}",
-            "Content-Type":  "application/json",
-        },
-        json    = payload,
-        timeout = 120,
-    )
-    r.raise_for_status()
+    # Retry automatico con backoff exponencial para errores 429 y 5xx
+    max_attempts = 4
+    for attempt in range(1, max_attempts + 1):
+        r = requests.post(
+            GROQ_ENDPOINT,
+            headers = {
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type":  "application/json",
+            },
+            json    = payload,
+            timeout = 120,
+        )
+        if r.status_code == 200:
+            break
+        if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
+            wait = 30 * attempt  # 30s, 60s, 90s
+            print(f"   · Groq devolvio {r.status_code}, reintento en {wait}s (intento {attempt}/{max_attempts})...")
+            time.sleep(wait)
+            continue
+        r.raise_for_status()
+
     content = r.json()["choices"][0]["message"]["content"]
 
     return json.loads(content)
