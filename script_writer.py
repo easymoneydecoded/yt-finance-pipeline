@@ -167,6 +167,13 @@ If your draft is under 1500 total, ADD detail to body sections — more examples
   - description: 150-250 words. First 2 lines hook the reader. Include the disclaimer. End with: "Read the Spanish-language deep dive at {web_backlink}"
   - tags: 15-20 SEO tags, lowercase, mix broad + specific.
 
+=== STRUCTURAL DISCIPLINE (READ TWICE) ===
+The 4 body sections must each cover a DIFFERENT angle of the topic. Never let the last body section drift into "conclusion" or "summary" territory — that's the outro's job. If body section 4 starts with "In conclusion" or repeats CTAs/disclaimers, you've failed.
+
+Body section 4 should introduce a FRESH ANGLE — typically the actionable response, the contrarian view, the historical parallel, or the surprising second-order effect. It must contain new information not covered in sections 1-3.
+
+The outro is the ONLY place where: (a) the summary appears, (b) the CTA appears, (c) the disclaimer appears. Body sections never include these.
+
 === OUTPUT ===
 Return ONE JSON object with these EXACT top-level fields:
 {{
