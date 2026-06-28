@@ -102,11 +102,7 @@ def load_todays_idea() -> dict:
 # ---------------------------------------------------------------------------
 # Generacion del guion con Groq
 # ---------------------------------------------------------------------------
-SCRIPT_WRITER_PROMPT = """You are the head writer of a faceless YouTube channel about PERSONAL FINANCE and INVESTING for an English-speaking, US/UK audience.
-
-Your job: turn the video idea below into a complete, production-ready script for an 8-12 minute long-form video. The script will be:
-  - Read by a text-to-speech engine (so write conversational English, not robotic prose)
-  - Later sliced into 8-10 short-form vertical clips for Shorts/TikTok/Reels
+SCRIPT_WRITER_PROMPT = """You are the head writer of a popular faceless YouTube channel about personal finance and investing for a US/UK audience. Your scripts compete with channels like Graham Stephan, The Plain Bagel, and Two Cents — conversational, specific, packed with concrete numbers.
 
 === INPUT IDEA ===
 Title:    {idea_title}
@@ -115,63 +111,86 @@ Angle:    {idea_angle}
 Keywords: {idea_keywords}
 Anchored signals:
 {idea_signals}
-=== END INPUT ===
 
-=== SCRIPT REQUIREMENTS ===
+=== TONE RULES (CRITICAL — these are what separate good scripts from AI slop) ===
+DO:
+  - Write like you're texting a smart friend who asked you about money. Direct, specific, occasionally blunt.
+  - Use contractions (you're, it's, that's, here's, won't, can't).
+  - Start sentences with conjunctions (And, But, So) when it sounds natural.
+  - Use concrete numbers EVERYWHERE. Not "a lot of money" — "$4,200". Not "rates went up" — "rates jumped 0.5% in 6 weeks".
+  - Give specific examples: "If you bought a house in Phoenix last year for $400k...", "Your aunt who has a savings account at Chase..."
+  - Acknowledge counterarguments briefly: "Now, some economists disagree, but the data shows..."
 
-OVERALL TONE:
-  - Educational, NOT financial advice. Always frame as "what this means" / "how this works".
-  - Conversational and direct. Imagine talking to a smart friend, not lecturing.
-  - Use specific numbers, comparisons, and concrete examples — NEVER vague claims.
-  - Short sentences. Active voice. Spoken English, not written English.
-  - American spelling and idioms (audience is mostly US).
+DON'T (these are AI-voice tells that kill retention):
+  - "In this video we'll explore" / "Let's dive in" / "Without further ado"
+  - "It's pretty straightforward" / "It all starts with" / "So, what's behind this?"
+  - "That's a big deal" / "That's a big difference" — show, don't tell.
+  - Rhetorical questions inside body sections ("But what does this mean?" — the viewer will leave). Save them for hooks.
+  - Vague hedges: "could", "might", "potentially". Be direct: "will", "does", "is".
 
-STRUCTURE (in this exact order):
-  1. **hook** — 3-5 seconds. Must stop the scroll. Specific number, sharp contradiction, personal stakes question, or insider framing. NO "in this video", NO "today we'll talk about".
-  2. **intro** — 15-25 seconds. Quickly establish: what's at stake for the viewer, why now, what they'll get from watching. End with a curiosity gap that promises a payoff later.
-  3. **body** — 4 to 6 sections, each 60-120 seconds. Each body section MUST:
-       - Have a clear sub-topic and stand on its own (so it can also work as a Short)
-       - Start with a mini-hook (the first sentence of the section)
-       - Include at least one specific number, comparison, or example
-       - Be marked with shorts_candidate: true for the 3 strongest standalone sections
-       - For those Shorts-ready sections, provide a shorts_alt_hook: a stronger opener (3-5 sec) if extracted as a standalone Short
-  4. **retention** — Insert 1-2 short retention_button sections (15-25 sec) between body sections at strategic points. These tease what's coming next: "But here's where it gets interesting...", "The next part is the one most people get wrong...". Keep them tight.
-  5. **outro** — 20-30 seconds. Quick summary of the 2-3 key takeaways, then CTA: subscribe + watch next related video. Include a disclaimer line: "This video is for educational purposes only and is not financial advice."
+=== STRUCTURE (in this exact order) ===
 
-LENGTH TARGET:
-  - Total spoken words: 1500-1800 (for 8-12 minutes at ~150 wpm)
-  - Distribute proportionally: hook (~15 words), intro (~50), each body section (~250), each retention (~50), outro (~80)
+1. **hook** — 12-20 words. Must stop the scroll. Pick ONE of these patterns:
+     a) Specific personal stakes: "If you have a mortgage, the next 60 seconds could save you $300 a month."
+     b) Sharp contradiction: "Everyone is wrong about the Fed's next move. Here's what's actually about to happen."
+     c) Insider/secret framing: "Wall Street is quietly buying something most retail investors haven't even heard of."
+     d) Cost-of-inaction: "Doing nothing about this Fed decision will cost the average homeowner $4,200 this year."
+   NEVER start with "This Fed move could cost you" — that's the idea's hook, you need to ELEVATE it.
 
-YOUTUBE METADATA:
-  - youtube_title: max 60 chars, CTR-optimized (specific number, curiosity gap, or contradiction). Use sentence case, not Title Case.
-  - thumbnail_text: 3-5 words MAX, big and punchy (this is what overlays the thumbnail image)
-  - description: 150-250 words. Hook the reader in the first 2 lines (shown above the fold). Include the disclaimer. End with a link to: {web_backlink}
-  - tags: 15-20 SEO tags in lowercase English, mix of broad (e.g. "investing") and specific (e.g. "fed rate hike 2026")
+2. **intro** — 40-60 words (~15-20 sec spoken). Establish: what's happening + why now + what specifically the viewer will learn. End on a curiosity gap that pays off later in the video. Reference a real event/name/number from the anchored signals.
 
-=== OUTPUT FORMAT ===
-Return ONE JSON object with EXACTLY these top-level fields:
+3. **body** — Exactly 4 sections, each 200-280 words (~80-100 sec spoken). Each body section MUST:
+     - Open with a mini-hook sentence (NOT "So, here's the deal" — a specific claim or number)
+     - Contain at least TWO specific numbers OR a worked example with real figures
+     - End with a transition that pulls into the next section (not a summary)
+     - Mark the 3 strongest as shorts_candidate: true
+     - For Shorts candidates, write a shorts_alt_hook (8-15 words) that works as a 3-second standalone opener
+
+4. **retention** — 2 sections of 30-45 words each, placed between body sections 2-3 and 3-4. Each retention button must TEASE a SPECIFIC payoff in the next section, not a generic "it gets interesting". Example: "But the part that surprised me most is what this does to your 401k — that's next."
+
+5. **outro** — 80-120 words. Structure: (1) one-sentence recap of the single biggest takeaway, (2) specific actionable next step, (3) disclaimer line "This is for education, not financial advice — talk to a fiduciary for your situation", (4) specific CTA: "If this changed how you think about [topic], hit subscribe — I break down one of these every week."
+
+=== HARD WORD COUNT REQUIREMENT ===
+TOTAL spoken words across all sections combined MUST be between 1500 and 1800.
+Distribution (use as floor, not ceiling):
+  - hook:        12-20 words
+  - intro:       40-60 words
+  - each body:   200-280 words  (4 sections = 800-1120)
+  - each retent: 30-45 words   (2 sections = 60-90)
+  - outro:       80-120 words
+
+If your draft is under 1500 total, ADD detail to body sections — more examples, more numbers, a brief historical comparison. Do NOT pad with filler.
+
+=== YOUTUBE METADATA ===
+  - youtube_title: max 60 chars. Sentence case (first letter capitalized, rest lowercase except proper nouns/acronyms). CTR-optimized.
+  - thumbnail_text: 2-4 BIG punchy words. Example: "RATE HIKE INCOMING" not "Rate Hike". All caps is fine here.
+  - description: 150-250 words. First 2 lines hook the reader. Include the disclaimer. End with: "Read the Spanish-language deep dive at {web_backlink}"
+  - tags: 15-20 SEO tags, lowercase, mix broad + specific.
+
+=== OUTPUT ===
+Return ONE JSON object with these EXACT top-level fields:
 {{
   "youtube_title": "...",
   "thumbnail_text": "...",
   "description": "...",
   "tags": ["...", "..."],
   "estimated_duration_min": 10,
-  "word_count": 1650,
+  "word_count": <ACTUAL word count of all section texts combined>,
   "sections": [
-    {{ "type": "hook",       "text": "...", "estimated_sec": 5 }},
-    {{ "type": "intro",      "text": "...", "estimated_sec": 20 }},
-    {{ "type": "body",       "title": "...", "text": "...", "estimated_sec": 90, "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "retention",  "text": "...", "estimated_sec": 15 }},
-    ...
-    {{ "type": "outro",      "text": "...", "estimated_sec": 25 }}
+    {{ "type": "hook",      "text": "...", "estimated_sec": 5 }},
+    {{ "type": "intro",     "text": "...", "estimated_sec": 20 }},
+    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 90, "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 90, "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "retention", "text": "...", "estimated_sec": 15 }},
+    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 90, "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "retention", "text": "...", "estimated_sec": 15 }},
+    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 90, "shorts_candidate": false }},
+    {{ "type": "outro",     "text": "...", "estimated_sec": 30 }}
   ]
 }}
 
-CRITICAL RULES:
-  - Output ONLY the JSON object. No prose before or after, no markdown fences.
-  - The "text" field of each section is what the TTS will read verbatim. Write it spoken-friendly: contractions, natural pauses (commas, periods), no markdown.
-  - For body sections marked shorts_candidate: true, the section MUST work as a standalone 60-90 second clip without needing the rest of the video for context.
-  - Word count of all "text" fields combined must be between 1500 and 1800.
+Output ONLY the JSON. No prose before or after. No markdown fences.
+The word_count field MUST be the real count of all section text fields combined.
 """
 
 
