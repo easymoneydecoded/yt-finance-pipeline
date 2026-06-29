@@ -1,19 +1,17 @@
 """
 ================================================================================
- b_roll.py - Etapa 4 del canal de YouTube automatico
+ b_roll.py - Etapa 4 del canal de YouTube automatico (v2)
 ================================================================================
 
  Que hace:
    1. Lee el JSON de guion generado por la etapa 2
    2. Pide a Groq que extraiga keywords VISUALES por seccion
-   3. Busca y descarga clips de stock video gratis desde Pexels
-   4. Guarda los MP4 en data/broll/section_XX/ y un manifest JSON
+   3. Si Groq falla (rate limit, error), usa FALLBACK LOCAL con keywords
+      genericas de finanzas - el pipeline NUNCA se rompe por culpa de Groq
+   4. Busca y descarga clips de stock video gratis desde Pexels
+   5. Guarda los MP4 en data/broll/section_XX/ y un manifest JSON
 
- Coste: 0 EUR (Pexels free tier: 200 peticiones/hora, 20.000/mes)
-
- Nota: los MP4 son grandes (~250MB/dia) y NO se suben al artifact final.
- Se consumen en la etapa 5 (montaje) y se descartan al terminar el workflow.
-
+ Coste: 0 EUR
 ================================================================================
 """
 
@@ -21,6 +19,7 @@ import os
 import json
 import time
 import re
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -46,7 +45,6 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 TODAY           = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-# Cuantas keywords visuales pedir a Groq por tipo de seccion
 KEYWORDS_PER_SECTION = {
     "hook":      2,
     "intro":     3,
@@ -55,19 +53,44 @@ KEYWORDS_PER_SECTION = {
     "outro":     2,
 }
 
-# Cuantos clips descargar por keyword
-CLIPS_PER_KEYWORD = 2
+CLIPS_PER_KEYWORD     = 2
+TARGET_WIDTH          = 1280
+MIN_CLIP_DURATION_SEC = 5
+MAX_CLIP_DURATION_SEC = 60
 
-# Resolucion target: 1280 = HD 720p (buen balance calidad/tamano)
-TARGET_WIDTH = 1280
 
-# Filtros de calidad para descartar clips malos
-MIN_CLIP_DURATION_SEC = 5      # Descartar clips de menos de 5 segundos
-MAX_CLIP_DURATION_SEC = 60     # Descartar clips de mas de 60 segundos
+# Pool de keywords visuales evergreen para finanzas (fallback si Groq falla)
+FINANCE_BROLL_POOL = [
+    "stock market chart",
+    "wall street building",
+    "businessman office",
+    "calculator money",
+    "graph rising arrow",
+    "city skyline night",
+    "trading floor stocks",
+    "computer screen data",
+    "newspaper finance",
+    "coins stacking",
+    "office meeting business",
+    "smartphone trading app",
+    "bank vault",
+    "credit card payment",
+    "wallet money cash",
+    "businesswoman laptop",
+    "global economy map",
+    "downtown financial district",
+    "graph red downturn",
+    "investor analyzing charts",
+    "money transfer mobile",
+    "piggy bank savings",
+    "house keys mortgage",
+    "boardroom executives",
+    "retirement planning",
+]
 
 
 # ---------------------------------------------------------------------------
-# Carga del guion del dia
+# Carga del guion
 # ---------------------------------------------------------------------------
 def load_todays_script() -> dict:
     path = INPUT_DIR / f"script_{TODAY}.json"
@@ -81,7 +104,7 @@ def load_todays_script() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Extraccion de keywords visuales con Groq
+# Extraccion de keywords con Groq (con fallback)
 # ---------------------------------------------------------------------------
 KEYWORDS_PROMPT = """You are a video editor's research assistant. For each script section below, suggest visual keywords that would work as stock footage b-roll on Pexels.
 
@@ -116,7 +139,11 @@ Output ONLY the JSON. No prose. No markdown fences.
 """
 
 
-def call_groq(prompt: str, max_tokens: int = 2000) -> dict:
+def call_groq(prompt: str, max_tokens: int = 2000) -> dict | None:
+    """
+    Llama a Groq. Devuelve dict si OK, None si agota reintentos.
+    NO lanza excepcion: la decision de fallback la toma el caller.
+    """
     payload = {
         "model":       GROQ_MODEL,
         "messages":    [{"role": "user", "content": prompt}],
@@ -124,44 +151,87 @@ def call_groq(prompt: str, max_tokens: int = 2000) -> dict:
         "max_tokens":  max_tokens,
         "response_format": {"type": "json_object"},
     }
-    max_attempts = 4
+    max_attempts = 3  # menos reintentos para no inflar tiempo total
     for attempt in range(1, max_attempts + 1):
-        r = requests.post(
-            GROQ_ENDPOINT,
-            headers = {
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type":  "application/json",
-            },
-            json    = payload,
-            timeout = 90,
-        )
+        try:
+            r = requests.post(
+                GROQ_ENDPOINT,
+                headers = {
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type":  "application/json",
+                },
+                json    = payload,
+                timeout = 90,
+            )
+        except Exception as e:
+            print(f"   . Groq conexion fallo: {e}")
+            return None
+
         if r.status_code == 200:
-            break
+            try:
+                return json.loads(r.json()["choices"][0]["message"]["content"])
+            except Exception as e:
+                print(f"   ! Groq parseo fallo: {e}")
+                return None
+
         if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
-            wait = 45 * attempt
-            print(f"   . Groq devolvio {r.status_code}, reintento en {wait}s...")
+            wait = 30 * attempt
+            print(f"   . Groq devolvio {r.status_code}, espero {wait}s...")
             time.sleep(wait)
             continue
-        r.raise_for_status()
-    return json.loads(r.json()["choices"][0]["message"]["content"])
+
+        # Otros errores o ultimo intento fallido
+        print(f"   ! Groq error final: {r.status_code}")
+        return None
+
+    return None
+
+
+def fallback_keywords(script_data: dict, sections: list) -> list[list[str]]:
+    """
+    Genera keywords visuales SIN llamar a Groq. Mezcla:
+      1. Tags del video (filtradas, solo las visualmente plausibles)
+      2. Pool evergreen de finanzas
+    """
+    print("   ! Usando FALLBACK LOCAL para keywords (Groq no disponible)")
+
+    tags = script_data.get("tags", [])
+    # Filtrar tags poco visuales (terminos abstractos)
+    abstract_terms = {
+        "investing", "investment", "investments", "personal finance", "money",
+        "finance", "wealth", "education", "advice", "tips", "strategy",
+        "strategies", "planning", "retirement"
+    }
+    visual_tags = [t for t in tags if t.lower() not in abstract_terms and len(t) < 30]
+
+    # Mezcla aleatoria controlada (semilla fija para resultados estables)
+    rng = random.Random(42)
+    pool = list(set(visual_tags + FINANCE_BROLL_POOL))
+    rng.shuffle(pool)
+
+    result = []
+    pool_idx = 0
+    for section in sections:
+        stype = section.get("type", "body")
+        n = KEYWORDS_PER_SECTION.get(stype, 2)
+        section_kws = []
+        for _ in range(n):
+            section_kws.append(pool[pool_idx % len(pool)])
+            pool_idx += 1
+        result.append(section_kws)
+    return result
 
 
 def extract_keywords(script_data: dict) -> list[list[str]]:
-    """
-    Llama a Groq UNA SOLA VEZ con todas las secciones y devuelve una lista
-    paralela de keywords por seccion.
-    """
     sections = script_data.get("sections", [])
     if not sections:
         return []
 
-    # Construir el bloque de secciones para el prompt
     sections_block_lines = []
     for i, s in enumerate(sections, 1):
         stype = s.get("type", "body")
         n_kw = KEYWORDS_PER_SECTION.get(stype, 2)
         text = s.get("text", "").strip()
-        # Truncar texto para no inflar el prompt
         if len(text) > 400:
             text = text[:400] + "..."
         sections_block_lines.append(
@@ -170,28 +240,34 @@ def extract_keywords(script_data: dict) -> list[list[str]]:
     sections_block = "\n\n".join(sections_block_lines)
 
     prompt = KEYWORDS_PROMPT.format(
-        video_title   = script_data.get("youtube_title", ""),
-        thumbnail     = script_data.get("thumbnail_text", ""),
+        video_title    = script_data.get("youtube_title", ""),
+        thumbnail      = script_data.get("thumbnail_text", ""),
         sections_block = sections_block,
     )
 
-    print(f"   . Pidiendo keywords visuales a Groq para {len(sections)} secciones...")
+    print(f"   . Pidiendo keywords a Groq para {len(sections)} secciones...")
     raw = call_groq(prompt)
 
-    # Parseo defensivo: convertir a lista paralela
+    # Si Groq fallo, fallback completo
+    if raw is None:
+        return fallback_keywords(script_data, sections)
+
+    # Parseo defensivo
     result = [[] for _ in sections]
     for entry in raw.get("section_keywords", []):
-        idx = entry.get("section_index", 0) - 1  # 1-indexed -> 0-indexed
+        idx = entry.get("section_index", 0) - 1
         if 0 <= idx < len(sections):
             kws = entry.get("keywords", [])
             result[idx] = [str(k).strip() for k in kws if k]
 
-    # Fallback: si alguna seccion se quedo sin keywords, usar el titulo del video
-    fallback_kw = script_data.get("youtube_title", "business finance").lower()
+    # Fallback PARCIAL: para secciones sueltas que Groq dejo vacias
+    fb = None
     for i, kws in enumerate(result):
         if not kws:
-            print(f"   ! Seccion {i+1} sin keywords, usando fallback")
-            result[i] = [fallback_kw]
+            if fb is None:
+                fb = fallback_keywords(script_data, sections)
+            result[i] = fb[i]
+            print(f"   . Seccion {i+1} sin keywords de Groq, uso fallback parcial")
 
     return result
 
@@ -200,37 +276,40 @@ def extract_keywords(script_data: dict) -> list[list[str]]:
 # Pexels: busqueda y descarga
 # ---------------------------------------------------------------------------
 def search_pexels(query: str, per_page: int = 5) -> list[dict]:
-    """Devuelve la lista de videos de Pexels para una query."""
     if not PEXELS_API_KEY:
         raise RuntimeError("Falta PEXELS_API_KEY")
 
     max_attempts = 3
     for attempt in range(1, max_attempts + 1):
-        r = requests.get(
-            PEXELS_ENDPOINT,
-            headers = {"Authorization": PEXELS_API_KEY},
-            params  = {
-                "query":       query,
-                "per_page":    per_page,
-                "orientation": "landscape",
-                "size":        "medium",
-            },
-            timeout = 30,
-        )
+        try:
+            r = requests.get(
+                PEXELS_ENDPOINT,
+                headers = {"Authorization": PEXELS_API_KEY},
+                params  = {
+                    "query":       query,
+                    "per_page":    per_page,
+                    "orientation": "landscape",
+                    "size":        "medium",
+                },
+                timeout = 30,
+            )
+        except Exception as e:
+            print(f"     ! pexels conexion: {e}")
+            return []
+
         if r.status_code == 200:
             return r.json().get("videos", [])
         if r.status_code == 429 and attempt < max_attempts:
             wait = 20 * attempt
-            print(f"     ! Pexels rate limit, espero {wait}s...")
+            print(f"     ! pexels rate limit, espero {wait}s...")
             time.sleep(wait)
             continue
-        print(f"     ! Pexels devolvio {r.status_code} para '{query}'")
+        print(f"     ! pexels devolvio {r.status_code} para '{query}'")
         return []
     return []
 
 
 def pick_video_file(video: dict, target_width: int = TARGET_WIDTH) -> dict | None:
-    """De los video_files disponibles, escoge el MP4 mas cercano a target_width."""
     candidates = [
         f for f in video.get("video_files", [])
         if f.get("file_type") == "video/mp4" and f.get("link")
@@ -242,7 +321,6 @@ def pick_video_file(video: dict, target_width: int = TARGET_WIDTH) -> dict | Non
 
 
 def download_clip(url: str, dest_path: Path) -> int:
-    """Descarga un MP4 a disco. Devuelve el tamano en bytes."""
     r = requests.get(url, stream=True, timeout=180)
     r.raise_for_status()
     with open(dest_path, "wb") as f:
@@ -261,8 +339,6 @@ def main() -> None:
 
     if not PEXELS_API_KEY:
         raise RuntimeError("Falta PEXELS_API_KEY en variables de entorno")
-    if not GROQ_API_KEY:
-        raise RuntimeError("Falta GROQ_API_KEY en variables de entorno")
 
     print("1/4  Cargando guion...")
     script_data = load_todays_script()
@@ -270,16 +346,15 @@ def main() -> None:
     print(f"      -> '{script_data.get('youtube_title', '?')}'")
     print(f"      -> {len(sections)} secciones")
 
-    print(f"\n2/4  Extrayendo keywords visuales con Groq...")
+    print(f"\n2/4  Extrayendo keywords visuales...")
     section_keywords = extract_keywords(script_data)
 
-    # Mostrar las keywords
     for i, (s, kws) in enumerate(zip(sections, section_keywords), 1):
         print(f"      sec {i:02d} [{s.get('type'):9s}]: {', '.join(kws)}")
 
     print(f"\n3/4  Descargando clips de Pexels...")
     manifest_sections = []
-    seen_video_ids = set()  # Evitar descargar el mismo clip dos veces
+    seen_video_ids = set()
     total_bytes = 0
     total_clips = 0
     total_failures = 0
@@ -306,7 +381,7 @@ def main() -> None:
 
                 video_id = video.get("id")
                 if video_id in seen_video_ids:
-                    continue  # Ya descargado para otra seccion/keyword
+                    continue
 
                 duration = video.get("duration", 0)
                 if duration < MIN_CLIP_DURATION_SEC or duration > MAX_CLIP_DURATION_SEC:
@@ -343,12 +418,12 @@ def main() -> None:
                     print(f"     ! fallo descarga: {e}")
 
         manifest_sections.append({
-            "section_id":     section_id,
-            "section_type":   section.get("type"),
-            "section_title":  section.get("title", ""),
-            "keywords":       keywords,
-            "clips":          section_clips,
-            "n_clips":        len(section_clips),
+            "section_id":    section_id,
+            "section_type":  section.get("type"),
+            "section_title": section.get("title", ""),
+            "keywords":      keywords,
+            "clips":         section_clips,
+            "n_clips":       len(section_clips),
         })
 
     if total_clips == 0:
@@ -357,13 +432,13 @@ def main() -> None:
     print(f"\n4/4  Guardando manifest...")
     manifest_path = OUTPUT_DIR / f"broll_manifest_{TODAY}.json"
     manifest_path.write_text(json.dumps({
-        "date":                TODAY,
-        "youtube_title":       script_data.get("youtube_title", ""),
-        "n_sections":          len(sections),
-        "n_clips_total":       total_clips,
-        "total_size_mb":       round(total_bytes / 1024 / 1024, 2),
-        "n_failures":          total_failures,
-        "sections":            manifest_sections,
+        "date":          TODAY,
+        "youtube_title": script_data.get("youtube_title", ""),
+        "n_sections":    len(sections),
+        "n_clips_total": total_clips,
+        "total_size_mb": round(total_bytes / 1024 / 1024, 2),
+        "n_failures":    total_failures,
+        "sections":      manifest_sections,
     }, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print(f"\n  Listo en {time.time()-t0:.1f}s")
@@ -375,7 +450,6 @@ def main() -> None:
     print(f"  Tamano total:       {total_bytes/1024/1024:.1f} MB")
     print(f"  Fallos:             {total_failures}")
 
-    # Desglose por seccion
     print(f"\n  Desglose:")
     for m in manifest_sections:
         print(f"    {m['section_id']} [{m['section_type']:9s}]  {m['n_clips']} clips")
