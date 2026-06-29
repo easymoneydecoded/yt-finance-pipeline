@@ -2,14 +2,16 @@ name: Morning Pipeline
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # Preferido: 06:00 hora espanola, baja demanda
-    - cron: '0 9 * * *'   # Backup: 11:00 hora espanola por si el primero falla
+    # Disparo preferido: 06:00 hora espanola, baja demanda en runners
+    - cron: '0 4 * * *'
+    # Disparo de backup: 11:00 hora espanola si el primero fallara
+    - cron: '0 9 * * *'
   workflow_dispatch:
 
 jobs:
   generate-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -34,7 +36,10 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python script_writer.py
 
-      - name: Guardar ideas y guion como artefacto
+      - name: Etapa 3 - Voz en off
+        run: python voiceover.py
+
+      - name: Guardar todo como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: content-${{ github.run_id }}
