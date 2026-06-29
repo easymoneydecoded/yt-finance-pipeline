@@ -2,9 +2,9 @@ name: Morning Pipeline
 
 on:
   schedule:
-    # Ejecuta cada dia a las 06:00 UTC (08:00 hora espanola en verano)
-    - cron: '0 6 * * *'
-  workflow_dispatch:  # Permite lanzarlo manualmente desde la web
+    - cron: '0 4 * * *'   # Preferido: 06:00 hora espanola, baja demanda
+    - cron: '0 9 * * *'   # Backup: 11:00 hora espanola por si el primero falla
+  workflow_dispatch:
 
 jobs:
   generate-content:
