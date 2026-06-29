@@ -11,7 +11,7 @@ on:
 jobs:
   generate-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -39,9 +39,17 @@ jobs:
       - name: Etapa 3 - Voz en off
         run: python voiceover.py
 
-      - name: Guardar todo como artefacto
+      - name: Etapa 4 - Descargar b-roll
+        env:
+          GROQ_API_KEY:   ${{ secrets.GROQ_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: python b_roll.py
+
+      - name: Guardar artefacto (sin MP4 pesados de b-roll)
         uses: actions/upload-artifact@v4
         with:
           name: content-${{ github.run_id }}
-          path: data/
+          path: |
+            data/
+            !data/broll/**/*.mp4
           retention-days: 30
