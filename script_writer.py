@@ -1,15 +1,16 @@
 """
 ================================================================================
- script_writer.py — Etapa 2 del canal de YouTube automatico (v2)
+ script_writer.py - Etapa 2 del canal de YouTube automatico (v3)
 ================================================================================
 
  Que hace:
    1. Lee el JSON de ideas generadas por la etapa 1 (morning_pipeline.py)
    2. Coge la primera idea (la mejor, segun el ranking del prompt)
    3. Llama a Groq para escribir un guion completo y estructurado
-   4. VERIFICA el word count real (no se fia de lo que dice el modelo)
-   5. Si las body sections estan cortas, REINTENTA con expansion forzada
-   6. Guarda el guion en JSON (consumible por etapa 3) y en MD (legible)
+   4. VERIFICA palabras por seccion contra rangos minimos (todas las secciones)
+   5. Si alguna seccion esta corta de verdad, REINTENTA con expansion quirurgica
+   6. Tolera margenes razonables para no quemar tokens en perfeccionismo
+   7. Guarda el guion en JSON (consumible por etapa 3) y en MD (legible)
 
  Coste: 0 EUR (Groq free tier)
 
@@ -45,9 +46,18 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 TODAY           = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-# Word count targets (palabras REALES, contadas tras la respuesta del modelo)
-MIN_BODY_WORDS      = 200
-MIN_TOTAL_WORDS     = 1500
+# Rangos esperados por tipo de seccion (min, max ideal)
+SECTION_TARGETS = {
+    "hook":      (12,  20),
+    "intro":     (50,  70),
+    "body":      (220, 280),
+    "retention": (35,  50),
+    "outro":     (80,  120),
+}
+
+# Tolerancia: si la seccion esta al X% del minimo o mas, no reintentamos.
+# Solo reintentamos si la seccion esta MUY por debajo (<60% del minimo).
+TOLERANCE_RATIO     = 0.60
 MAX_RETRY_GENERATION = 2
 
 
@@ -97,30 +107,55 @@ def load_todays_idea() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Conteo de palabras (real, no lo que dice el modelo)
+# Conteo de palabras y validacion
 # ---------------------------------------------------------------------------
 def count_words(text: str) -> int:
     return len(re.findall(r"\b\w+\b", text or ""))
 
 
+def check_section(section_type: str, word_count: int) -> tuple[bool, int, int]:
+    """
+    Devuelve (is_too_short, min_target, max_target).
+    'too_short' significa "tan corto que merece reintento" (<60% del minimo).
+    """
+    if section_type not in SECTION_TARGETS:
+        return (False, 0, 0)
+    min_w, max_w = SECTION_TARGETS[section_type]
+    threshold = int(min_w * TOLERANCE_RATIO)
+    return (word_count < threshold, min_w, max_w)
+
+
 def measure_script(raw: dict) -> dict:
+    """
+    Evalua cada seccion. Marca como 'short' solo las que estan MUY por debajo
+    del minimo (para no quemar tokens en perfeccionismo).
+    """
     sections = raw.get("sections", [])
     per_section = []
     total = 0
-    short_bodies = []
+    short_sections = []
 
     for i, s in enumerate(sections):
+        stype = s.get("type", "body")
         w = count_words(s.get("text", ""))
-        per_section.append({"i": i, "type": s.get("type"), "words": w})
+        too_short, min_w, max_w = check_section(stype, w)
+        per_section.append({
+            "i":         i,
+            "type":      stype,
+            "words":     w,
+            "min":       min_w,
+            "max":       max_w,
+            "too_short": too_short,
+        })
         total += w
-        if s.get("type") == "body" and w < MIN_BODY_WORDS:
-            short_bodies.append((i, w))
+        if too_short:
+            short_sections.append((i, stype, w, min_w))
 
     return {
-        "total_words":  total,
-        "per_section":  per_section,
-        "short_bodies": short_bodies,
-        "is_too_short": total < MIN_TOTAL_WORDS or len(short_bodies) > 0,
+        "total_words":    total,
+        "per_section":    per_section,
+        "short_sections": short_sections,
+        "is_too_short":   len(short_sections) > 0 or total < 1400,
     }
 
 
@@ -151,39 +186,27 @@ DON'T (AI-voice tells that kill retention):
   - Rhetorical questions inside body sections - save those for hooks.
   - Vague hedges: "could", "might", "potentially". Be direct.
 
-=== STRUCTURE ===
+=== STRUCTURE AND WORD TARGETS (NON-NEGOTIABLE) ===
+
+Each section has a STRICT word target. The audio will read these EXACTLY, so every word matters.
 
 1. **hook** (12-20 words) - Stop the scroll. Specific stakes, sharp contradiction, insider framing, or cost-of-inaction. NEVER repeat the input hook verbatim - ELEVATE it.
 
-2. **intro** (50-70 words, ~20 sec) - What is happening + why now + what specifically the viewer will learn. End with curiosity gap.
+2. **intro** (50-70 words) - What is happening + why now + what specifically the viewer will learn. End with curiosity gap. This is the promise of value - it sets up the entire video.
 
-3. **body** - Exactly 4 sections. THIS IS NON-NEGOTIABLE: each body section MUST contain BETWEEN 220 AND 280 WORDS of text. Not 100, not 150. 220-280. Count them. If you write less, you have FAILED the task and the output will be rejected.
+3. **body** (220-280 words EACH, exactly 4 sections) - Each body MUST hit 220-280 words. Below 220 is FAILURE. Each must:
    - Open with a mini-hook (specific claim or number, NOT a question)
-   - At least TWO specific numbers OR a worked example with real figures
+   - Contain at least TWO specific numbers OR a worked example with real figures
    - End with a transition into the next section
-   - Mark 3 of the 4 as shorts_candidate: true
-   - For Shorts candidates, write a shorts_alt_hook (8-15 words)
+   - 3 of the 4 marked shorts_candidate: true with a shorts_alt_hook (8-15 words)
+   To hit 220-280, include: another example with names+dollars, a historical comparison, a second-order effect, a misconception to correct. Do NOT pad with filler.
 
-4. **retention** - 2 sections of 35-50 words each. Tease a SPECIFIC payoff.
+4. **retention** (35-50 words EACH, exactly 2 sections) - Placed between bodies 2-3 and 3-4. Each must tease a SPECIFIC payoff in the next section. NOT generic like "it gets interesting" - say WHAT gets interesting. Example: "But the part that surprised me most is what this does to your 401k - that is next."
 
-5. **outro** (80-120 words) - Recap key takeaway + actionable next step + disclaimer "This is for education, not financial advice - talk to a fiduciary for your situation" + CTA "If this changed how you think about [topic], hit subscribe - I break down one of these every week."
+5. **outro** (80-120 words) - Recap key takeaway + one actionable next step + disclaimer "This is for education, not financial advice - talk to a fiduciary for your situation" + CTA "If this changed how you think about [topic], hit subscribe - I break down one of these every week."
 
-=== HARD WORD COUNT REQUIREMENT (READ TWICE) ===
-The TOTAL word count of all text fields combined must be 1500-1800 words.
-This means:
-  - hook:        12-20 words
-  - intro:       50-70 words
-  - body x 4:    220-280 each (total 880-1120)
-  - retention x 2: 35-50 each (total 70-100)
-  - outro:       80-120 words
-  - GRAND TOTAL: 1500-1800
-
-Before you finish writing, MENTALLY COUNT the words in each body section. If any body is under 220, EXPAND IT with:
-  - Another specific example with names and dollar figures
-  - A historical comparison ("Back in 2008, the same thing happened to...")
-  - A second-order effect ("And here is what most people miss: this also affects...")
-  - A common misconception you can correct
-DO NOT pad with filler like "and so on" or repetition.
+=== GRAND TOTAL ===
+Sum of all section words must be 1500-1800. Mentally tally before finishing.
 
 === STRUCTURAL DISCIPLINE ===
 Body sections must each cover a DIFFERENT angle. The last body must introduce a FRESH angle (actionable response, contrarian view, historical parallel, surprising second-order effect). Body sections NEVER include summaries, CTAs, or disclaimers - those go ONLY in the outro.
@@ -220,24 +243,26 @@ Output ONLY the JSON. No prose before or after. No markdown fences.
 """
 
 
-EXPANSION_PROMPT = """Your previous draft was REJECTED because the body sections were too short. Here is the draft you wrote:
+EXPANSION_PROMPT = """Your previous draft was REJECTED because some sections were too short. Here is your previous draft:
 
 {previous_draft}
 
-Word counts of each section (from your draft):
+Word counts vs targets:
 {word_breakdown}
 
-You MUST rewrite ALL body sections marked SHORT to contain 220-280 words EACH.
+You MUST rewrite ONLY the sections marked SHORT to hit their target word range. Keep ALL OTHER sections (including hook, intro, retention, outro) EXACTLY as they were unless they are also flagged. Do not rewrite what is already fine.
 
-For each short body section, ADD:
+For SHORT body sections, ADD (do not pad with filler):
   - Another specific example with names and dollar figures
-  - OR a historical comparison
-  - OR a second-order effect most people miss
-  - OR a common misconception you can correct
+  - A historical comparison (e.g. "Back in 2008...")
+  - A second-order effect most people miss
+  - A common misconception you can correct
 
-DO NOT change the hook, intro, retention sections, or outro unless they are also flagged as short. Only fix what is short. Keep everything else identical.
+For SHORT retention sections, ADD a specific tease of the next section's payoff.
 
-Return the SAME JSON shape as before, with the expanded sections. Output ONLY the JSON.
+For SHORT outro, ADD a stronger recap or a sharper actionable step.
+
+Return the FULL JSON in the same shape, with corrections applied. Output ONLY the JSON.
 """
 
 
@@ -267,7 +292,7 @@ def call_groq(prompt: str, max_tokens: int = 5500) -> dict:
         if r.status_code == 200:
             break
         if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
-            wait = 30 * attempt
+            wait = 45 * attempt  # 45s, 90s, 135s
             print(f"   . Groq devolvio {r.status_code}, reintento en {wait}s (intento {attempt}/{max_attempts})...")
             time.sleep(wait)
             continue
@@ -275,6 +300,22 @@ def call_groq(prompt: str, max_tokens: int = 5500) -> dict:
 
     content = r.json()["choices"][0]["message"]["content"]
     return json.loads(content)
+
+
+def format_breakdown(stats: dict) -> str:
+    lines = []
+    for ps in stats["per_section"]:
+        if ps["min"] == 0:  # tipo desconocido
+            continue
+        mark = ""
+        if ps["too_short"]:
+            mark = f"  <-- SHORT, expand to {ps['min']}-{ps['max']}"
+        elif ps["words"] < ps["min"]:
+            mark = f"  (slightly under {ps['min']} but acceptable)"
+        elif ps["words"] > ps["max"]:
+            mark = f"  (over {ps['max']} but acceptable)"
+        lines.append(f"  Section {ps['i']+1} ({ps['type']}): {ps['words']} words (target {ps['min']}-{ps['max']}){mark}")
+    return "\n".join(lines)
 
 
 def generate_script(idea: dict) -> dict:
@@ -294,30 +335,33 @@ def generate_script(idea: dict) -> dict:
     print("   . Pasada inicial...")
     raw = call_groq(prompt)
     stats = measure_script(raw)
-    print(f"   . Resultado: {stats['total_words']} palabras, {len(stats['short_bodies'])} body(s) cortas.")
+    print(f"   . Resultado: {stats['total_words']} palabras totales, {len(stats['short_sections'])} secciones muy cortas.")
 
     for retry in range(1, MAX_RETRY_GENERATION + 1):
         if not stats["is_too_short"]:
             break
 
-        print(f"   . Guion corto. Reintento {retry}/{MAX_RETRY_GENERATION} con expansion forzada...")
-
-        breakdown_lines = []
-        for ps in stats["per_section"]:
-            mark = ""
-            if ps["type"] == "body" and ps["words"] < MIN_BODY_WORDS:
-                mark = "  <-- SHORT, EXPAND TO 220-280"
-            breakdown_lines.append(f"  Section {ps['i']+1} ({ps['type']}): {ps['words']} words{mark}")
-        word_breakdown = "\n".join(breakdown_lines)
+        # Listar las secciones cortas para el log
+        short_summary = ", ".join(f"{stype}({w}<{m})" for _, stype, w, m in stats["short_sections"])
+        if short_summary:
+            print(f"   . Secciones cortas: {short_summary}")
+        print(f"   . Reintento {retry}/{MAX_RETRY_GENERATION} con expansion quirurgica...")
 
         expansion_prompt = EXPANSION_PROMPT.format(
             previous_draft = json.dumps(raw, indent=2),
-            word_breakdown = word_breakdown,
+            word_breakdown = format_breakdown(stats),
         )
 
-        raw = call_groq(expansion_prompt, max_tokens=6500)
-        stats = measure_script(raw)
-        print(f"   . Tras expansion: {stats['total_words']} palabras, {len(stats['short_bodies'])} body(s) cortas.")
+        raw_new = call_groq(expansion_prompt, max_tokens=6500)
+        stats_new = measure_script(raw_new)
+
+        # Solo aceptamos la nueva version si MEJORA
+        if stats_new["total_words"] >= stats["total_words"] - 50:  # margen
+            raw = raw_new
+            stats = stats_new
+        else:
+            print(f"   ! La expansion empeoro el guion ({stats_new['total_words']} < {stats['total_words']}), descartada.")
+        print(f"   . Tras retry {retry}: {stats['total_words']} palabras, {len(stats['short_sections'])} cortas.")
 
     return raw
 
@@ -447,9 +491,9 @@ def main() -> None:
     print(f"\n  Desglose:")
     for i, s in enumerate(sections, 1):
         w = count_words(s.text)
-        flag = ""
-        if s.type == "body" and w < MIN_BODY_WORDS:
-            flag = "  ! corto"
+        min_w, max_w = SECTION_TARGETS.get(s.type, (0, 0))
+        in_range = min_w <= w <= max_w if min_w else True
+        flag = "" if in_range else f"  (fuera de {min_w}-{max_w})"
         print(f"    {i}. {s.type:10s} {w:>4} palabras{flag}")
     print()
 
