@@ -5,3 +5,4 @@ praw>=7.7
 python-dotenv>=1.0
 edge-tts>=6.1
 mutagen>=1.47
+openai-whisper>=20240930
