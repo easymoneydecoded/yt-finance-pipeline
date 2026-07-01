@@ -49,6 +49,9 @@ jobs:
       - name: Etapa 5 - Montar video final
         run: python editor.py
 
+      - name: Etapa 6 - Cortar Shorts verticales
+        run: python shorts_clipper.py
+
       - name: Guardar artefacto (sin MP4 pesados de b-roll)
         uses: actions/upload-artifact@v4
         with:
