@@ -2,16 +2,14 @@ name: Morning Pipeline
 
 on:
   schedule:
-    # Disparo preferido: 06:00 hora espanola, baja demanda en runners
     - cron: '0 4 * * *'
-    # Disparo de backup: 11:00 hora espanola si el primero fallara
     - cron: '0 9 * * *'
   workflow_dispatch:
 
 jobs:
   generate-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -22,7 +20,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Instalar dependencias
+      - name: Instalar dependencias del sistema (ffmpeg)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Instalar dependencias Python
         run: pip install -r requirements.txt
 
       - name: Etapa 1 - Generar ideas
@@ -45,6 +46,9 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python b_roll.py
 
+      - name: Etapa 5 - Montar video final
+        run: python editor.py
+
       - name: Guardar artefacto (sin MP4 pesados de b-roll)
         uses: actions/upload-artifact@v4
         with:
@@ -52,4 +56,4 @@ jobs:
           path: |
             data/
             !data/broll/**/*.mp4
-          retention-days: 30
+          retention-days: 7
