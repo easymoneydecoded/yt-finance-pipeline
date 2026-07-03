@@ -51,14 +51,17 @@ jobs:
       - name: Etapa 6 - Cortar Shorts verticales
         run: python shorts_clipper.py
 
-      - name: Etapa 7 - Subir a YouTube
+      - name: Etapa 7 - Generar thumbnail custom
+        run: python thumbnail_maker.py
+
+      - name: Etapa 8 - Subir a YouTube
         env:
           YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: python uploader.py
 
-      - name: Guardar artefacto (sin MP4 pesados)
+      - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
           name: content-${{ github.run_id }}
@@ -66,4 +69,5 @@ jobs:
             data/
             !data/broll/**/*.mp4
             !data/output/video_clean_*.mp4
+            !data/fonts/**
           retention-days: 7
