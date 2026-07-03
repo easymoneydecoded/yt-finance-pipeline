@@ -1,18 +1,16 @@
 """
 ================================================================================
- uploader.py - Etapa 7 del canal de YouTube automatico
+ uploader.py - Etapa 8 del canal de YouTube automatico (v2)
 ================================================================================
 
  Que hace:
-   1. Lee el guion, el video largo y el manifest de Shorts
+   1. Lee el guion, el video largo, el manifest de Shorts y el thumbnail
    2. Se autentica en YouTube Data API v3 usando el refresh token
-   3. Sube el video largo con la metadata del guion (titulo, descripcion, tags)
+   3. Sube el video largo con metadata + establece thumbnail custom
    4. Sube los 3 Shorts como Shorts (usando #Shorts en la descripcion)
    5. Guarda un manifest final con los video_id de YouTube
 
- Coste: 0 EUR
- Cuota YouTube Data API: cada upload cuesta 1600 unidades, cuota diaria 10000
- -> con 4 uploads al dia (largo + 3 Shorts) gastamos 6400/10000. Cabe holgado.
+ Cuota YouTube Data API: upload=1600, thumbnail=50. Total: 4 uploads + 1 thumb = 6450/10000.
 
 ================================================================================
 """
@@ -37,29 +35,25 @@ OUTPUT_DIR     = Path("data/output")
 
 TODAY          = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-# Credenciales OAuth desde variables de entorno (GitHub Secrets)
 YT_CLIENT_ID     = os.getenv("YOUTUBE_CLIENT_ID")
 YT_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET")
 YT_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN")
 
-# YouTube URLs y valores
 YT_TOKEN_URI     = "https://oauth2.googleapis.com/token"
 YT_SCOPES        = ["https://www.googleapis.com/auth/youtube.upload"]
 
-# Category IDs de YouTube (25 = News & Politics, 27 = Education, 28 = Science & Tech)
 CATEGORY_ID      = "27"  # Education
 
-# Configuracion de subida
-PRIVACY_STATUS   = "public"      # "public", "unlisted", "private"
+PRIVACY_STATUS   = "public"
 MADE_FOR_KIDS    = False
 NOTIFY_SUBS      = True
 
 
 # ---------------------------------------------------------------------------
-# Utilidades de carga de datos
+# Carga de datos
 # ---------------------------------------------------------------------------
-def load_data() -> tuple[dict, dict, Path]:
-    """Carga script, shorts manifest y localiza el video largo."""
+def load_data() -> tuple[dict, dict, Path, Path]:
+    """Carga script, shorts manifest y localiza video largo + thumbnail."""
     def _latest(pattern: str, base: Path = INPUT_DIR) -> Path:
         candidates = sorted(base.rglob(pattern), reverse=True)
         if not candidates:
@@ -75,7 +69,6 @@ def load_data() -> tuple[dict, dict, Path]:
     if shorts_manifest_path.exists():
         shorts_manifest = json.loads(shorts_manifest_path.read_text(encoding="utf-8"))
     else:
-        # Fallback: buscar el mas reciente
         candidates = sorted(OUTPUT_DIR.glob("shorts_manifest_*.json"), reverse=True)
         if candidates:
             shorts_manifest = json.loads(candidates[0].read_text(encoding="utf-8"))
@@ -88,32 +81,35 @@ def load_data() -> tuple[dict, dict, Path]:
             raise FileNotFoundError("No hay video_*.mp4 en output/")
         video_path = candidates[0]
 
-    print(f"   . script: {script_path.name}")
-    print(f"   . video:  {video_path.name}")
+    # Thumbnail (opcional pero recomendada)
+    thumb_path = OUTPUT_DIR / f"thumbnail_{TODAY}.jpg"
+    if not thumb_path.exists():
+        candidates = sorted(OUTPUT_DIR.glob("thumbnail_*.jpg"), reverse=True)
+        thumb_path = candidates[0] if candidates else None
+
+    print(f"   . script:    {script_path.name}")
+    print(f"   . video:     {video_path.name}")
     if shorts_manifest:
-        print(f"   . shorts: {len(shorts_manifest.get('shorts', []))} clips")
+        print(f"   . shorts:    {len(shorts_manifest.get('shorts', []))} clips")
+    if thumb_path and thumb_path.exists():
+        print(f"   . thumbnail: {thumb_path.name}")
+    else:
+        print(f"   ! sin thumbnail custom, YouTube usara frame automatico")
 
     return (
         json.loads(script_path.read_text(encoding="utf-8")),
         shorts_manifest,
         video_path,
+        thumb_path,
     )
 
 
 # ---------------------------------------------------------------------------
-# Autenticacion OAuth2
+# Autenticacion
 # ---------------------------------------------------------------------------
 def get_youtube_client():
-    """
-    Crea el cliente autenticado de YouTube usando el refresh token.
-    El refresh token no caduca (mientras no lo revoques), asi que este
-    proceso es 100% desatendido.
-    """
     if not all([YT_CLIENT_ID, YT_CLIENT_SECRET, YT_REFRESH_TOKEN]):
-        raise RuntimeError(
-            "Faltan credenciales YOUTUBE_* en variables de entorno. "
-            "Revisa GitHub Secrets."
-        )
+        raise RuntimeError("Faltan credenciales YOUTUBE_*")
 
     credentials = Credentials(
         token          = None,
@@ -123,18 +119,14 @@ def get_youtube_client():
         client_secret  = YT_CLIENT_SECRET,
         scopes         = YT_SCOPES,
     )
-
-    # Refrescar el token de acceso
     credentials.refresh(Request())
-
     return build("youtube", "v3", credentials=credentials, cache_discovery=False)
 
 
 # ---------------------------------------------------------------------------
-# Construccion de metadatos
+# Metadata builders
 # ---------------------------------------------------------------------------
 def build_long_video_metadata(script_data: dict) -> dict:
-    """Metadata del video largo, tomada del script del dia."""
     title       = script_data.get("youtube_title", "Untitled")[:100]
     description = script_data.get("description", "")
     tags        = script_data.get("tags", [])[:25]
@@ -145,8 +137,8 @@ def build_long_video_metadata(script_data: dict) -> dict:
             "description": description,
             "tags":        tags,
             "categoryId":  CATEGORY_ID,
-            "defaultLanguage":       "en",
-            "defaultAudioLanguage":  "en",
+            "defaultLanguage":      "en",
+            "defaultAudioLanguage": "en",
         },
         "status": {
             "privacyStatus":           PRIVACY_STATUS,
@@ -158,15 +150,10 @@ def build_long_video_metadata(script_data: dict) -> dict:
 
 
 def build_short_metadata(short_info: dict, script_data: dict, short_index: int) -> dict:
-    """
-    Metadata para un Short. Debe incluir #Shorts en titulo o descripcion
-    para que YouTube lo trate como formato vertical.
-    """
     parent_title  = script_data.get("youtube_title", "Untitled")
     section_title = short_info.get("section_title", "")
     alt_hook      = short_info.get("alt_hook", "").strip()
 
-    # Titulo del Short: el hook alternativo si existe, si no un truncado del parent
     if alt_hook:
         short_title = f"{alt_hook} #Shorts"
     elif section_title:
@@ -176,7 +163,6 @@ def build_short_metadata(short_info: dict, script_data: dict, short_index: int) 
 
     short_title = short_title[:100]
 
-    # Descripcion del Short: hashtag obligatorio + link al video largo (se anadira despues)
     description = (
         f"{section_title}\n\n"
         f"Watch the full video for the deep breakdown.\n\n"
@@ -205,19 +191,16 @@ def build_short_metadata(short_info: dict, script_data: dict, short_index: int) 
 
 
 # ---------------------------------------------------------------------------
-# Upload con retry y progress
+# Upload
 # ---------------------------------------------------------------------------
 def upload_video(youtube, video_path: Path, metadata: dict, label: str = "") -> str:
-    """
-    Sube un video con reintentos. Devuelve el video_id de YouTube.
-    """
     print(f"   . preparando upload: {video_path.name} ({video_path.stat().st_size/1024/1024:.1f}MB)")
 
     media = MediaFileUpload(
         str(video_path),
         mimetype    = "video/mp4",
         resumable   = True,
-        chunksize   = 5 * 1024 * 1024,  # 5MB chunks
+        chunksize   = 5 * 1024 * 1024,
     )
 
     request = youtube.videos().insert(
@@ -261,6 +244,24 @@ def upload_video(youtube, video_path: Path, metadata: dict, label: str = "") -> 
     return video_id
 
 
+def set_video_thumbnail(youtube, video_id: str, thumbnail_path: Path) -> bool:
+    """Sube y establece una thumbnail custom para el video."""
+    try:
+        media = MediaFileUpload(
+            str(thumbnail_path),
+            mimetype = "image/jpeg",
+            resumable = False,
+        )
+        youtube.thumbnails().set(
+            videoId    = video_id,
+            media_body = media,
+        ).execute()
+        return True
+    except Exception as e:
+        print(f"   ! fallo subiendo thumbnail: {e}")
+        return False
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -268,10 +269,10 @@ def main() -> None:
     t0 = time.time()
     print(f"\n=== UPLOADER . {TODAY} ===\n")
 
-    print("1/4  Cargando datos...")
-    script_data, shorts_manifest, video_path = load_data()
+    print("1/5  Cargando datos...")
+    script_data, shorts_manifest, video_path, thumb_path = load_data()
 
-    print("\n2/4  Autenticando en YouTube API...")
+    print("\n2/5  Autenticando en YouTube API...")
     youtube = get_youtube_client()
     print(f"      cliente creado")
 
@@ -284,9 +285,9 @@ def main() -> None:
     }
 
     # -----------------------------------------------------------------------
-    # Upload del video largo
+    # Video largo
     # -----------------------------------------------------------------------
-    print(f"\n3/4  Subiendo video largo...")
+    print(f"\n3/5  Subiendo video largo...")
     long_metadata = build_long_video_metadata(script_data)
     print(f"      titulo: {long_metadata['snippet']['title']}")
     try:
@@ -304,13 +305,26 @@ def main() -> None:
         error_msg = f"Fallo subiendo video largo: {e}"
         print(f"      ! {error_msg}")
         uploaded["errors"].append(error_msg)
-        # Si falla el video largo, no subimos Shorts para evitar contexto raro
         raise
 
     # -----------------------------------------------------------------------
-    # Upload de los Shorts
+    # Thumbnail custom
     # -----------------------------------------------------------------------
-    print(f"\n4/4  Subiendo Shorts...")
+    print(f"\n4/5  Estableciendo thumbnail custom...")
+    if thumb_path and thumb_path.exists():
+        ok = set_video_thumbnail(youtube, long_video_id, thumb_path)
+        if ok:
+            print(f"      thumbnail aplicada: {thumb_path.name}")
+            uploaded["long_video"]["thumbnail"] = thumb_path.name
+        else:
+            uploaded["errors"].append("Fallo subir thumbnail")
+    else:
+        print(f"      ! sin thumbnail custom, YouTube usara frame automatico")
+
+    # -----------------------------------------------------------------------
+    # Shorts
+    # -----------------------------------------------------------------------
+    print(f"\n5/5  Subiendo Shorts...")
     if not shorts_manifest or not shorts_manifest.get("shorts"):
         print("      ! no hay Shorts para subir")
     else:
@@ -323,7 +337,6 @@ def main() -> None:
                 continue
 
             metadata = build_short_metadata(short_info, script_data, i)
-            # Anadir link al video largo en la descripcion
             metadata["snippet"]["description"] = (
                 metadata["snippet"]["description"] +
                 f"\n\nFull video: {uploaded['long_video']['url']}"
@@ -342,7 +355,6 @@ def main() -> None:
                     "filename":  short_filename,
                 })
 
-                # Pausa entre uploads para no disparar rate limits
                 if i < len(shorts_manifest["shorts"]):
                     print(f"      pausa 10s antes del siguiente...")
                     time.sleep(10)
@@ -351,10 +363,9 @@ def main() -> None:
                 error_msg = f"Fallo subiendo Short {i}: {e}"
                 print(f"      ! {error_msg}")
                 uploaded["errors"].append(error_msg)
-                # Seguimos con los siguientes Shorts (no rompemos el pipeline)
 
     # -----------------------------------------------------------------------
-    # Guardar manifest de subida
+    # Guardar manifest
     # -----------------------------------------------------------------------
     manifest_path = OUTPUT_DIR / f"uploaded_{TODAY}.json"
     manifest_path.write_text(json.dumps(uploaded, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -365,6 +376,8 @@ def main() -> None:
     print(f"\n=== RESUMEN ===")
     if uploaded["long_video"]:
         print(f"  Video largo: {uploaded['long_video']['url']}")
+        if uploaded["long_video"].get("thumbnail"):
+            print(f"  Thumbnail:   {uploaded['long_video']['thumbnail']}")
     print(f"  Shorts subidos: {len(uploaded['shorts'])}")
     for s in uploaded["shorts"]:
         print(f"    - {s['url']}")
