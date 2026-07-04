@@ -40,10 +40,7 @@ YT_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET")
 YT_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN")
 
 YT_TOKEN_URI     = "https://oauth2.googleapis.com/token"
-YT_SCOPES = [
-    "https://www.googleapis.com/auth/youtube.upload",
-    "https://www.googleapis.com/auth/youtube.force-ssl",
-]
+YT_SCOPES        = ["https://www.googleapis.com/auth/youtube.upload"]
 
 CATEGORY_ID      = "27"  # Education
 
@@ -84,10 +81,15 @@ def load_data() -> tuple[dict, dict, Path, Path]:
             raise FileNotFoundError("No hay video_*.mp4 en output/")
         video_path = candidates[0]
 
-    # Thumbnail (opcional pero recomendada)
-    thumb_path = OUTPUT_DIR / f"thumbnail_{TODAY}.jpg"
+    # Thumbnail (opcional pero recomendada) - puede ser PNG o JPG
+    thumb_path = OUTPUT_DIR / f"thumbnail_{TODAY}.png"
     if not thumb_path.exists():
-        candidates = sorted(OUTPUT_DIR.glob("thumbnail_*.jpg"), reverse=True)
+        thumb_path = OUTPUT_DIR / f"thumbnail_{TODAY}.jpg"
+    if not thumb_path.exists():
+        candidates = sorted(
+            list(OUTPUT_DIR.glob("thumbnail_*.png")) + list(OUTPUT_DIR.glob("thumbnail_*.jpg")),
+            reverse=True,
+        )
         thumb_path = candidates[0] if candidates else None
 
     print(f"   . script:    {script_path.name}")
@@ -250,9 +252,10 @@ def upload_video(youtube, video_path: Path, metadata: dict, label: str = "") -> 
 def set_video_thumbnail(youtube, video_id: str, thumbnail_path: Path) -> bool:
     """Sube y establece una thumbnail custom para el video."""
     try:
+        mime = "image/png" if thumbnail_path.suffix.lower() == ".png" else "image/jpeg"
         media = MediaFileUpload(
             str(thumbnail_path),
-            mimetype = "image/jpeg",
+            mimetype = mime,
             resumable = False,
         )
         youtube.thumbnails().set(
