@@ -13,7 +13,7 @@ import urllib.request
 from pathlib import Path
 from datetime import datetime, timezone
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 INPUT_DIR      = Path("data")
 BROLL_DIR      = Path("data/broll")
@@ -147,6 +147,15 @@ def crop_center(img: Image.Image, target_w: int, target_h: int) -> Image.Image:
         img = img.resize((new_w, new_h), Image.LANCZOS)
         top = (new_h - target_h) // 2
         img = img.crop((0, top, target_w, top + target_h))
+
+    # Mejoras de calidad para compensar la compresion del b-roll:
+    # 1. Sharpen (nitidez) para definir bordes
+    img = img.filter(ImageFilter.UnsharpMask(radius=2.5, percent=140, threshold=2))
+    # 2. Realce ligero de contraste
+    img = ImageEnhance.Contrast(img).enhance(1.10)
+    # 3. Realce ligero de saturacion (colores mas vivos)
+    img = ImageEnhance.Color(img).enhance(1.12)
+
     return img
 
 
@@ -293,7 +302,7 @@ def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, outp
     draw.text((THUMB_W - 30 - logo_w, THUMB_H - 48), tp_logo, font=font_logo, fill=COLOR_WHITE)
 
     # Guardar
-    bg.convert("RGB").save(str(output_path), "JPEG", quality=92, optimize=True)
+    bg.convert("RGB").save(str(output_path), "JPEG", quality=95, optimize=True, subsampling=0)
 
 
 def main() -> None:
