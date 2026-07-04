@@ -1,6 +1,11 @@
 """
 ================================================================================
- thumbnail_maker.py - Etapa 7 (v2, estilo LIMPIO CON PUNCH)
+ thumbnail_maker.py - Etapa 7 (v3, MAXIMA NITIDEZ)
+================================================================================
+ Mejoras v3:
+   - Re-descarga el clip elegido en HD (Full HD) desde Pexels para el frame
+   - Guarda en PNG (texto sin halo de compresion JPEG)
+   - Control de peso: si el PNG supera 2MB, optimiza para caber en YouTube
 ================================================================================
 """
 
@@ -13,16 +18,24 @@ import urllib.request
 from pathlib import Path
 from datetime import datetime, timezone
 
+import requests
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
+from dotenv import load_dotenv
+
+load_dotenv()
 
 INPUT_DIR      = Path("data")
 BROLL_DIR      = Path("data/broll")
 OUTPUT_DIR     = Path("data/output")
 FONTS_DIR      = Path("data/fonts")
+TEMP_DIR       = Path("data/tmp_thumb")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 FONTS_DIR.mkdir(parents=True, exist_ok=True)
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 TODAY          = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 
 THUMB_W        = 1280
 THUMB_H        = 720
@@ -34,14 +47,13 @@ COLOR_WHITE    = (255, 255, 255)
 COLOR_GREY     = (140, 140, 140)
 COLOR_BLACK    = (0, 0, 0)
 
-# Overlay MENOS oscuro (45% vs 55% antes) - deja ver mas el b-roll
 OVERLAY_ALPHA  = 115
 
-# Fuente: Anton (gratis, ancha, muy YouTube - similar a Impact)
+# YouTube limite de miniatura: 2MB
+MAX_THUMB_BYTES = 2 * 1024 * 1024
+
 ANTON_URL      = "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf"
 ANTON_PATH     = FONTS_DIR / "Anton-Regular.ttf"
-
-# Fallback siempre disponible
 DEJAVU_BOLD    = Path("/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf")
 DEJAVU_FALLBACK = Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")
 
@@ -56,14 +68,12 @@ def load_data() -> tuple[dict, dict]:
     script_path = INPUT_DIR / f"script_{TODAY}.json"
     if not script_path.exists():
         script_path = _latest("script_*.json")
-
     broll_path = BROLL_DIR / f"broll_manifest_{TODAY}.json"
     if not broll_path.exists():
         broll_path = _latest("broll_manifest_*.json")
 
     print(f"   . script: {script_path.name}")
     print(f"   . broll:  {broll_path.name}")
-
     return (
         json.loads(script_path.read_text(encoding="utf-8")),
         json.loads(broll_path.read_text(encoding="utf-8")),
@@ -80,36 +90,68 @@ def download_font_if_missing() -> Path:
             return ANTON_PATH
     except Exception as e:
         print(f"   ! fallo descarga Anton: {e}")
-
     if DEJAVU_BOLD.exists():
-        print(f"   . fallback: DejaVu Condensed Bold")
         return DEJAVU_BOLD
     if DEJAVU_FALLBACK.exists():
-        print(f"   . fallback: DejaVu Sans Bold")
         return DEJAVU_FALLBACK
     raise RuntimeError("No hay fuente disponible")
 
 
-def pick_best_broll_clip(broll_manifest: dict) -> Path:
+def pick_best_broll_clip(broll_manifest: dict) -> dict:
+    """Devuelve el dict completo del clip (con pexels_id) para poder re-bajar en HD."""
     body_clips = []
     all_clips = []
     for section in broll_manifest.get("sections", []):
+        stype = section.get("section_type")
         for clip in section.get("clips", []):
             clip_path = INPUT_DIR / clip["filename"]
             if not clip_path.exists():
                 continue
-            entry = (clip_path, clip.get("duration_sec", 0))
-            all_clips.append(entry)
-            if section.get("section_type") == "body":
-                body_clips.append(entry)
+            all_clips.append(clip)
+            if stype == "body":
+                body_clips.append(clip)
     pool = body_clips or all_clips
     if not pool:
         raise RuntimeError("No hay clips de b-roll disponibles")
-    good = [(p, d) for p, d in pool if d >= 10]
+    good = [c for c in pool if c.get("duration_sec", 0) >= 10]
     chosen_pool = good or pool
     random.seed(hash(TODAY))
-    chosen_path, _ = random.choice(chosen_pool)
-    return chosen_path
+    return random.choice(chosen_pool)
+
+
+def download_hd_clip(pexels_id: int) -> Path | None:
+    """Re-descarga el clip en la mayor resolucion disponible desde Pexels."""
+    if not PEXELS_API_KEY or not pexels_id:
+        return None
+    try:
+        r = requests.get(
+            f"https://api.pexels.com/videos/videos/{pexels_id}",
+            headers={"Authorization": PEXELS_API_KEY},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            print(f"   ! Pexels HD devolvio {r.status_code}, uso clip local")
+            return None
+        data = r.json()
+        # Elegir el video_file de mayor resolucion (mas cercano a 1920 de ancho)
+        files = [f for f in data.get("video_files", []) if f.get("file_type") == "video/mp4"]
+        if not files:
+            return None
+        # Preferir el mas cercano a 1920px de ancho (Full HD)
+        files.sort(key=lambda f: abs(f.get("width", 0) - 1920))
+        best = files[0]
+        hd_path = TEMP_DIR / f"hd_clip.mp4"
+        with requests.get(best["link"], stream=True, timeout=120) as resp:
+            resp.raise_for_status()
+            with open(hd_path, "wb") as fh:
+                for chunk in resp.iter_content(chunk_size=65536):
+                    if chunk:
+                        fh.write(chunk)
+        print(f"   . clip HD descargado: {best.get('width')}x{best.get('height')}")
+        return hd_path
+    except Exception as e:
+        print(f"   ! fallo descarga HD: {e}, uso clip local")
+        return None
 
 
 def extract_frame(clip_path: Path, out_path: Path, offset_sec: float = 3.0) -> None:
@@ -118,7 +160,7 @@ def extract_frame(clip_path: Path, out_path: Path, offset_sec: float = 3.0) -> N
         "-ss", f"{offset_sec:.2f}",
         "-i", str(clip_path),
         "-vframes", "1",
-        "-q:v", "2",
+        "-q:v", "1",
         str(out_path),
     ], capture_output=True, text=True)
     if result.returncode != 0 or not out_path.exists():
@@ -126,7 +168,7 @@ def extract_frame(clip_path: Path, out_path: Path, offset_sec: float = 3.0) -> N
             "ffmpeg", "-y", "-loglevel", "error",
             "-i", str(clip_path),
             "-vframes", "1",
-            "-q:v", "2",
+            "-q:v", "1",
             str(out_path),
         ], check=True)
 
@@ -148,26 +190,20 @@ def crop_center(img: Image.Image, target_w: int, target_h: int) -> Image.Image:
         top = (new_h - target_h) // 2
         img = img.crop((0, top, target_w, top + target_h))
 
-    # Mejoras de calidad para compensar la compresion del b-roll:
-    # 1. Sharpen (nitidez) para definir bordes
+    # Mejoras de calidad
     img = img.filter(ImageFilter.UnsharpMask(radius=2.5, percent=140, threshold=2))
-    # 2. Realce ligero de contraste
     img = ImageEnhance.Contrast(img).enhance(1.10)
-    # 3. Realce ligero de saturacion (colores mas vivos)
     img = ImageEnhance.Color(img).enhance(1.12)
-
     return img
 
 
-def wrap_text_for_font(text: str, font: ImageFont.FreeTypeFont, max_width: int, draw: ImageDraw.ImageDraw) -> list[str]:
+def wrap_text_for_font(text, font, max_width, draw):
     words = text.split()
-    lines = []
-    current = ""
+    lines, current = [], ""
     for word in words:
         test = f"{current} {word}".strip()
         bbox = draw.textbbox((0, 0), test, font=font)
-        w = bbox[2] - bbox[0]
-        if w <= max_width or not current:
+        if (bbox[2] - bbox[0]) <= max_width or not current:
             current = test
         else:
             lines.append(current)
@@ -177,8 +213,7 @@ def wrap_text_for_font(text: str, font: ImageFont.FreeTypeFont, max_width: int, 
     return lines
 
 
-def draw_text_thick_outline(draw, xy, text, font, fill, outline_w=8):
-    """Borde negro MUY grueso para maximo contraste."""
+def draw_text_thick_outline(draw, xy, text, font, fill, outline_w=10):
     x, y = xy
     for dx in range(-outline_w, outline_w + 1, 2):
         for dy in range(-outline_w, outline_w + 1, 2):
@@ -188,77 +223,52 @@ def draw_text_thick_outline(draw, xy, text, font, fill, outline_w=8):
     draw.text((x, y), text, font=font, fill=fill)
 
 
-def split_number_from_text(text: str) -> tuple[str, str]:
-    """Separa un numero destacado. Devuelve (texto_restante, numero_destacado)."""
-    patterns = [
-        r'\$[\d,\.]+[KMB]?',
-        r'\d+[\.,]?\d*\s*%',
-        r'\d+[KMB]',
-    ]
-    for pat in patterns:
-        match = re.search(pat, text)
-        if match:
-            number = match.group().strip()
-            rest = (text[:match.start()] + text[match.end():]).strip()
-            return (rest, number)
-    return (text, "")
+def split_number_from_text(text):
+    for pat in [r'\$[\d,\.]+[KMB]?', r'\d+[\.,]?\d*\s*%', r'\d+[KMB]']:
+        m = re.search(pat, text)
+        if m:
+            return (text[:m.start()] + text[m.end():]).strip(), m.group().strip()
+    return text, ""
 
 
 def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, output_path: Path) -> None:
-    # 1. Fondo
     bg = Image.open(frame_path).convert("RGB")
     bg = crop_center(bg, THUMB_W, THUMB_H)
-
-    # 2. Overlay oscuro (45%)
     bg = bg.convert("RGBA")
     overlay = Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, OVERLAY_ALPHA))
     bg = Image.alpha_composite(bg, overlay)
 
-    # 3. Barra superior
     top_bar_h = 60
     draw = ImageDraw.Draw(bg)
     draw.rectangle([0, 0, THUMB_W, top_bar_h], fill=COLOR_BG_BAR)
     draw.rectangle([0, top_bar_h, THUMB_W, top_bar_h + 4], fill=COLOR_GREEN)
 
     font_small = ImageFont.truetype(str(font_path), 30)
-
-    # LIVE
     draw.ellipse([25, 22, 41, 38], fill=COLOR_GREEN)
     draw.text((52, 15), "LIVE", font=font_small, fill=COLOR_GREEN)
-    # TICKER PRESS
     draw.text((155, 15), "TICKER PRESS", font=font_small, fill=COLOR_WHITE)
-    # Handle derecha
     handle = "@TICKERPRESSYT"
     bbox = draw.textbbox((0, 0), handle, font=font_small)
-    h_w = bbox[2] - bbox[0]
-    draw.text((THUMB_W - 30 - h_w, 15), handle, font=font_small, fill=COLOR_GREEN)
+    draw.text((THUMB_W - 30 - (bbox[2] - bbox[0]), 15), handle, font=font_small, fill=COLOR_GREEN)
 
-    # 4. BADGE ALERT naranja en la esquina superior derecha (debajo de la barra)
     badge_font = ImageFont.truetype(str(font_path), 42)
-    badge_text = "⚡ ALERT"
+    badge_text = "\u26a1 ALERT"
     bbox = draw.textbbox((0, 0), badge_text, font=badge_font)
-    badge_w = bbox[2] - bbox[0] + 40
-    badge_h = 60
+    badge_w = (bbox[2] - bbox[0]) + 40
     badge_x = THUMB_W - badge_w - 20
-    badge_y = 90
-    draw.rectangle([badge_x, badge_y, badge_x + badge_w, badge_y + badge_h], fill=COLOR_ORANGE)
-    draw.text((badge_x + 20, badge_y + 6), badge_text, font=badge_font, fill=COLOR_BLACK)
+    draw.rectangle([badge_x, 90, badge_x + badge_w, 150], fill=COLOR_ORANGE)
+    draw.text((badge_x + 20, 96), badge_text, font=badge_font, fill=COLOR_BLACK)
 
-    # 5. TEXTO PRINCIPAL - Separar numero del resto
     main_text = thumbnail_text.upper()
     text_before, big_number = split_number_from_text(main_text)
 
-    # Buscamos la fuente MAS GRANDE que quepa
     max_text_width = THUMB_W - 80
     font_main = None
     for size in range(200, 90, -10):
         f = ImageFont.truetype(str(font_path), size)
         lines_before = wrap_text_for_font(text_before, f, max_text_width, draw) if text_before else []
-        num_line = [big_number] if big_number else []
-        all_lines = lines_before + num_line
-        line_h = size + 15
-        total_h = len(all_lines) * line_h
-        if total_h < (THUMB_H - top_bar_h - 60 - 60):
+        all_lines = lines_before + ([big_number] if big_number else [])
+        if len(all_lines) * (size + 15) < (THUMB_H - top_bar_h - 60 - 60):
             font_main = f
             break
     if font_main is None:
@@ -267,42 +277,57 @@ def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, outp
     lines_before = wrap_text_for_font(text_before, font_main, max_text_width, draw) if text_before else []
     line_h = font_main.size + 15
     total_h = (len(lines_before) + (1 if big_number else 0)) * line_h
-    y_start = top_bar_h + ((THUMB_H - top_bar_h - 60 - total_h) // 2)
+    y = top_bar_h + ((THUMB_H - top_bar_h - 60 - total_h) // 2)
 
-    # Blanco con borde negro GRUESO
-    y = y_start
     for line in lines_before:
         bbox = draw.textbbox((0, 0), line, font=font_main)
-        line_w = bbox[2] - bbox[0]
-        x = (THUMB_W - line_w) // 2
+        x = (THUMB_W - (bbox[2] - bbox[0])) // 2
         draw_text_thick_outline(draw, (x, y), line, font_main, COLOR_WHITE, outline_w=10)
         y += line_h
-
-    # NUMERO EN NARANJA con borde negro grueso
     if big_number:
         bbox = draw.textbbox((0, 0), big_number, font=font_main)
-        num_w = bbox[2] - bbox[0]
-        x = (THUMB_W - num_w) // 2
+        x = (THUMB_W - (bbox[2] - bbox[0])) // 2
         draw_text_thick_outline(draw, (x, y), big_number, font_main, COLOR_ORANGE, outline_w=10)
 
-    # 6. Barra inferior
     bot_bar_h = 55
     draw.rectangle([0, THUMB_H - bot_bar_h, THUMB_W, THUMB_H], fill=COLOR_BG_BAR)
     draw.rectangle([0, THUMB_H - bot_bar_h - 4, THUMB_W, THUMB_H - bot_bar_h], fill=COLOR_GREEN)
-
-    tagline = "MARKET NEWS THAT ACTUALLY MOVES YOU"
     font_tag = ImageFont.truetype(str(font_path), 22)
-    draw.text((30, THUMB_H - 40), tagline, font=font_tag, fill=COLOR_GREY)
-
-    # Mini logo TP
+    draw.text((30, THUMB_H - 40), "MARKET NEWS THAT ACTUALLY MOVES YOU", font=font_tag, fill=COLOR_GREY)
     font_logo = ImageFont.truetype(str(font_path), 38)
-    tp_logo = "TP"
-    bbox = draw.textbbox((0, 0), tp_logo, font=font_logo)
-    logo_w = bbox[2] - bbox[0]
-    draw.text((THUMB_W - 30 - logo_w, THUMB_H - 48), tp_logo, font=font_logo, fill=COLOR_WHITE)
+    bbox = draw.textbbox((0, 0), "TP", font=font_logo)
+    draw.text((THUMB_W - 30 - (bbox[2] - bbox[0]), THUMB_H - 48), "TP", font=font_logo, fill=COLOR_WHITE)
 
-    # Guardar
-    bg.convert("RGB").save(str(output_path), "JPEG", quality=95, optimize=True, subsampling=0)
+    # Guardar como PNG (texto perfecto, sin halo)
+    final = bg.convert("RGB")
+    final.save(str(output_path), "PNG", optimize=True)
+
+    # Control de peso: si supera 2MB, reducir progresivamente
+    if output_path.stat().st_size > MAX_THUMB_BYTES:
+        print(f"   . PNG pesa {output_path.stat().st_size/1024/1024:.1f}MB, optimizando...")
+        # Reducir colores del fondo con quantize suave manteniendo texto
+        for colors in [256, 192, 128]:
+            final.quantize(colors=colors, method=Image.FASTOCTREE).convert("RGB").save(
+                str(output_path), "PNG", optimize=True)
+            if output_path.stat().st_size <= MAX_THUMB_BYTES:
+                break
+        # Si aun asi se pasa, fallback a JPG calidad alta
+        if output_path.stat().st_size > MAX_THUMB_BYTES:
+            jpg_path = output_path.with_suffix(".jpg")
+            final.save(str(jpg_path), "JPEG", quality=94, optimize=True, subsampling=0)
+            output_path.unlink()
+            print(f"   . usando JPG de respaldo (PNG no cabia)")
+            return jpg_path
+
+    return output_path
+
+
+def cleanup_temp():
+    import shutil
+    try:
+        shutil.rmtree(TEMP_DIR)
+    except Exception:
+        pass
 
 
 def main() -> None:
@@ -318,25 +343,28 @@ def main() -> None:
     print("\n2/4  Preparando fuente...")
     font_path = download_font_if_missing()
 
-    print("\n3/4  Extrayendo frame de b-roll...")
+    print("\n3/4  Obteniendo frame en alta calidad...")
     clip = pick_best_broll_clip(broll_manifest)
-    print(f"      clip elegido: {clip.name}")
+    pexels_id = clip.get("pexels_id")
+    local_clip = INPUT_DIR / clip["filename"]
+    print(f"      clip: {local_clip.name} (pexels {pexels_id})")
 
-    frame_path = OUTPUT_DIR / f"_thumb_frame_{TODAY}.jpg"
-    extract_frame(clip, frame_path, offset_sec=3.0)
+    # Intentar bajar version HD; si falla, usar el clip local
+    hd_clip = download_hd_clip(pexels_id)
+    source_clip = hd_clip if hd_clip else local_clip
 
-    print("\n4/4  Componiendo thumbnail...")
-    output_path = OUTPUT_DIR / f"thumbnail_{TODAY}.jpg"
-    build_thumbnail(frame_path, thumbnail_text, font_path, output_path)
+    frame_path = TEMP_DIR / "frame.png"
+    extract_frame(source_clip, frame_path, offset_sec=3.0)
 
-    try:
-        frame_path.unlink()
-    except Exception:
-        pass
+    print("\n4/4  Componiendo thumbnail (PNG)...")
+    output_path = OUTPUT_DIR / f"thumbnail_{TODAY}.png"
+    final_path = build_thumbnail(frame_path, thumbnail_text, font_path, output_path)
 
-    size_kb = output_path.stat().st_size / 1024
+    cleanup_temp()
+
+    size_kb = final_path.stat().st_size / 1024
     print(f"\n  Listo")
-    print(f"     Thumbnail: {output_path}")
+    print(f"     Thumbnail: {final_path}")
     print(f"     Tamano:    {size_kb:.1f} KB")
 
 
