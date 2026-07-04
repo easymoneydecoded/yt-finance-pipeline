@@ -52,6 +52,8 @@ jobs:
         run: python shorts_clipper.py
 
       - name: Etapa 7 - Generar thumbnail custom
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python thumbnail_maker.py
 
       - name: Etapa 8 - Subir a YouTube
