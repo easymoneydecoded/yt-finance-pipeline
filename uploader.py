@@ -40,7 +40,10 @@ YT_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET")
 YT_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN")
 
 YT_TOKEN_URI     = "https://oauth2.googleapis.com/token"
-YT_SCOPES        = ["https://www.googleapis.com/auth/youtube.upload"]
+YT_SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtube.force-ssl",
+]
 
 CATEGORY_ID      = "27"  # Education
 
