@@ -44,7 +44,7 @@ REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GROQ_MODEL      = "llama-3.1-8b-instant"
+GROQ_MODEL      = "openai/gpt-oss-20b"
 GROQ_ENDPOINT   = "https://api.groq.com/openai/v1/chat/completions"
 
 OUTPUT_DIR      = Path("data")
