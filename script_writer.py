@@ -364,8 +364,55 @@ def call_groq(prompt: str, max_tokens: int = 3800) -> dict:
         r = _do_request(payload_no_json)
         r.raise_for_status()
 
-    content = r.json()["choices"][0]["message"]["content"]
-    # Si vino sin response_format, puede tener texto extra alrededor del JSON
+    return _parse_groq_response(r, payload)
+
+
+def _parse_groq_response(r: requests.Response, payload: dict, retries_left: int = 2) -> dict:
+    """
+    Parsea la respuesta de Groq de forma tolerante.
+    Si viene vacia o rota, reintenta la peticion (a veces gpt-oss devuelve
+    strings vacios cuando esta saturado).
+    """
+    try:
+        content = r.json()["choices"][0]["message"]["content"] or ""
+    except Exception as e:
+        content = ""
+        print(f"   ! No se pudo extraer content de Groq: {e}")
+
+    # Limpiar markdown code blocks si vienen (```json ... ``` o ``` ... ```)
+    content = content.strip()
+    if content.startswith("```"):
+        # Quitar la primera linea (```json o ```)
+        lines = content.split("\n")
+        content = "\n".join(lines[1:])
+        # Quitar el ``` final
+        if content.rstrip().endswith("```"):
+            content = content.rstrip()[:-3]
+    content = content.strip()
+
+    # Si viene vacia, reintentar la peticion entera
+    if not content or (not content.startswith("{") and "{" not in content):
+        if retries_left > 0:
+            print(f"   ! Respuesta de Groq vacia o sin JSON. Reintento en 45s (quedan {retries_left})...")
+            print(f"     Contenido recibido: '{content[:200]}'")
+            time.sleep(45)
+            r_new = requests.post(
+                GROQ_ENDPOINT,
+                headers = {
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type":  "application/json",
+                },
+                json    = payload,
+                timeout = 120,
+            )
+            r_new.raise_for_status()
+            return _parse_groq_response(r_new, payload, retries_left=retries_left - 1)
+        else:
+            print(f"   ! Groq sigue devolviendo respuesta vacia/rota tras reintentos")
+            print(f"     Ultimo contenido: '{content[:500]}'")
+            raise RuntimeError("Groq devuelve respuestas vacias sistematicamente")
+
+    # Intentar parsear el JSON tal cual
     try:
         return json.loads(content)
     except json.JSONDecodeError:
@@ -373,7 +420,14 @@ def call_groq(prompt: str, max_tokens: int = 3800) -> dict:
         start = content.find("{")
         end = content.rfind("}")
         if start >= 0 and end > start:
-            return json.loads(content[start:end + 1])
+            try:
+                return json.loads(content[start:end + 1])
+            except json.JSONDecodeError as e:
+                print(f"   ! JSON malformado tras extraccion: {e}")
+                print(f"     Contenido: '{content[:500]}'")
+                raise
+        print(f"   ! No se encontro JSON valido en la respuesta")
+        print(f"     Contenido: '{content[:500]}'")
         raise
 
 
