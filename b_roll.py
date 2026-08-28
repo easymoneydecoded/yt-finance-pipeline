@@ -34,7 +34,7 @@ load_dotenv()
 GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
 PEXELS_API_KEY  = os.getenv("PEXELS_API_KEY")
 
-GROQ_MODEL      = "openai/gpt-oss-120b"
+GROQ_MODEL      = "llama-3.1-8b-instant"
 GROQ_ENDPOINT   = "https://api.groq.com/openai/v1/chat/completions"
 
 PEXELS_ENDPOINT = "https://api.pexels.com/videos/search"
