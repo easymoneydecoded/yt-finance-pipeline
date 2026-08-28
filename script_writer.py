@@ -308,11 +308,15 @@ Return the FULL JSON in the same shape, with corrections applied. Output ONLY th
 # ---------------------------------------------------------------------------
 # Llamada a Groq con retry para 429/5xx
 # ---------------------------------------------------------------------------
-def call_groq(prompt: str, max_tokens: int = 5500) -> dict:
-    def _build_payload(with_json_format: bool = True) -> dict:
+def call_groq(prompt: str, max_tokens: int = 3800) -> dict:
+    # Anadimos instruccion explicita al prompt para que devuelva SOLO JSON
+    # (evita el json_validate_failed de gpt-oss-120b y ahorra el response_format)
+    prompt_json = prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no code blocks, no explanations before or after. Start directly with { and end with }."
+
+    def _build_payload(with_json_format: bool = False) -> dict:
         p = {
             "model":       GROQ_MODEL,
-            "messages":    [{"role": "user", "content": prompt}],
+            "messages":    [{"role": "user", "content": prompt_json}],
             "temperature": 0.75,
             "max_tokens":  max_tokens,
         }
@@ -331,7 +335,7 @@ def call_groq(prompt: str, max_tokens: int = 5500) -> dict:
             timeout = 120,
         )
 
-    payload = _build_payload(with_json_format=True)
+    payload = _build_payload(with_json_format=False)
     max_attempts = 4
     r = None
     for attempt in range(1, max_attempts + 1):
@@ -423,7 +427,7 @@ def generate_script(idea: dict) -> dict:
             word_breakdown = format_breakdown(stats),
         )
 
-        raw_new = call_groq(expansion_prompt, max_tokens=6500)
+        raw_new = call_groq(expansion_prompt, max_tokens=4500)
         stats_new = measure_script(raw_new)
 
         # Solo aceptamos la nueva version si MEJORA
