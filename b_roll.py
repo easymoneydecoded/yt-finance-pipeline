@@ -31,11 +31,12 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
+GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
 PEXELS_API_KEY  = os.getenv("PEXELS_API_KEY")
 
-GROQ_MODEL      = "openai/gpt-oss-20b"
-GROQ_ENDPOINT   = "https://api.groq.com/openai/v1/chat/completions"
+GEMINI_MODEL    = "gemini-2.5-flash"
+GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 PEXELS_ENDPOINT = "https://api.pexels.com/videos/search"
 
@@ -141,47 +142,66 @@ Output ONLY the JSON. No prose. No markdown fences.
 
 def call_groq(prompt: str, max_tokens: int = 2000) -> dict | None:
     """
-    Llama a Groq. Devuelve dict si OK, None si agota reintentos.
+    Llama a Gemini (nombre por compat con el resto del pipeline).
+    Devuelve dict si OK, None si agota reintentos.
     NO lanza excepcion: la decision de fallback la toma el caller.
     """
+    if not GEMINI_API_KEY:
+        print("   ! Falta GEMINI_API_KEY, no puedo llamar a IA")
+        return None
+
     payload = {
-        "model":       GROQ_MODEL,
-        "messages":    [{"role": "user", "content": prompt}],
-        "temperature": 0.7,
-        "max_tokens":  max_tokens,
-        "response_format": {"type": "json_object"},
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "temperature":      0.7,
+            "maxOutputTokens":  max_tokens,
+            "responseMimeType": "application/json",
+        },
     }
     max_attempts = 3  # menos reintentos para no inflar tiempo total
     for attempt in range(1, max_attempts + 1):
         try:
             r = requests.post(
-                GROQ_ENDPOINT,
+                GEMINI_ENDPOINT,
                 headers = {
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type":  "application/json",
+                    "x-goog-api-key": GEMINI_API_KEY,
+                    "Content-Type":   "application/json",
                 },
                 json    = payload,
                 timeout = 90,
             )
         except Exception as e:
-            print(f"   . Groq conexion fallo: {e}")
+            print(f"   . Gemini conexion fallo: {e}")
             return None
 
         if r.status_code == 200:
             try:
-                return json.loads(r.json()["choices"][0]["message"]["content"])
+                data = r.json()
+                content = data["candidates"][0]["content"]["parts"][0]["text"]
+                # Parseo tolerante: si vino con texto extra alrededor del JSON, extraer
+                try:
+                    return json.loads(content)
+                except json.JSONDecodeError:
+                    i, j = content.find("{"), content.rfind("}")
+                    if i != -1 and j != -1:
+                        return json.loads(content[i:j+1])
+                    print(f"   ! Gemini devolvio sin JSON: {content[:200]}")
+                    return None
             except Exception as e:
-                print(f"   ! Groq parseo fallo: {e}")
+                print(f"   ! Gemini parseo fallo: {e}")
                 return None
 
         if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
             wait = 30 * attempt
-            print(f"   . Groq devolvio {r.status_code}, espero {wait}s...")
+            snippet = r.text[:150].replace("\n", " ")
+            print(f"   . Gemini devolvio {r.status_code}: {snippet}. Espero {wait}s...")
             time.sleep(wait)
             continue
 
         # Otros errores o ultimo intento fallido
-        print(f"   ! Groq error final: {r.status_code}")
+        print(f"   ! Gemini error final: {r.status_code} - {r.text[:200]}")
         return None
 
     return None
@@ -193,7 +213,7 @@ def fallback_keywords(script_data: dict, sections: list) -> list[list[str]]:
       1. Tags del video (filtradas, solo las visualmente plausibles)
       2. Pool evergreen de finanzas
     """
-    print("   ! Usando FALLBACK LOCAL para keywords (Groq no disponible)")
+    print("   ! Usando FALLBACK LOCAL para keywords (Gemini no disponible)")
 
     tags = script_data.get("tags", [])
     # Filtrar tags poco visuales (terminos abstractos)
