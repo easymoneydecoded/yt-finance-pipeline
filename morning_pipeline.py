@@ -45,7 +45,7 @@ REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GEMINI_MODEL    = "gemini-3.6-flash"
+GEMINI_MODEL    = "gemini-2.5-flash"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 OUTPUT_DIR      = Path("data")
@@ -292,6 +292,84 @@ def _call_gemini_with_retries(payload: dict, max_attempts: int = 4) -> str:
     raise RuntimeError(f"Gemini fallo tras {max_attempts} intentos: {last_err}")
 
 
+def _robust_parse_ideas(content: str) -> dict:
+    """
+    Parseo robusto que rescata ideas individuales aunque el JSON global este roto.
+    Si el JSON esta truncado o malformado, intenta extraer los objetos {..} uno a uno.
+    """
+    content = (content or "").strip()
+
+    # Limpiar markdown code blocks
+    if content.startswith("```"):
+        lines = content.split("\n")
+        content = "\n".join(lines[1:])
+        if content.rstrip().endswith("```"):
+            content = content.rstrip()[:-3]
+    content = content.strip()
+
+    # Intento 1: parseo directo
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+
+    # Intento 2: buscar array [...] completo
+    i, j = content.find("["), content.rfind("]")
+    if i != -1 and j != -1 and j > i:
+        try:
+            return {"ideas": json.loads(content[i:j+1])}
+        except json.JSONDecodeError:
+            pass
+
+    # Intento 3: buscar objeto {...} completo
+    i, j = content.find("{"), content.rfind("}")
+    if i != -1 and j != -1 and j > i:
+        try:
+            return json.loads(content[i:j+1])
+        except json.JSONDecodeError:
+            pass
+
+    # Intento 4 (RESCATE): extraer objetos {...} uno a uno usando balance de llaves
+    print("   . JSON global roto, rescatando ideas individuales...")
+    ideas = []
+    depth = 0
+    start = -1
+    in_string = False
+    escape = False
+
+    for idx, ch in enumerate(content):
+        if escape:
+            escape = False
+            continue
+        if ch == "\\":
+            escape = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == "{":
+            if depth == 0:
+                start = idx
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and start != -1:
+                obj_str = content[start:idx+1]
+                try:
+                    obj = json.loads(obj_str)
+                    # Solo ideas validas (tienen title y hook)
+                    if "title" in obj and "hook" in obj:
+                        ideas.append(obj)
+                except json.JSONDecodeError:
+                    pass  # objeto malformado, saltar
+                start = -1
+
+    print(f"   . Rescatadas {len(ideas)} ideas del JSON roto")
+    return {"ideas": ideas}
+
+
 def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
     if not GEMINI_API_KEY:
         raise RuntimeError("Falta GEMINI_API_KEY en .env")
@@ -314,23 +392,14 @@ def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
         }],
         "generationConfig": {
             "temperature":      0.85,
-            "maxOutputTokens":  3000,
+            "maxOutputTokens":  6000,
             "responseMimeType": "application/json",
         },
     }
 
     content = _call_gemini_with_retries(payload)
 
-    try:
-        parsed = json.loads(content)
-    except json.JSONDecodeError:
-        # Plan B: rescatar buscando array [] o objeto {}
-        i, j = content.find("["), content.rfind("]")
-        if i != -1 and j != -1:
-            parsed = {"ideas": json.loads(content[i:j+1])}
-        else:
-            i, j = content.find("{"), content.rfind("}")
-            parsed = json.loads(content[i:j+1]) if i != -1 and j != -1 else {"ideas": []}
+    parsed = _robust_parse_ideas(content)
 
     raw_ideas = parsed.get("ideas") or parsed.get("videos") or []
     if isinstance(raw_ideas, dict):
