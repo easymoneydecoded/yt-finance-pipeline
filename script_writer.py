@@ -34,9 +34,10 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
-GROQ_MODEL      = "openai/gpt-oss-20b"
-GROQ_ENDPOINT   = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
+GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL    = "gemini-2.5-flash"
+GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 WEB_BACKLINK    = "https://carterapasiva.com"
 
@@ -308,111 +309,90 @@ Return the FULL JSON in the same shape, with corrections applied. Output ONLY th
 # ---------------------------------------------------------------------------
 # Llamada a Groq con retry para 429/5xx
 # ---------------------------------------------------------------------------
-def call_groq(prompt: str, max_tokens: int = 3800) -> dict:
-    # Anadimos instruccion explicita al prompt para que devuelva SOLO JSON
-    # (evita el json_validate_failed de gpt-oss-120b y ahorra el response_format)
-    prompt_json = prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no code blocks, no explanations before or after. Start directly with { and end with }."
+def call_groq(prompt: str, max_tokens: int = 8000) -> dict:
+    """
+    Llama a Gemini (nombre por compat con el resto del pipeline).
+    Devuelve dict con el JSON parseado. Lanza RuntimeError si falla del todo.
+    """
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Falta GEMINI_API_KEY")
 
-    def _build_payload(with_json_format: bool = False) -> dict:
-        p = {
-            "model":       GROQ_MODEL,
-            "messages":    [{"role": "user", "content": prompt_json}],
-            "temperature": 0.75,
-            "max_tokens":  max_tokens,
-        }
-        if with_json_format:
-            p["response_format"] = {"type": "json_object"}
-        return p
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "temperature":      0.75,
+            "maxOutputTokens":  max_tokens,
+            "responseMimeType": "application/json",
+        },
+    }
 
-    def _do_request(payload: dict) -> requests.Response:
-        return requests.post(
-            GROQ_ENDPOINT,
-            headers = {
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type":  "application/json",
-            },
-            json    = payload,
-            timeout = 120,
-        )
+    content = _call_gemini_with_retries(payload)
+    return _parse_gemini_response(content)
 
-    payload = _build_payload(with_json_format=False)
-    max_attempts = 4
-    r = None
+
+def _call_gemini_with_retries(payload: dict, max_attempts: int = 4) -> str:
+    """Llama a Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
+    last_err = None
     for attempt in range(1, max_attempts + 1):
-        r = _do_request(payload)
-        if r.status_code == 200:
-            break
-        # Retry-able: 429 (rate limit), 5xx (servidor), 400 (a veces transitorio con modelos nuevos)
-        if r.status_code in (400, 429, 500, 502, 503, 504) and attempt < max_attempts:
-            wait = 45 * attempt  # 45s, 90s, 135s
-            # Log del body del error para diagnostico
-            try:
-                err_snippet = r.text[:300].replace("\n", " ")
-            except Exception:
-                err_snippet = "(sin body)"
-            print(f"   . Groq devolvio {r.status_code}: {err_snippet}")
-            print(f"     reintento en {wait}s (intento {attempt}/{max_attempts})...")
+        try:
+            r = requests.post(
+                GEMINI_ENDPOINT,
+                headers = {
+                    "x-goog-api-key": GEMINI_API_KEY,
+                    "Content-Type":   "application/json",
+                },
+                json    = payload,
+                timeout = 180,
+            )
+            if r.status_code == 200:
+                data = r.json()
+                try:
+                    return data["candidates"][0]["content"]["parts"][0]["text"]
+                except (KeyError, IndexError) as e:
+                    last_err = f"Respuesta Gemini sin texto: {e} / {str(data)[:300]}"
+                    print(f"   ! {last_err}")
+                    if attempt < max_attempts:
+                        wait = 30 * attempt
+                        print(f"     reintento en {wait}s...")
+                        time.sleep(wait)
+                        continue
+            elif r.status_code in (429, 500, 502, 503, 504):
+                wait = 30 * attempt
+                snippet = r.text[:250].replace("\n", " ")
+                print(f"   . Gemini devolvio {r.status_code}: {snippet}")
+                print(f"     reintento en {wait}s (intento {attempt}/{max_attempts})...")
+                time.sleep(wait)
+                continue
+            else:
+                # Otros errores: mostrar body para debug y raise
+                print(f"   ! Gemini error {r.status_code}: {r.text[:400]}")
+                r.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            last_err = str(e)
+            wait = 30 * attempt
+            print(f"   . Gemini error de red: {e}. Reintento en {wait}s...")
             time.sleep(wait)
-            continue
-        r.raise_for_status()
-
-    # Fallback: si sigue fallando con 400, probar UNA vez sin response_format
-    # (algunos modelos rechazan json_object en ciertas condiciones)
-    if r is not None and r.status_code == 400:
-        print(f"   . Fallback: reintento sin response_format json_object...")
-        payload_no_json = _build_payload(with_json_format=False)
-        r = _do_request(payload_no_json)
-        r.raise_for_status()
-
-    return _parse_groq_response(r, payload)
+    raise RuntimeError(f"Gemini fallo tras {max_attempts} intentos: {last_err}")
 
 
-def _parse_groq_response(r: requests.Response, payload: dict, retries_left: int = 2) -> dict:
-    """
-    Parsea la respuesta de Groq de forma tolerante.
-    Si viene vacia o rota, reintenta la peticion (a veces gpt-oss devuelve
-    strings vacios cuando esta saturado).
-    """
-    try:
-        content = r.json()["choices"][0]["message"]["content"] or ""
-    except Exception as e:
-        content = ""
-        print(f"   ! No se pudo extraer content de Groq: {e}")
+def _parse_gemini_response(content: str) -> dict:
+    """Parsea la respuesta JSON de Gemini de forma tolerante."""
+    content = (content or "").strip()
 
-    # Limpiar markdown code blocks si vienen (```json ... ``` o ``` ... ```)
-    content = content.strip()
+    # Limpiar markdown code blocks si vienen (```json ... ```)
     if content.startswith("```"):
-        # Quitar la primera linea (```json o ```)
         lines = content.split("\n")
         content = "\n".join(lines[1:])
-        # Quitar el ``` final
         if content.rstrip().endswith("```"):
             content = content.rstrip()[:-3]
     content = content.strip()
 
-    # Si viene vacia, reintentar la peticion entera
-    if not content or (not content.startswith("{") and "{" not in content):
-        if retries_left > 0:
-            print(f"   ! Respuesta de Groq vacia o sin JSON. Reintento en 45s (quedan {retries_left})...")
-            print(f"     Contenido recibido: '{content[:200]}'")
-            time.sleep(45)
-            r_new = requests.post(
-                GROQ_ENDPOINT,
-                headers = {
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type":  "application/json",
-                },
-                json    = payload,
-                timeout = 120,
-            )
-            r_new.raise_for_status()
-            return _parse_groq_response(r_new, payload, retries_left=retries_left - 1)
-        else:
-            print(f"   ! Groq sigue devolviendo respuesta vacia/rota tras reintentos")
-            print(f"     Ultimo contenido: '{content[:500]}'")
-            raise RuntimeError("Groq devuelve respuestas vacias sistematicamente")
+    if not content:
+        raise RuntimeError("Gemini devolvio respuesta vacia")
 
-    # Intentar parsear el JSON tal cual
+    # Intentar parsear tal cual
     try:
         return json.loads(content)
     except json.JSONDecodeError:
@@ -423,12 +403,12 @@ def _parse_groq_response(r: requests.Response, payload: dict, retries_left: int 
             try:
                 return json.loads(content[start:end + 1])
             except json.JSONDecodeError as e:
-                print(f"   ! JSON malformado tras extraccion: {e}")
+                print(f"   ! JSON malformado: {e}")
                 print(f"     Contenido: '{content[:500]}'")
                 raise
         print(f"   ! No se encontro JSON valido en la respuesta")
         print(f"     Contenido: '{content[:500]}'")
-        raise
+        raise RuntimeError("Respuesta de Gemini sin JSON valido")
 
 
 def format_breakdown(stats: dict) -> str:
@@ -448,8 +428,8 @@ def format_breakdown(stats: dict) -> str:
 
 
 def generate_script(idea: dict) -> dict:
-    if not GROQ_API_KEY:
-        raise RuntimeError("Falta GROQ_API_KEY")
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Falta GEMINI_API_KEY")
 
     signals_text = "\n".join(f"  - {s}" for s in idea.get("source_signals", []))
     prompt = SCRIPT_WRITER_PROMPT.format(
@@ -566,7 +546,7 @@ def main() -> None:
     idea = load_todays_idea()
     print(f"      -> '{idea.get('title', 'sin titulo')}'")
 
-    print(f"\n2/3  Generando guion con Groq ({GROQ_MODEL})...")
+    print(f"\n2/3  Generando guion con Gemini ({GEMINI_MODEL})...")
     raw = generate_script(idea)
 
     sections = []
