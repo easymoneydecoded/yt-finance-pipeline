@@ -38,14 +38,15 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
+GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
 FRED_API_KEY    = os.getenv("FRED_API_KEY")
 REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GROQ_MODEL      = "openai/gpt-oss-20b"
-GROQ_ENDPOINT   = "https://api.groq.com/openai/v1/chat/completions"
+GEMINI_MODEL    = "gemini-2.5-flash"
+GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 OUTPUT_DIR      = Path("data")
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -224,69 +225,76 @@ def fetch_reddit_hot(limit: int = 5) -> list[Signal]:
 # ---------------------------------------------------------------------------
 # Generador de ideas con Groq
 # ---------------------------------------------------------------------------
-IDEA_GENERATOR_PROMPT = """You are the creative director of a faceless, automated YouTube channel about PERSONAL FINANCE and INVESTING for an English-speaking, mostly US/UK audience.
+IDEA_GENERATOR_PROMPT = """You are the creative director of a faceless, automated YouTube channel about personal finance and investing for an English-speaking, mostly US/UK audience.
 
-=== STRICT NICHE BOUNDARIES ===
-IN-NICHE topics ONLY (everything else is OUT):
-  - Personal finance (saving, budgeting, debt, credit, banking, taxes)
-  - Investing (stocks, ETFs, index funds, bonds, dividends, portfolios)
-  - Markets (S&P, Nasdaq, Dow, sector moves, individual tickers with money angle)
-  - Macro (Fed, rates, inflation, jobs, GDP — only when explained as "what this means for your money")
-  - Retirement (401k, IRA, pensions, FIRE movement)
-  - Real estate as investment (mortgages, rentals, REITs)
-  - Crypto as financial asset (BTC/ETH price, regulation, investment thesis)
-  - Side income, passive income, financial independence
+Below are real, fresh signals from today: financial news headlines, a live market snapshot, macro indicators, and what people are actively asking on Reddit. Use these as raw material.
 
-OUT OF NICHE — DO NOT propose these even if signals mention them:
-  - Healthcare/medical topics (even if money saving is involved)
-  - Pure tech news without an investment angle (e.g. "new iPhone features")
-  - Politics without a direct money/markets impact
-  - Lifestyle, productivity, self-help that isn't strictly about money
-  - General business news without an actionable investing/finance angle
+Your job: pick 5 distinct video angles. Each should be:
+  - **Currently relevant** (anchored in a real signal you can see below)
+  - **High retention** (curiosity, contrast, urgency, money-on-the-line)
+  - **Mid-length friendly** (8-12 min long video that we'll later cut into 8-10 Shorts)
+  - **NOT generic** (avoid "how to budget", "what is a 401k" — those are evergreen blog topics; we need angles that feel like today)
+  - **NOT financial advice** (educational tone only — "what this means", "how this works", never "buy this")
+  - **Rotated in format** across the 5 ideas: mix at least 3 different formats from: news breakdown, data deep-dive, myth-buster, contrarian take, case study, comparison, "if you have $X today" scenario, behavioral psychology angle, historical parallel
 
-=== YOUR TASK ===
-From the signals below, pick 5 distinct video angles. Each must:
-  - Anchor in 1-3 real signals you see below (cite them verbatim in source_signals)
-  - Have a clear MONEY ANGLE in the angle field — answer "how does this affect the viewer's wallet/portfolio?"
-  - Be currently relevant (today/this week — no evergreen "what is a 401k")
-  - Be high-retention (curiosity gap, contrast, urgency, specific numbers)
-  - Be mid-length-friendly (8-12 min long video, later cut into 8-10 Shorts)
-  - NOT be financial advice (educational tone — "what this means", "how this works", never "buy this stock")
-  - Rotate format across the 5 ideas — mix at least 3 different formats from:
-      news-breakdown, data-deep-dive, myth-buster, contrarian-take, case-study,
-      comparison, "if-you-have-$X-today" scenario, historical-parallel, behavioral-psychology
-
-=== HOOK RULES ===
-Each hook must do ONE of these in 3-5 seconds:
-  a) Promise a specific dollar amount or % ("This Fed move could cost you $4,200 a year")
-  b) Set up a sharp contradiction or surprise ("Everyone is wrong about this market")
-  c) Personal-stakes question ("Is your 401k about to lose 20%?")
-  d) Insider/secret framing ("Wall Street is quietly doing X")
-BANNED hooks: "In this video we'll...", "Today we're talking about...", anything generic.
-
-=== OUTPUT FORMAT ===
-Return JSON only. Shape: {{"ideas": [...5 objects...]}}
-Each object MUST have these exact fields:
-  - title: English, max 60 chars, CTR-optimized (specific number or curiosity gap)
-  - hook: 3-5 second opening line in English, following the hook rules above
-  - angle: 2-3 sentences explaining (a) the unique angle, (b) the explicit MONEY ANGLE — what's at stake for the viewer's money
-  - target_keywords: list of 3-5 English SEO keywords
-  - source_signals: list of verbatim source headlines you anchored on
+For each idea give me strict JSON with:
+  - title:        an English YouTube title, max 60 chars, CTR-optimized (curiosity gap or specific number)
+  - hook:         3-5 second opening line in English. Must make someone STOP scrolling. No "in this video we will" garbage.
+  - angle:        2-3 sentences explaining the unique angle and why it works NOW
+  - target_keywords: list of 3-5 SEO keywords in English
+  - source_signals: list of the source headlines (verbatim) you anchored this idea on
   - estimated_length_min: integer 6-12
 
-=== ANTI-FORCING RULE ===
-   If a signal is out of niche (e.g. health, lifestyle, pure tech without investing angle), DO NOT try to bend it into finance by adding "what's the investing angle?" or similar patches. Simply ignore that signal and use others. Forcing a finance frame onto an unrelated news item produces low-quality clickbait and is FORBIDDEN.  
-
-If you cannot find 5 strong in-niche ideas from the signals, return fewer (3 or 4) rather than forcing off-niche angles.
+Return ONLY a JSON array of 5 objects. No prose before or after, no markdown fences.
 
 === SIGNALS ===
 {signals_text}
 === END SIGNALS ===
 """
 
+def _call_gemini_with_retries(payload: dict, max_attempts: int = 4) -> str:
+    """Llama a la API de Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
+    last_err = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            r = requests.post(
+                GEMINI_ENDPOINT,
+                headers = {
+                    "x-goog-api-key": GEMINI_API_KEY,
+                    "Content-Type":   "application/json",
+                },
+                json    = payload,
+                timeout = 120,
+            )
+            if r.status_code == 200:
+                data = r.json()
+                try:
+                    return data["candidates"][0]["content"]["parts"][0]["text"]
+                except (KeyError, IndexError) as e:
+                    last_err = f"Respuesta Gemini sin texto: {e} / {str(data)[:200]}"
+                    print(f"   ! {last_err}")
+            elif r.status_code in (429, 500, 502, 503, 504):
+                wait = 30 * attempt
+                snippet = r.text[:200].replace("\n", " ")
+                print(f"   . Gemini devolvio {r.status_code}: {snippet}")
+                print(f"     reintento en {wait}s (intento {attempt}/{max_attempts})...")
+                time.sleep(wait)
+                continue
+            else:
+                # Otros errores: mostrar body y raise
+                print(f"   ! Gemini error {r.status_code}: {r.text[:300]}")
+                r.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            last_err = str(e)
+            wait = 30 * attempt
+            print(f"   . Gemini error de red: {e}. Reintento en {wait}s...")
+            time.sleep(wait)
+    raise RuntimeError(f"Gemini fallo tras {max_attempts} intentos: {last_err}")
+
+
 def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
-    if not GROQ_API_KEY:
-        raise RuntimeError("Falta GROQ_API_KEY en .env")
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Falta GEMINI_API_KEY en .env")
 
     # Formateamos las senales en un bloque legible
     lines = []
@@ -297,48 +305,32 @@ def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
         lines.append(line)
     signals_text = "\n".join(lines)
 
+    prompt_text = IDEA_GENERATOR_PROMPT.format(signals_text=signals_text)
+    prompt_text += '\n\nReturn shape: {"ideas": [ ...5 objects... ]}'
+
     payload = {
-        "model":       GROQ_MODEL,
-        "messages":    [{"role": "user",
-                         "content": IDEA_GENERATOR_PROMPT.format(signals_text=signals_text)}],
-        "temperature": 0.85,
-        "max_tokens":  3000,
-        "response_format": {"type": "json_object"},
+        "contents": [{
+            "parts": [{"text": prompt_text}]
+        }],
+        "generationConfig": {
+            "temperature":      0.85,
+            "maxOutputTokens":  3000,
+            "responseMimeType": "application/json",
+        },
     }
 
-    # Groq a veces devuelve el array dentro de un objeto cuando pides JSON mode,
-    # asi que pedimos un envoltorio simple: {"ideas": [...]}
-    payload["messages"][0]["content"] += '\n\nReturn shape: {"ideas": [ ...5 objects... ]}'
-
-    # Retry automatico con backoff exponencial para errores 429 y 5xx
-    max_attempts = 4
-    for attempt in range(1, max_attempts + 1):
-        r = requests.post(
-            GROQ_ENDPOINT,
-            headers = {
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type":  "application/json",
-            },
-            json    = payload,
-            timeout = 90,
-        )
-        if r.status_code == 200:
-            break
-        if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
-            wait = 30 * attempt
-            print(f"   · Groq devolvio {r.status_code}, reintento en {wait}s (intento {attempt}/{max_attempts})...")
-            time.sleep(wait)
-            continue
-        r.raise_for_status()
-
-    content = r.json()["choices"][0]["message"]["content"]
+    content = _call_gemini_with_retries(payload)
 
     try:
         parsed = json.loads(content)
     except json.JSONDecodeError:
-        # Plan B: intento de rescate buscando el primer '[' y ultimo ']'
+        # Plan B: rescatar buscando array [] o objeto {}
         i, j = content.find("["), content.rfind("]")
-        parsed = {"ideas": json.loads(content[i:j+1])} if i != -1 and j != -1 else {"ideas": []}
+        if i != -1 and j != -1:
+            parsed = {"ideas": json.loads(content[i:j+1])}
+        else:
+            i, j = content.find("{"), content.rfind("}")
+            parsed = json.loads(content[i:j+1]) if i != -1 and j != -1 else {"ideas": []}
 
     raw_ideas = parsed.get("ideas") or parsed.get("videos") or []
     if isinstance(raw_ideas, dict):
@@ -417,7 +409,7 @@ def main() -> None:
     if not all_signals:
         raise RuntimeError("No se obtuvo ninguna senal — revisa conexion y claves.")
 
-    print(f"\n5/5  Generando 5 ideas con Groq ({GROQ_MODEL})...")
+    print(f"\n5/5  Generando 5 ideas con Gemini ({GEMINI_MODEL})...")
     ideas = generate_ideas(all_signals)
 
     if not ideas:
