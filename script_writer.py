@@ -309,7 +309,7 @@ Return the FULL JSON in the same shape, with corrections applied. Output ONLY th
 # ---------------------------------------------------------------------------
 # Llamada a Groq con retry para 429/5xx
 # ---------------------------------------------------------------------------
-def call_groq(prompt: str, max_tokens: int = 8000) -> dict:
+def call_groq(prompt: str, max_tokens: int = 16000) -> dict:
     """
     Llama a Gemini (nombre por compat con el resto del pipeline).
     Devuelve dict con el JSON parseado. Lanza RuntimeError si falla del todo.
@@ -562,7 +562,7 @@ def generate_script(idea: dict) -> dict:
             word_breakdown = format_breakdown(stats),
         )
 
-        raw_new = call_groq(expansion_prompt, max_tokens=4500)
+        raw_new = call_groq(expansion_prompt, max_tokens=8000)
         stats_new = measure_script(raw_new)
 
         # Solo aceptamos la nueva version si MEJORA
