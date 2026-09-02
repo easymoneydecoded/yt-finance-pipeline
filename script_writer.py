@@ -36,7 +36,7 @@ load_dotenv()
 
 GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL    = "gemini-3.6-flash"
+GEMINI_MODEL    = "gemini-2.5-flash"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 WEB_BACKLINK    = "https://carterapasiva.com"
@@ -392,23 +392,124 @@ def _parse_gemini_response(content: str) -> dict:
     if not content:
         raise RuntimeError("Gemini devolvio respuesta vacia")
 
-    # Intentar parsear tal cual
+    # Intento 1: parsear tal cual
     try:
         return json.loads(content)
     except json.JSONDecodeError:
-        # Extraer JSON del texto (busca desde el primer { hasta el ultimo })
-        start = content.find("{")
-        end = content.rfind("}")
-        if start >= 0 and end > start:
-            try:
-                return json.loads(content[start:end + 1])
-            except json.JSONDecodeError as e:
-                print(f"   ! JSON malformado: {e}")
-                print(f"     Contenido: '{content[:500]}'")
-                raise
-        print(f"   ! No se encontro JSON valido en la respuesta")
-        print(f"     Contenido: '{content[:500]}'")
-        raise RuntimeError("Respuesta de Gemini sin JSON valido")
+        pass
+
+    # Intento 2: extraer entre primer { y ultimo }
+    start = content.find("{")
+    end = content.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            return json.loads(content[start:end + 1])
+        except json.JSONDecodeError:
+            pass
+
+    # Intento 3 (RESCATE): reparar JSON malformado y extraer campo por campo
+    print("   . JSON global roto, intentando rescate por campos...")
+    rescued = _rescue_script_fields(content)
+    if rescued and rescued.get("sections"):
+        print(f"   . Rescate OK: {len(rescued.get('sections', []))} secciones recuperadas")
+        return rescued
+
+    # Ultimo recurso: mostrar contenido y raise
+    print(f"   ! No se encontro JSON valido en la respuesta")
+    print(f"     Contenido: '{content[:500]}'")
+    raise RuntimeError("Respuesta de Gemini sin JSON valido")
+
+
+def _rescue_script_fields(content: str) -> dict:
+    """
+    Ultimo recurso: si el JSON del guion esta malformado, extraer campo por campo
+    con regex y balance de llaves. Recupera al menos las secciones del guion.
+    """
+    import re
+    result = {}
+
+    # Extraer campos string simples con regex (youtube_title, thumbnail_text, description)
+    for field in ("youtube_title", "thumbnail_text", "description"):
+        # Busca "campo": "..." permitiendo escapes internos
+        m = re.search(rf'"{field}"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
+        if m:
+            # Deshacer escapes basicos
+            val = m.group(1).replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
+            result[field] = val
+
+    # Extraer tags (array de strings)
+    m = re.search(r'"tags"\s*:\s*\[([^\]]*)\]', content, re.DOTALL)
+    if m:
+        try:
+            result["tags"] = json.loads("[" + m.group(1) + "]")
+        except json.JSONDecodeError:
+            # Fallback: extraer strings individuales
+            tags = re.findall(r'"([^"\\]+)"', m.group(1))
+            result["tags"] = tags[:20]
+
+    # Extraer sections: recorrer buscando cada objeto {..} dentro de "sections": [..]
+    # Localizar el inicio del array sections
+    sec_match = re.search(r'"sections"\s*:\s*\[', content)
+    if not sec_match:
+        return result
+
+    array_start = sec_match.end()
+    sections = []
+    depth = 0
+    obj_start = -1
+    in_string = False
+    escape = False
+    i = array_start
+
+    while i < len(content):
+        ch = content[i]
+        if escape:
+            escape = False
+            i += 1
+            continue
+        if ch == "\\":
+            escape = True
+            i += 1
+            continue
+        if ch == '"':
+            in_string = not in_string
+            i += 1
+            continue
+        if in_string:
+            i += 1
+            continue
+        if ch == "{":
+            if depth == 0:
+                obj_start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start != -1:
+                obj_str = content[obj_start:i+1]
+                try:
+                    obj = json.loads(obj_str)
+                    if "voiceover" in obj or "section_title" in obj:
+                        sections.append(obj)
+                except json.JSONDecodeError:
+                    # Intentar reparar comas faltantes al final antes de }
+                    repaired = re.sub(r',\s*}', '}', obj_str)
+                    repaired = re.sub(r',\s*]', ']', repaired)
+                    try:
+                        obj = json.loads(repaired)
+                        if "voiceover" in obj or "section_title" in obj:
+                            sections.append(obj)
+                    except json.JSONDecodeError:
+                        pass
+                obj_start = -1
+        elif ch == "]" and depth == 0:
+            # Fin del array sections
+            break
+        i += 1
+
+    if sections:
+        result["sections"] = sections
+
+    return result
 
 
 def format_breakdown(stats: dict) -> str:
