@@ -45,7 +45,7 @@ REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GEMINI_MODEL    = "gemini-3.6-flash"
+GEMINI_MODEL    = "gemini-3.6-flash-lite"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 OUTPUT_DIR      = Path("data")
@@ -252,7 +252,7 @@ Return ONLY a JSON array of 5 objects. No prose before or after, no markdown fen
 === END SIGNALS ===
 """
 
-def _call_gemini_with_retries(payload: dict, max_attempts: int = 4) -> str:
+def _call_gemini_with_retries(payload: dict, max_attempts: int = 7) -> str:
     """Llama a la API de Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
     last_err = None
     for attempt in range(1, max_attempts + 1):
