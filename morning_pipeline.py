@@ -45,7 +45,7 @@ REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GEMINI_MODEL    = "gemini-3.6-flash-lite"
+GEMINI_MODEL    = "gemini-3.5-flash-lite"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 OUTPUT_DIR      = Path("data")
