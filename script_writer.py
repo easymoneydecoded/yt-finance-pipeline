@@ -36,7 +36,7 @@ load_dotenv()
 
 GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL    = "gemini-3.6-flash"
+GEMINI_MODEL    = "gemini-3.6-flash-lite"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 WEB_BACKLINK    = "https://carterapasiva.com"
@@ -332,7 +332,7 @@ def call_groq(prompt: str, max_tokens: int = 16000) -> dict:
     return _parse_gemini_response(content)
 
 
-def _call_gemini_with_retries(payload: dict, max_attempts: int = 4) -> str:
+def _call_gemini_with_retries(payload: dict, max_attempts: int = 7) -> str:
     """Llama a Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
     last_err = None
     for attempt in range(1, max_attempts + 1):
