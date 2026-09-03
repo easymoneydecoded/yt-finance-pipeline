@@ -36,7 +36,7 @@ load_dotenv()
 
 GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL    = "gemini-3.6-flash-lite"
+GEMINI_MODEL    = "gemini-3.5-flash-lite"
 GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 WEB_BACKLINK    = "https://carterapasiva.com"
