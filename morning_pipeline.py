@@ -401,7 +401,11 @@ def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
 
     parsed = _robust_parse_ideas(content)
 
-    raw_ideas = parsed.get("ideas") or parsed.get("videos") or []
+    # Gemini puede devolver el array directamente [..] en vez de envuelto {"ideas": [..]}
+    if isinstance(parsed, list):
+        raw_ideas = parsed
+    else:
+        raw_ideas = parsed.get("ideas") or parsed.get("videos") or []
     if isinstance(raw_ideas, dict):
         raw_ideas = list(raw_ideas.values())
 
