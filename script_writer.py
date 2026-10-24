@@ -163,123 +163,53 @@ def measure_script(raw: dict) -> dict:
 # ---------------------------------------------------------------------------
 # Prompts
 # ---------------------------------------------------------------------------
-SCRIPT_WRITER_PROMPT = """You are the head writer of a popular faceless YouTube channel about personal finance and investing for a US/UK audience. Your scripts compete with channels like Graham Stephan, The Plain Bagel, and Two Cents - conversational, specific, packed with concrete numbers.
+SCRIPT_WRITER_PROMPT = """You are a world-class YouTube storytelling strategist and financial analyst. Your goal is NOT to report news; your goal is to make the viewer feel like they just unlocked a secret financial superpower. You compete with top-tier creators who master curiosity, urgency, and retention-based editing.
 
-=== INPUT IDEA ===
-Title:    {idea_title}
-Hook:     {idea_hook}
-Angle:    {idea_angle}
-Keywords: {idea_keywords}
-Anchored signals:
-{idea_signals}
+=== YOUR MISSION ===
+Write a script that causes viewers to binge-watch and share. Every single sentence must serve one purpose: to keep the viewer from clicking away.
 
-=== TONE RULES ===
-DO:
-  - Write like you are texting a smart friend who asked you about money. Direct, specific, occasionally blunt.
-  - Use contractions (you are, it is, that is, here is, will not, cannot).
-  - Start sentences with conjunctions (And, But, So) when natural.
-  - Use concrete numbers EVERYWHERE. Specific examples with names/cities/figures.
-  - Acknowledge counterarguments briefly.
+=== TONE RULES (CRITICAL) ===
+1.  NO "News Anchor" talk. No "In this video we explore..." / "Let's dive in..." / "It's pretty straightforward..."
+2.  Be raw, conversational, and opinionated. Use the tone of a high-stakes conversation over a coffee with an expert.
+3.  Speed is life. Every paragraph must have a punchy opening.
+4.  If a fact isn't shocking, money-related, or directly affecting the viewer's wallet, CUT IT.
 
-DON'T (AI-voice tells that kill retention):
-  - "In this video we will explore" / "Let us dive in" / "Without further ado"
-  - "It is pretty straightforward" / "It all starts with" / "So, what is behind this?"
-  - Rhetorical questions inside body sections - save those for hooks.
-  - Vague hedges: "could", "might", "potentially". Be direct.
+=== STRUCTURE - THE "RETENTION ENGINE" (NON-NEGOTIABLE) ===
+Do NOT follow a "news report" structure. Follow this "Binge-Watch" structure:
 
-=== STRUCTURE AND WORD TARGETS (NON-NEGOTIABLE) ===
+1.  **THE JOLT (Hook - 15-25 words)**: Start with a concrete, shocking paradox or a high-stakes outcome directly related to the viewer's money. DO NOT summarize. Make them feel losing money or missing an opportunity *right now*.
+2.  **THE PROMISE (Intro - 30-50 words)**: Connect the Jolt to their specific situation. Explain the "why it matters" immediately. End with a curiosity gap that can only be answered by staying until the end.
+3.  **THE STORY (Body - 3-4 sections of 200-250 words each)**:
+    - Each body MUST build on the previous one.
+    - Use concrete examples: names, actual dollars, dates.
+    - Use "Pattern Interrupts": Every 45 seconds, introduce a new angle, a counter-intuitive fact, or a sharp realization.
+    - NEVER end a body section with a conclusion. End it with a tease of a bigger problem/solution in the next section.
+4.  **THE REVEAL (Outro - 50-80 words)**: Summarize the actionable realization. No boring recaps. Give them ONE concrete step to take. Add the disclaimer briefly. Finish with a sharp CTA.
 
-Each section has a STRICT word target. The audio will read these EXACTLY, so every word matters.
-
-1. **hook** (12-20 words) - Stop the scroll. Specific stakes, sharp contradiction, insider framing, or cost-of-inaction. NEVER repeat the input hook verbatim - ELEVATE it.
-
-2. **intro** (50-70 words) - What is happening + why now + what specifically the viewer will learn. End with curiosity gap. This is the promise of value - it sets up the entire video.
-
-3. **body** (220-280 words EACH, exactly 4 sections) - Each body MUST hit 220-280 words. Below 220 is FAILURE. Each must:
-   - Open with a mini-hook (specific claim or number, NOT a question)
-   - Contain at least TWO specific numbers OR a worked example with real figures
-   - End with a transition into the next section
-   - 3 of the 4 marked shorts_candidate: true with a shorts_alt_hook (8-15 words)
-   To hit 220-280, include: another example with names+dollars, a historical comparison, a second-order effect, a misconception to correct. Do NOT pad with filler.
-
-4. **retention** (35-50 words EACH, exactly 2 sections) - Placed between bodies 2-3 and 3-4. Each must tease a SPECIFIC payoff in the next section. NOT generic like "it gets interesting" - say WHAT gets interesting. Example: "But the part that surprised me most is what this does to your 401k - that is next."
-
-5. **outro** (80-120 words) - Recap key takeaway + one actionable next step + disclaimer "This is for education, not financial advice - talk to a fiduciary for your situation" + CTA "If this changed how you think about [topic], hit subscribe - I break down one of these every week."
-
-=== GRAND TOTAL ===
-Sum of all section words must be 1500-1800. Mentally tally before finishing.
-
-=== STRUCTURAL DISCIPLINE ===
-Body sections must each cover a DIFFERENT angle. The last body must introduce a FRESH angle (actionable response, contrarian view, historical parallel, surprising second-order effect). Body sections NEVER include summaries, CTAs, or disclaimers - those go ONLY in the outro.
-
-=== YOUTUBE TITLE (CRITICAL - THIS DETERMINES IF ANYONE CLICKS) ===
-
-youtube_title MUST use one of these HIGH-CTR patterns. Titles that read like Reuters headlines get ZERO clicks - they're forbidden.
-
-PATTERNS TO USE (in priority order):
-  1. **Curiosity gap**: "Why [X] Just [Y] (And Nobody's Talking About It)"
-     - "Why the Fed's Move Just Cost You $4,200"
-     - "Why SpaceX Investors Are Panicking Right Now"
-
-  2. **Direct-to-viewer with cost/threat**: "[X] Is [verb] Your [Y]"
-     - "Inflation Is Silently Charging You $4,200/Year"
-     - "This Rate Hike Is Costing Your 401k Right Now"
-
-  3. **Contradiction/paradox**: "Everyone Thinks [X] But [Y]"
-     - "Everyone Fears Rate Hikes But Smart Money Is Loading Up"
-     - "The Housing Crash Everyone Missed"
-
-  4. **Insider framing with number**: "[Person/entity] Just [action] $[amount]... Here's What It Means"
-     - "Jamie Dimon Just Bet $24M On This (Here's Why)"
-     - "Trump Just Handed Americans $10,000 (Nobody Noticed)"
-
-  5. **Question hook**: "Is [X] About To [Y]?"
-     - "Is Bitcoin About To Break $150K?"
-     - "Is Your Bank About To Fail?"
-
-RULES:
-  - 40-60 characters (mobile-friendly, doesn't get cut off)
-  - Use "your" or "you" whenever possible (personal stakes)
-  - Include ONE specific number when relevant ($4,200, 6.5%, $50K)
-  - Never use colons for "Topic: subtitle" format (that's a news headline, not a hook)
-  - Sentence case, NOT all caps
-  - No clickbait lies - must accurately reflect the video content
-
-FORBIDDEN (these get 0 clicks):
-  - "Fed Rate Hike: $4,200 Hit?" (news headline format)
-  - "SpaceX Stock Tanks" (too flat, no hook)
-  - "Inflation's $4,200 Tax" (headline, not hook)
-  - "Bitcoin Price Prediction" (generic, boring)
-  - Any title starting with "The " followed by a noun phrase without action
-
-=== OTHER YOUTUBE METADATA ===
-  - thumbnail_text: 2-4 BIG punchy words (all caps OK).
-  - description: 150-250 words. First 2 lines hook the reader. Include the disclaimer. End with: "Read the Spanish-language deep dive at {web_backlink}"
-  - tags: 15-20 lowercase SEO tags, mix broad + specific.
+=== YOUTUBE METADATA (HIGH-CTR) ===
+- `youtube_title`: 40-55 chars. MUST use: Curiosity, Contradiction, or Personal Stake. No boring headlines.
+- `thumbnail_text`: 2-4 punchy words (e.g., "BANKING SECRETS?", "THE $50K TRAP").
+- `description`: Hook, value prop, and call to action.
 
 === OUTPUT ===
-Return ONE JSON object with these EXACT fields:
+Return ONLY JSON. Do not add any text before or after the JSON.
 {{
   "youtube_title": "...",
   "thumbnail_text": "...",
   "description": "...",
   "tags": ["..."],
   "estimated_duration_min": 10,
-  "word_count": <REAL count of all section texts combined>,
+  "word_count": <REAL count>,
   "sections": [
-    {{ "type": "hook",      "text": "...", "estimated_sec": 5 }},
-    {{ "type": "intro",     "text": "...", "estimated_sec": 22 }},
-    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 100, "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 100, "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "retention", "text": "...", "estimated_sec": 18 }},
-    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 100, "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "retention", "text": "...", "estimated_sec": 18 }},
-    {{ "type": "body",      "title": "...", "text": "...", "estimated_sec": 100, "shorts_candidate": false }},
-    {{ "type": "outro",     "text": "...", "estimated_sec": 35 }}
+    {{ "type": "hook",      "text": "..." }},
+    {{ "type": "intro",     "text": "..." }},
+    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
+    {{ "type": "body",      "title": "...", "text": "..." }},
+    {{ "type": "outro",     "text": "..." }}
   ]
 }}
-
-Output ONLY the JSON. No prose before or after. No markdown fences.
 """
 
 
