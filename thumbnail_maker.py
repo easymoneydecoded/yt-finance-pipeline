@@ -1,11 +1,12 @@
 """
 ================================================================================
- thumbnail_maker.py - Etapa 7 (v3, MAXIMA NITIDEZ)
+ thumbnail_maker.py - Etapa 7 (v3, MAXIMA NITIDEZ, DISEÑO AGRESIVO)
 ================================================================================
  Mejoras v3:
    - Re-descarga el clip elegido en HD (Full HD) desde Pexels para el frame
    - Guarda en PNG (texto sin halo de compresion JPEG)
    - Control de peso: si el PNG supera 2MB, optimiza para caber en YouTube
+   - Diseño Minimalista Agresivo (Eliminación de barras, texto gigante, sombras)
 ================================================================================
 """
 
@@ -40,12 +41,8 @@ PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 THUMB_W        = 1280
 THUMB_H        = 720
 
-COLOR_BG_BAR   = (10, 10, 10)
-COLOR_GREEN    = (0, 255, 136)
-COLOR_ORANGE   = (255, 107, 0)
 COLOR_WHITE    = (255, 255, 255)
-COLOR_GREY     = (140, 140, 140)
-COLOR_BLACK    = (0, 0, 0)
+COLOR_ORANGE   = (255, 107, 0)
 
 OVERLAY_ALPHA  = 115
 
@@ -213,13 +210,11 @@ def wrap_text_for_font(text, font, max_width, draw):
     return lines
 
 
-def draw_text_thick_outline(draw, xy, text, font, fill, outline_w=10):
+def draw_text_with_shadow(draw, xy, text, font, fill):
     x, y = xy
-    for dx in range(-outline_w, outline_w + 1, 2):
-        for dy in range(-outline_w, outline_w + 1, 2):
-            if dx == 0 and dy == 0:
-                continue
-            draw.text((x + dx, y + dy), text, font=font, fill=COLOR_BLACK)
+    # Modern drop shadow: draw text slightly offset in black, then main text
+    shadow_color = (0, 0, 0, 180)
+    draw.text((x + 6, y + 6), text, font=font, fill=shadow_color)
     draw.text((x, y), text, font=font, fill=fill)
 
 
@@ -235,68 +230,38 @@ def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, outp
     bg = Image.open(frame_path).convert("RGB")
     bg = crop_center(bg, THUMB_W, THUMB_H)
     bg = bg.convert("RGBA")
-    overlay = Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, OVERLAY_ALPHA))
+
+    # Dramatizar el fondo: oscurecerlo más para que el texto resalte
+    overlay = Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, 160))
     bg = Image.alpha_composite(bg, overlay)
 
-    top_bar_h = 60
     draw = ImageDraw.Draw(bg)
-    draw.rectangle([0, 0, THUMB_W, top_bar_h], fill=COLOR_BG_BAR)
-    draw.rectangle([0, top_bar_h, THUMB_W, top_bar_h + 4], fill=COLOR_GREEN)
 
-    font_small = ImageFont.truetype(str(font_path), 30)
-    draw.ellipse([25, 22, 41, 38], fill=COLOR_GREEN)
-    draw.text((52, 15), "LIVE", font=font_small, fill=COLOR_GREEN)
-    draw.text((155, 15), "TICKER PRESS", font=font_small, fill=COLOR_WHITE)
-    handle = "@TICKERPRESSYT"
-    bbox = draw.textbbox((0, 0), handle, font=font_small)
-    draw.text((THUMB_W - 30 - (bbox[2] - bbox[0]), 15), handle, font=font_small, fill=COLOR_GREEN)
-
-    badge_font = ImageFont.truetype(str(font_path), 42)
-    badge_text = "\u26a1 ALERT"
-    bbox = draw.textbbox((0, 0), badge_text, font=badge_font)
-    badge_w = (bbox[2] - bbox[0]) + 40
-    badge_x = THUMB_W - badge_w - 20
-    draw.rectangle([badge_x, 90, badge_x + badge_w, 150], fill=COLOR_ORANGE)
-    draw.text((badge_x + 20, 96), badge_text, font=badge_font, fill=COLOR_BLACK)
-
+    # Texto principal dominante
     main_text = thumbnail_text.upper()
     text_before, big_number = split_number_from_text(main_text)
 
-    max_text_width = THUMB_W - 80
-    font_main = None
-    for size in range(200, 90, -10):
-        f = ImageFont.truetype(str(font_path), size)
-        lines_before = wrap_text_for_font(text_before, f, max_text_width, draw) if text_before else []
-        all_lines = lines_before + ([big_number] if big_number else [])
-        if len(all_lines) * (size + 15) < (THUMB_H - top_bar_h - 60 - 60):
-            font_main = f
-            break
-    if font_main is None:
-        font_main = ImageFont.truetype(str(font_path), 90)
+    max_text_width = THUMB_W - 100
+    # Fuente gigante para impacto máximo
+    font_main = ImageFont.truetype(str(font_path), 140)
 
+    # Calcular posicionamiento centralizado
     lines_before = wrap_text_for_font(text_before, font_main, max_text_width, draw) if text_before else []
-    line_h = font_main.size + 15
+    line_h = font_main.size + 20
     total_h = (len(lines_before) + (1 if big_number else 0)) * line_h
-    y = top_bar_h + ((THUMB_H - top_bar_h - 60 - total_h) // 2)
+    y = (THUMB_H - total_h) // 2
 
+    # Dibujar lineas de texto
     for line in lines_before:
         bbox = draw.textbbox((0, 0), line, font=font_main)
         x = (THUMB_W - (bbox[2] - bbox[0])) // 2
-        draw_text_thick_outline(draw, (x, y), line, font_main, COLOR_WHITE, outline_w=10)
+        draw_text_with_shadow(draw, (x, y), line, font_main, COLOR_WHITE)
         y += line_h
+
     if big_number:
         bbox = draw.textbbox((0, 0), big_number, font=font_main)
         x = (THUMB_W - (bbox[2] - bbox[0])) // 2
-        draw_text_thick_outline(draw, (x, y), big_number, font_main, COLOR_ORANGE, outline_w=10)
-
-    bot_bar_h = 55
-    draw.rectangle([0, THUMB_H - bot_bar_h, THUMB_W, THUMB_H], fill=COLOR_BG_BAR)
-    draw.rectangle([0, THUMB_H - bot_bar_h - 4, THUMB_W, THUMB_H - bot_bar_h], fill=COLOR_GREEN)
-    font_tag = ImageFont.truetype(str(font_path), 22)
-    draw.text((30, THUMB_H - 40), "MARKET NEWS THAT ACTUALLY MOVES YOU", font=font_tag, fill=COLOR_GREY)
-    font_logo = ImageFont.truetype(str(font_path), 38)
-    bbox = draw.textbbox((0, 0), "TP", font=font_logo)
-    draw.text((THUMB_W - 30 - (bbox[2] - bbox[0]), THUMB_H - 48), "TP", font=font_logo, fill=COLOR_WHITE)
+        draw_text_with_shadow(draw, (x, y), big_number, font_main, COLOR_ORANGE)
 
     # Guardar como PNG (texto perfecto, sin halo)
     final = bg.convert("RGB")
