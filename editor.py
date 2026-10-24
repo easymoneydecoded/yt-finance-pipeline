@@ -44,8 +44,8 @@ TARGET_WIDTH   = 1920
 TARGET_HEIGHT  = 1080
 TARGET_FPS     = 30
 
-CLIP_DURATION_MIN = 4.0
-CLIP_DURATION_MAX = 6.0
+CLIP_DURATION_MIN = 2.5
+CLIP_DURATION_MAX = 4.0
 
 MUSIC_VOLUME   = 0.08
 VOICE_VOLUME   = 1.0
@@ -227,7 +227,8 @@ def prepare_broll_track(broll_manifest: dict, target_duration: float) -> Path:
             (
                 f"scale={TARGET_WIDTH}:{TARGET_HEIGHT}:force_original_aspect_ratio=increase,"
                 f"crop={TARGET_WIDTH}:{TARGET_HEIGHT},"
-                f"fps={TARGET_FPS}"
+                f"fps={TARGET_FPS},"
+                f"zoompan=z='min(zoom+0.001,1.1)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={TARGET_WIDTH}x{TARGET_HEIGHT}"
             ),
             "-an",
             "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
