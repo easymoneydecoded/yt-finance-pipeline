@@ -66,6 +66,9 @@ jobs:
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: python uploader.py
 
+      - name: Etapa 9 - Publicar Shorts en TikTok/IG via Webhook
+        run: python publisher_webhook.py
+
       - name: Guardar artefacto (ligero, solo metadata + thumbnail)
         uses: actions/upload-artifact@v4
         with:
