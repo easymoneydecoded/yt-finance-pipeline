@@ -9,6 +9,12 @@
    3. Sube el video largo con metadata + establece thumbnail custom
    4. Sube los 3 Shorts como Shorts (usando #Shorts en la descripcion)
    5. Guarda un manifest final con los video_id de YouTube
+   6. Registra el video en history/videos.json (memoria anti-repeticion)
+
+ Protecciones:
+   - Si hoy ya se subio un video (re-ejecucion del workflow), no sube otro
+   - Si el titulo/miniatura repite un video anterior, aborta en vez de publicar
+   - Los titulos de Shorts tampoco pueden repetir titulos ya publicados
 
  Cuota YouTube Data API: upload=1600, thumbnail=50. Total: 4 uploads + 1 thumb = 6450/10000.
 
@@ -26,6 +32,8 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
+
+import content_history as ch
 
 # ---------------------------------------------------------------------------
 # Config
@@ -109,6 +117,40 @@ def load_data() -> tuple[dict, dict, Path, Path]:
     )
 
 
+def load_optional_json(pattern_today: Path, glob: str, base: Path) -> dict:
+    if pattern_today.exists():
+        return json.loads(pattern_today.read_text(encoding="utf-8"))
+    candidates = sorted(base.glob(glob), reverse=True)
+    return json.loads(candidates[0].read_text(encoding="utf-8")) if candidates else {}
+
+
+def build_history_entry(script_data: dict, long_video: dict, shorts: list[dict]) -> dict:
+    idea   = script_data.get("source_idea", {})
+    thumb  = load_optional_json(OUTPUT_DIR / f"thumbnail_meta_{TODAY}.json", "thumbnail_meta_*.json", OUTPUT_DIR)
+    broll  = load_optional_json(INPUT_DIR / "broll" / f"broll_manifest_{TODAY}.json", "broll_manifest_*.json", INPUT_DIR / "broll")
+    broll_ids = [c.get("pexels_id") for sec in broll.get("sections", []) for c in sec.get("clips", []) if c.get("pexels_id")]
+    return {
+        "date":             TODAY,
+        "video_id":         long_video["video_id"],
+        "url":              long_video["url"],
+        "title":            long_video["title"],
+        "thumbnail_text":   script_data.get("thumbnail_text", ""),
+        "topic_key":        script_data.get("topic_key") or idea.get("topic_key", ""),
+        "entities":         script_data.get("entities") or idea.get("entities", []),
+        "format":           script_data.get("format") or idea.get("format", ""),
+        "title_style":      script_data.get("title_style", ""),
+        "keywords":         idea.get("target_keywords", []),
+        "source_headlines": idea.get("source_signals", []),
+        "source_urls":      idea.get("source_urls", []),
+        "thumb_layout":     thumb.get("thumb_layout", ""),
+        "thumb_color":      thumb.get("thumb_color", ""),
+        "thumb_pexels_id":  thumb.get("thumb_pexels_id"),
+        "broll_pexels_ids": broll_ids,
+        "shorts_titles":    [s["title"].replace(" #Shorts", "") for s in shorts],
+        "shorts_ids":       [s["video_id"] for s in shorts],
+    }
+
+
 # ---------------------------------------------------------------------------
 # Autenticacion
 # ---------------------------------------------------------------------------
@@ -154,19 +196,23 @@ def build_long_video_metadata(script_data: dict) -> dict:
     }
 
 
-def build_short_metadata(short_info: dict, script_data: dict, short_index: int) -> dict:
+def build_short_metadata(short_info: dict, script_data: dict, short_index: int,
+                         taken: list[dict]) -> dict:
     parent_title  = script_data.get("youtube_title", "Untitled")
-    section_title = short_info.get("section_title", "")
+    section_title = short_info.get("section_title", "").strip()
     alt_hook      = short_info.get("alt_hook", "").strip()
 
-    if alt_hook:
-        short_title = f"{alt_hook} #Shorts"
-    elif section_title:
-        short_title = f"{section_title} #Shorts"
-    else:
-        short_title = f"{parent_title} - Part {short_index} #Shorts"
+    # Primer candidato que no repita ningun titulo publicado (ni de este mismo lote)
+    candidates = [c for c in (alt_hook, section_title) if c]
+    candidates.append(f"{parent_title} - Part {short_index}")
+    short_title = candidates[-1]
+    for c in candidates:
+        if not ch.find_duplicate({"title": c}, taken, TODAY):
+            short_title = c
+            break
+    taken.append({"title": short_title, "date": TODAY})
 
-    short_title = short_title[:100]
+    short_title = f"{short_title} #Shorts"[:100]
 
     description = (
         f"{section_title}\n\n"
@@ -278,6 +324,25 @@ def main() -> None:
     print("1/5  Cargando datos...")
     script_data, shorts_manifest, video_path, thumb_path = load_data()
 
+    history = ch.load_history()
+    done = ch.already_uploaded_on(TODAY, history)
+    if done:
+        print(f"\n  ! Hoy ya se subio un video ({done.get('url')}: '{done.get('title')}').")
+        print("    No subo otro para no duplicar contenido. Fin.")
+        return
+
+    dup = ch.find_duplicate({
+        "title":          script_data.get("youtube_title", ""),
+        "thumbnail_text": script_data.get("thumbnail_text", ""),
+        "topic_key":      script_data.get("topic_key", ""),
+        "entities":       script_data.get("entities", []),
+    }, history, TODAY)
+    if dup:
+        raise RuntimeError(
+            f"ABORTADO: el video repite contenido ya publicado ({dup[1]}; "
+            f"{dup[0].get('url', '')}). No se sube nada."
+        )
+
     print("\n2/5  Autenticando en YouTube API...")
     youtube = get_youtube_client()
     print(f"      cliente creado")
@@ -313,6 +378,9 @@ def main() -> None:
         uploaded["errors"].append(error_msg)
         raise
 
+    # Registrar ya en el historial: aunque fallen los Shorts, el tema queda marcado
+    ch.append_video(build_history_entry(script_data, uploaded["long_video"], []))
+
     # -----------------------------------------------------------------------
     # Thumbnail custom
     # -----------------------------------------------------------------------
@@ -334,6 +402,8 @@ def main() -> None:
     if not shorts_manifest or not shorts_manifest.get("shorts"):
         print("      ! no hay Shorts para subir")
     else:
+        taken_titles = [{"title": t, "date": v.get("date", "")}
+                        for v in history for t in [v.get("title", "")] + v.get("shorts_titles", [])]
         for i, short_info in enumerate(shorts_manifest["shorts"], 1):
             short_filename = short_info.get("filename")
             short_path = OUTPUT_DIR / short_filename
@@ -342,7 +412,7 @@ def main() -> None:
                 uploaded["errors"].append(f"Short {i} no encontrado: {short_filename}")
                 continue
 
-            metadata = build_short_metadata(short_info, script_data, i)
+            metadata = build_short_metadata(short_info, script_data, i, taken_titles)
             metadata["snippet"]["description"] = (
                 metadata["snippet"]["description"] +
                 f"\n\nFull video: {uploaded['long_video']['url']}"
@@ -369,6 +439,9 @@ def main() -> None:
                 error_msg = f"Fallo subiendo Short {i}: {e}"
                 print(f"      ! {error_msg}")
                 uploaded["errors"].append(error_msg)
+
+    ch.append_video(build_history_entry(script_data, uploaded["long_video"], uploaded["shorts"]))
+    print(f"\n  Historial actualizado: {ch.HISTORY_FILE}")
 
     # -----------------------------------------------------------------------
     # Guardar manifest

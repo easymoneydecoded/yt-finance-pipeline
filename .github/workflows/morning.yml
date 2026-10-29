@@ -5,6 +5,15 @@ on:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
+# Nunca dos ejecuciones a la vez: evitaba subir el mismo video dos veces
+concurrency:
+  group: morning-pipeline
+  cancel-in-progress: false
+
+# Necesario para guardar history/videos.json en el repo tras cada subida
+permissions:
+  contents: write
+
 jobs:
   generate-content:
     runs-on: ubuntu-latest
@@ -30,6 +39,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          REDDIT_CLIENT_ID:     ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
         run: python morning_pipeline.py
 
       - name: Etapa 2 - Escribir guion
@@ -66,10 +77,35 @@ jobs:
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: python uploader.py
 
+      # Se ejecuta aunque falle algo despues de subir: el historial es lo que
+      # impide que manana se repita el mismo tema
+      - name: Guardar historial del canal en el repo
+        if: always()
+        run: |
+          if git diff --quiet -- history/; then
+            echo "Historial sin cambios"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add history/
+          git commit -m "Historial: video del $(date -u +%F)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
+          echo "No se pudo guardar el historial" && exit 1
+
       - name: Etapa 9 - Publicar Shorts en TikTok/IG via Webhook
-        run: python publisher_webhook.py
+        run: |
+          if [ -f publisher_webhook.py ]; then
+            python publisher_webhook.py
+          else
+            echo "publisher_webhook.py no existe en el repo, salto la etapa 9"
+          fi
 
       - name: Guardar artefacto (ligero, solo metadata + thumbnail)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: content-${{ github.run_id }}
@@ -81,4 +117,5 @@ jobs:
             data/output/thumbnail_*.png
             data/output/thumbnail_*.jpg
             data/*.md
+            history/videos.json
           retention-days: 3

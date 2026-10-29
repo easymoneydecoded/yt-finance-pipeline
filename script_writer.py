@@ -5,12 +5,15 @@
 
  Que hace:
    1. Lee el JSON de ideas generadas por la etapa 1 (morning_pipeline.py)
-   2. Coge la primera idea (la mejor, segun el ranking del prompt)
-   3. Llama a Groq para escribir un guion completo y estructurado
+   2. Coge la primera idea que NO repita nada del historial del canal
+   3. Llama a Gemini para escribir el guion SOBRE ESA IDEA (titulo, angulo,
+      senales) con un estilo de titulo rotativo
    4. VERIFICA palabras por seccion contra rangos minimos (todas las secciones)
    5. Si alguna seccion esta corta de verdad, REINTENTA con expansion quirurgica
    6. Tolera margenes razonables para no quemar tokens en perfeccionismo
-   7. Guarda el guion en JSON (consumible por etapa 3) y en MD (legible)
+   7. Comprueba que titulo y texto de miniatura no repiten videos anteriores;
+      si repiten, regenera solo la metadata
+   8. Guarda el guion en JSON (consumible por etapa 3) y en MD (legible)
 
  Coste: 0 EUR (Groq free tier)
 
@@ -21,6 +24,7 @@ import os
 import json
 import time
 import re
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 from dataclasses import dataclass, asdict, field
@@ -28,6 +32,8 @@ from typing import Optional
 
 import requests
 from dotenv import load_dotenv
+
+import content_history as ch
 
 # ---------------------------------------------------------------------------
 # Config
@@ -60,6 +66,19 @@ SECTION_TARGETS = {
 # Solo reintentamos si la seccion esta MUY por debajo (<60% del minimo).
 TOLERANCE_RATIO     = 0.60
 MAX_RETRY_GENERATION = 2
+MAX_METADATA_RETRIES = 3
+
+# Estilos de titulo que rotan para que el canal no suene siempre igual
+TITLE_STYLES = [
+    "NAME-FIRST: open with the specific company/person/institution/asset name, then the stake (e.g. 'Barclays Cut 5,000 Jobs. Your Bank Is Next')",
+    "NUMBER-FIRST: open with a specific number or dollar figure from the story (e.g. '$42,000: The Real Cost of Paying Off a 2.75% Mortgage')",
+    "DIRECT QUESTION to the viewer about their money (e.g. 'Is Your 401k Quietly Betting on One Stock?')",
+    "VERSUS: compare two things head to head (e.g. 'T-Bills vs High-Yield Savings: One Pays 40% More')",
+    "BOLD CONTRARIAN CLAIM stated as fact (e.g. 'Lower Rates Will Make Housing Less Affordable')",
+    "HOW IT WORKS: 'How X Actually ...' revealing a mechanism (e.g. 'How Buybacks Quietly Inflate Your EPS')",
+    "TIMEFRAME WARNING: a deadline or date the viewer must care about (e.g. 'Before January 1st, Check This in Your IRA')",
+    "THE STORY: 'The ... That ...' naming the subject (e.g. 'The $52B Loophole That Moved Tech Stocks')",
+]
 
 
 # ---------------------------------------------------------------------------
@@ -90,7 +109,7 @@ class VideoScript:
 # ---------------------------------------------------------------------------
 # Carga de la idea del dia
 # ---------------------------------------------------------------------------
-def load_todays_idea() -> dict:
+def load_todays_idea(history: list[dict]) -> dict:
     path = INPUT_DIR / f"ideas_{TODAY}.json"
     if not path.exists():
         candidates = sorted(INPUT_DIR.glob("ideas_*.json"), reverse=True)
@@ -103,8 +122,21 @@ def load_todays_idea() -> dict:
     ideas = payload.get("ideas", [])
     if not ideas:
         raise ValueError(f"El archivo {path.name} no contiene ideas.")
-    print(f"   . Cargadas {len(ideas)} ideas. Eligiendo la #1.")
-    return ideas[0]
+    print(f"   . Cargadas {len(ideas)} ideas.")
+    for n, idea in enumerate(ideas, 1):
+        dup = ch.find_duplicate(idea, history, TODAY)
+        if dup:
+            print(f"   x idea #{n} '{idea.get('title')}' repetida: {dup[1]}")
+            continue
+        print(f"   . Eligiendo la #{n} (no repite nada del historial).")
+        return idea
+    raise RuntimeError("Todas las ideas del dia repiten videos ya publicados.")
+
+
+def pick_title_style(history: list[dict]) -> str:
+    recent = set(ch.recent_values(history, "title_style", last_n=3))
+    options = [t for t in TITLE_STYLES if t.split(":")[0] not in recent] or TITLE_STYLES
+    return random.choice(options)
 
 
 # ---------------------------------------------------------------------------
@@ -168,6 +200,22 @@ SCRIPT_WRITER_PROMPT = """You are a world-class YouTube storytelling strategist 
 === YOUR MISSION ===
 Write a script that causes viewers to binge-watch and share. Every single sentence must serve one purpose: to keep the viewer from clicking away.
 
+=== TODAY'S TOPIC (THE WHOLE VIDEO MUST BE ABOUT THIS) ===
+Title idea: {idea_title}
+Hook idea:  {idea_hook}
+Angle:      {idea_angle}
+Format:     {idea_format}
+Keywords:   {idea_keywords}
+Anchored on these real signals from today:
+{idea_signals}
+
+Stay specific to THIS story: name the companies, people, numbers and dates from
+the signals. A generic "hidden trap / your savings are stealing from you" video
+that could have been written any other day is a FAILURE.
+
+=== ALREADY PUBLISHED - DO NOT REUSE THESE TITLES OR THUMBNAIL TEXTS ===
+{history_block}
+
 === TONE RULES (CRITICAL) ===
 1.  NO "News Anchor" talk. No "In this video we explore..." / "Let's dive in..." / "It's pretty straightforward..."
 2.  Be raw, conversational, and opinionated. Use the tone of a high-stakes conversation over a coffee with an expert.
@@ -187,9 +235,11 @@ Do NOT follow a "news report" structure. Follow this "Binge-Watch" structure:
 4.  **THE REVEAL (Outro - 50-80 words)**: Summarize the actionable realization. No boring recaps. Give them ONE concrete step to take. Add the disclaimer briefly. Finish with a sharp CTA.
 
 === YOUTUBE METADATA (HIGH-CTR) ===
-- `youtube_title`: 40-55 chars. MUST use: Curiosity, Contradiction, or Personal Stake. No boring headlines.
-- `thumbnail_text`: 2-4 punchy words (e.g., "BANKING SECRETS?", "THE $50K TRAP").
-- `description`: Hook, value prop, and call to action.
+- `youtube_title`: 40-60 chars, about TODAY'S TOPIC, naming its specific subject. MUST use: Curiosity, Contradiction, or Personal Stake.
+  Title style for today: {title_style}
+  Do NOT start the title with: {overused_openers}
+- `thumbnail_text`: 2-4 punchy words specific to today's topic (a name, number or claim from THIS story). Must not match any thumbnail listed above.
+- `description`: 150-250 words. Hook, value prop, call to action, a one-line "educational, not financial advice" disclaimer. End with: "Read the Spanish-language deep dive at {web_backlink}"
 
 === OUTPUT ===
 Return ONLY JSON. Do not add any text before or after the JSON.
@@ -233,6 +283,23 @@ For SHORT retention sections, ADD a specific tease of the next section's payoff.
 For SHORT outro, ADD a stronger recap or a sharper actionable step.
 
 Return the FULL JSON in the same shape, with corrections applied. Output ONLY the JSON.
+"""
+
+
+METADATA_RETRY_PROMPT = """The YouTube title and/or thumbnail text below are too similar to videos this channel already published.
+
+Video topic: {idea_title}
+Angle: {idea_angle}
+Rejected title: {bad_title}
+Rejected thumbnail text: {bad_thumb}
+Reason: {reason}
+
+Already published (avoid anything similar):
+{history_block}
+
+Write a NEW title (40-60 chars, naming the specific subject of THIS story, style: {title_style})
+and a NEW thumbnail_text (2-4 punchy words, specific to this story).
+Return ONLY JSON: {{"youtube_title": "...", "thumbnail_text": "..."}}
 """
 
 
@@ -418,7 +485,7 @@ def _rescue_script_fields(content: str) -> dict:
                 obj_str = content[obj_start:i+1]
                 try:
                     obj = json.loads(obj_str)
-                    if "voiceover" in obj or "section_title" in obj:
+                    if "text" in obj:
                         sections.append(obj)
                 except json.JSONDecodeError:
                     # Intentar reparar comas faltantes al final antes de }
@@ -426,7 +493,7 @@ def _rescue_script_fields(content: str) -> dict:
                     repaired = re.sub(r',\s*]', ']', repaired)
                     try:
                         obj = json.loads(repaired)
-                        if "voiceover" in obj or "section_title" in obj:
+                        if "text" in obj:
                             sections.append(obj)
                     except json.JSONDecodeError:
                         pass
@@ -458,18 +525,23 @@ def format_breakdown(stats: dict) -> str:
     return "\n".join(lines)
 
 
-def generate_script(idea: dict) -> dict:
+def generate_script(idea: dict, history: list[dict], title_style: str) -> dict:
     if not GEMINI_API_KEY:
         raise RuntimeError("Falta GEMINI_API_KEY")
 
     signals_text = "\n".join(f"  - {s}" for s in idea.get("source_signals", []))
+    overused = ch.overused_title_openers(history)
     prompt = SCRIPT_WRITER_PROMPT.format(
-        idea_title    = idea.get("title", ""),
-        idea_hook     = idea.get("hook", ""),
-        idea_angle    = idea.get("angle", ""),
-        idea_keywords = ", ".join(idea.get("target_keywords", [])),
-        idea_signals  = signals_text or "  (none)",
-        web_backlink  = WEB_BACKLINK,
+        idea_title       = idea.get("title", ""),
+        idea_hook        = idea.get("hook", ""),
+        idea_angle       = idea.get("angle", ""),
+        idea_format      = idea.get("format", "") or "free",
+        idea_keywords    = ", ".join(idea.get("target_keywords", [])),
+        idea_signals     = signals_text or "  (none)",
+        history_block    = ch.recent_for_prompt(history, limit=40),
+        title_style      = title_style,
+        overused_openers = ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
+        web_backlink     = WEB_BACKLINK,
     )
 
     print("   . Pasada inicial...")
@@ -506,16 +578,66 @@ def generate_script(idea: dict) -> dict:
     return raw
 
 
+def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_style: str) -> dict:
+    """Si titulo o miniatura repiten un video anterior, regenera solo la metadata."""
+    def _check(title: str, thumb: str):
+        return ch.find_duplicate({
+            "title":          title,
+            "thumbnail_text": thumb,
+            "topic_key":      idea.get("topic_key", ""),
+            "entities":       idea.get("entities", []),
+        }, history, TODAY)
+
+    title = str(raw.get("youtube_title", "")).strip()
+    thumb = str(raw.get("thumbnail_text", "")).strip()
+    dup = _check(title, thumb) if title else (None, "titulo vacio")
+
+    for attempt in range(1, MAX_METADATA_RETRIES + 1):
+        if not dup:
+            break
+        print(f"   ! Metadata repetida ({dup[1]}). Regenerando titulo/miniatura {attempt}/{MAX_METADATA_RETRIES}...")
+        try:
+            new = call_groq(METADATA_RETRY_PROMPT.format(
+                idea_title    = idea.get("title", ""),
+                idea_angle    = idea.get("angle", ""),
+                bad_title     = title,
+                bad_thumb     = thumb,
+                reason        = dup[1],
+                history_block = ch.recent_for_prompt(history, limit=40),
+                title_style   = title_style,
+            ), max_tokens=500)
+        except RuntimeError as e:
+            print(f"   ! Fallo regenerando metadata: {e}")
+            break
+        title = str(new.get("youtube_title", title)).strip()
+        thumb = str(new.get("thumbnail_text", thumb)).strip()
+        dup = _check(title, thumb)
+
+    if dup:
+        # Ultimo recurso: el titulo de la idea ya paso el filtro anti-repeticion en la etapa 1
+        print(f"   ! Sigue repetida, uso el titulo de la idea: '{idea.get('title')}'")
+        title = idea.get("title", title)
+        thumb = " ".join(title.upper().split()[:3])
+
+    raw["youtube_title"]  = title
+    raw["thumbnail_text"] = thumb
+    return raw
+
+
 # ---------------------------------------------------------------------------
 # Persistencia
 # ---------------------------------------------------------------------------
-def save_outputs(script: VideoScript, raw_idea: dict, real_word_count: int) -> tuple[Path, Path]:
+def save_outputs(script: VideoScript, raw_idea: dict, real_word_count: int, title_style: str) -> tuple[Path, Path]:
     json_path = OUTPUT_DIR / f"script_{TODAY}.json"
     md_path   = OUTPUT_DIR / f"script_{TODAY}.md"
 
     json_path.write_text(json.dumps({
         "date":                 script.date,
         "source_idea":          raw_idea,
+        "topic_key":            raw_idea.get("topic_key", ""),
+        "entities":             raw_idea.get("entities", []),
+        "format":               raw_idea.get("format", ""),
+        "title_style":          title_style.split(":")[0],
         "youtube_title":        script.youtube_title,
         "thumbnail_text":       script.thumbnail_text,
         "description":          script.description,
@@ -573,12 +695,16 @@ def main() -> None:
     t0 = time.time()
     print(f"\n=== SCRIPT WRITER . {TODAY} ===\n")
 
-    print("1/3  Cargando la idea del dia...")
-    idea = load_todays_idea()
+    history = ch.load_history()
+    print(f"1/3  Cargando la idea del dia (historial: {len(history)} videos)...")
+    idea = load_todays_idea(history)
     print(f"      -> '{idea.get('title', 'sin titulo')}'")
+    title_style = pick_title_style(history)
+    print(f"      -> estilo de titulo: {title_style.split(':')[0]}")
 
     print(f"\n2/3  Generando guion con Gemini ({GEMINI_MODEL})...")
-    raw = generate_script(idea)
+    raw = generate_script(idea, history, title_style)
+    raw = ensure_unique_metadata(raw, idea, history, title_style)
 
     sections = []
     for s in raw.get("sections", []):
@@ -612,7 +738,7 @@ def main() -> None:
     )
 
     print("\n3/3  Guardando guion...")
-    json_path, md_path = save_outputs(script, idea, real_total)
+    json_path, md_path = save_outputs(script, idea, real_total, title_style)
 
     n_shorts = sum(1 for s in sections if s.shorts_candidate)
     estimated_minutes = real_total / 150

@@ -8,7 +8,9 @@
    2. Saca un snapshot de mercado con yfinance (indices + cripto)
    3. Saca indicadores economicos de la FRED (tipos, inflacion, paro)
    4. Saca los hilos calientes de Reddit (personalfinance, investing, FIRE)
-   5. Manda todo a Groq y obtiene 5 ideas de video en ingles con hook listo
+   5. Manda todo a Gemini junto con el HISTORIAL del canal y pide 8 ideas
+   6. Descarta las ideas que repiten tema/titulo de videos ya publicados
+      (content_history.py) y se queda con las 5 mejores ideas nuevas
 
  Salida:
    data/ideas_YYYY-MM-DD.json  -> estructurado, para la siguiente etapa
@@ -22,6 +24,7 @@
 import os
 import json
 import time
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 from dataclasses import dataclass, asdict, field
@@ -32,6 +35,8 @@ import feedparser
 import yfinance as yf
 import praw
 from dotenv import load_dotenv
+
+import content_history as ch
 
 # ---------------------------------------------------------------------------
 # Config
@@ -53,6 +58,16 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 TODAY           = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
+N_IDEAS_REQUESTED = 8   # pedimos de mas para poder descartar repetidas
+N_IDEAS_KEPT      = 5
+
+VIDEO_FORMATS = [
+    "news breakdown", "data deep-dive", "myth-buster", "contrarian take",
+    "case study", "comparison", "if you have $X today scenario",
+    "behavioral psychology angle", "historical parallel", "explainer of a hidden mechanism",
+    "winners vs losers", "step-by-step what to check",
+]
+
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -73,6 +88,10 @@ class VideoIdea:
     target_keywords: list[str] = field(default_factory=list)
     source_signals: list[str] = field(default_factory=list)
     estimated_length_min: int = 8
+    topic_key: str = ""
+    entities: list[str] = field(default_factory=list)
+    format: str = ""
+    source_urls: list[str] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +103,11 @@ RSS_FEEDS = {
     "MarketWatch Top":    "https://www.marketwatch.com/rss/topstories",
     "CNBC Finance":       "https://www.cnbc.com/id/10000664/device/rss/rss.html",
     "Investing.com":      "https://www.investing.com/rss/news.rss",
+    "CNBC Economy":       "https://www.cnbc.com/id/20910258/device/rss/rss.html",
+    "CNBC Investing":     "https://www.cnbc.com/id/15839069/device/rss/rss.html",
+    "MarketWatch Pulse":  "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
+    "Nasdaq Markets":     "https://www.nasdaq.com/feed/rssoutbound?category=Markets",
+    "Fed Press":          "https://www.federalreserve.gov/feeds/press_all.xml",
 }
 
 def fetch_rss_headlines(max_per_feed: int = 5) -> list[Signal]:
@@ -229,23 +253,39 @@ IDEA_GENERATOR_PROMPT = """You are the creative director of a faceless, automate
 
 Below are real, fresh signals from today: financial news headlines, a live market snapshot, macro indicators, and what people are actively asking on Reddit. Use these as raw material.
 
-Your job: pick 5 distinct video angles. Each should be:
+Your job: pick {n_ideas} distinct video angles. Each should be:
   - **Currently relevant** (anchored in a real signal you can see below)
   - **High retention** (curiosity, contrast, urgency, money-on-the-line)
   - **Mid-length friendly** (8-12 min long video that we'll later cut into 8-10 Shorts)
   - **NOT generic** (avoid "how to budget", "what is a 401k" — those are evergreen blog topics; we need angles that feel like today)
   - **NOT financial advice** (educational tone only — "what this means", "how this works", never "buy this")
-  - **Rotated in format** across the 5 ideas: mix at least 3 different formats from: news breakdown, data deep-dive, myth-buster, contrarian take, case study, comparison, "if you have $X today" scenario, behavioral psychology angle, historical parallel
+  - **Rotated in format**: every idea uses a DIFFERENT format from: {formats}
+    Prefer formats NOT used recently: {recent_formats}
+  - **Different from each other**: no two ideas about the same company, person, institution or story.
+
+=== ALREADY PUBLISHED ON THIS CHANNEL (DO NOT REPEAT) ===
+The channel has already published the videos below. Your ideas MUST be about a
+DIFFERENT story, company, person, institution, asset or mechanism. A new angle on
+the same story still counts as a repeat (e.g. if "Harvard + SpaceX" is listed,
+NO idea may involve Harvard or SpaceX). Generic evergreen fear titles like
+"The Hidden Wealth Trap Nobody Is Talking About" are banned.
+{history_block}
+
+Title openers that are OVERUSED on this channel (do NOT start titles with them): {overused}
+Vary title structure: statements, questions, numbers first, names first, "X vs Y".
 
 For each idea give me strict JSON with:
-  - title:        an English YouTube title, max 60 chars, CTR-optimized (curiosity gap or specific number)
+  - title:        an English YouTube title, max 60 chars, CTR-optimized (curiosity gap or specific number), naming the specific subject
   - hook:         3-5 second opening line in English. Must make someone STOP scrolling. No "in this video we will" garbage.
   - angle:        2-3 sentences explaining the unique angle and why it works NOW
   - target_keywords: list of 3-5 SEO keywords in English
   - source_signals: list of the source headlines (verbatim) you anchored this idea on
   - estimated_length_min: integer 6-12
+  - topic_key:    5-8 lowercase words that identify the STORY (e.g. "harvard endowment spacex stake")
+  - entities:     list of the named companies, people, institutions, assets or laws involved (e.g. ["Harvard", "SpaceX"]); use [] only if none
+  - format:       the format used, copied from the list above
 
-Return ONLY a JSON array of 5 objects. No prose before or after, no markdown fences.
+Return ONLY a JSON array of {n_ideas} objects. No prose before or after, no markdown fences.
 
 === SIGNALS ===
 {signals_text}
@@ -370,9 +410,27 @@ def _robust_parse_ideas(content: str) -> dict:
     return {"ideas": ideas}
 
 
-def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
+def filter_used_signals(signals: list[Signal], history: list[dict]) -> list[Signal]:
+    """Quita titulares que ya sirvieron de base a un video anterior."""
+    used_urls  = ch.used_source_urls(history)
+    used_heads = ch.used_source_headlines(history)
+    fresh = [s for s in signals
+             if not (s.url and s.url in used_urls)
+             and ch.normalize(s.headline) not in used_heads]
+    removed = len(signals) - len(fresh)
+    if removed:
+        print(f"      -> {removed} senales descartadas (ya usadas en videos anteriores)")
+    return fresh
+
+
+def generate_ideas(signals: list[Signal], history: list[dict],
+                   rejected: list[str] | None = None) -> list[VideoIdea]:
     if not GEMINI_API_KEY:
         raise RuntimeError("Falta GEMINI_API_KEY en .env")
+
+    # Barajamos para que el modelo no se ancle siempre en las primeras lineas
+    signals = list(signals)
+    random.shuffle(signals)
 
     # Formateamos las senales en un bloque legible
     lines = []
@@ -383,16 +441,29 @@ def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
         lines.append(line)
     signals_text = "\n".join(lines)
 
-    prompt_text = IDEA_GENERATOR_PROMPT.format(signals_text=signals_text)
-    prompt_text += '\n\nReturn shape: {"ideas": [ ...5 objects... ]}'
+    recent_formats = ch.recent_values(history, "format", last_n=7)
+    overused = ch.overused_title_openers(history)
+
+    prompt_text = IDEA_GENERATOR_PROMPT.format(
+        signals_text   = signals_text,
+        n_ideas        = N_IDEAS_REQUESTED,
+        formats        = ", ".join(VIDEO_FORMATS),
+        recent_formats = ", ".join(f for f in VIDEO_FORMATS if f not in recent_formats),
+        history_block  = ch.recent_for_prompt(history),
+        overused       = ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
+    )
+    if rejected:
+        prompt_text += ("\n\nThese ideas were just REJECTED as repeats of published videos. "
+                        "Go somewhere completely different:\n" + "\n".join(f"  - {r}" for r in rejected))
+    prompt_text += f'\n\nReturn shape: {{"ideas": [ ...{N_IDEAS_REQUESTED} objects... ]}}'
 
     payload = {
         "contents": [{
             "parts": [{"text": prompt_text}]
         }],
         "generationConfig": {
-            "temperature":      0.85,
-            "maxOutputTokens":  6000,
+            "temperature":      0.95,
+            "maxOutputTokens":  9000,
             "responseMimeType": "application/json",
         },
     }
@@ -409,20 +480,44 @@ def generate_ideas(signals: list[Signal]) -> list[VideoIdea]:
     if isinstance(raw_ideas, dict):
         raw_ideas = list(raw_ideas.values())
 
+    url_by_headline = {ch.normalize(s.headline): s.url for s in signals if s.url}
+
     ideas: list[VideoIdea] = []
     for raw in raw_ideas:
         try:
+            source_signals = [str(x) for x in raw.get("source_signals", [])][:5]
             ideas.append(VideoIdea(
                 title                = str(raw["title"])[:80],
                 hook                 = str(raw["hook"]),
                 angle                = str(raw["angle"]),
                 target_keywords      = list(raw.get("target_keywords", []))[:5],
-                source_signals       = list(raw.get("source_signals", []))[:5],
+                source_signals       = source_signals,
                 estimated_length_min = int(raw.get("estimated_length_min", 8)),
+                topic_key            = str(raw.get("topic_key", "")).lower()[:120],
+                entities             = [str(e) for e in raw.get("entities", [])][:8],
+                format               = str(raw.get("format", "")),
+                source_urls          = [u for u in (url_by_headline.get(ch.normalize(h)) for h in source_signals) if u],
             ))
         except (KeyError, ValueError, TypeError) as e:
             print(f"   ! Idea malformada, ignorada: {e}")
     return ideas
+
+
+def drop_repeated_ideas(ideas: list[VideoIdea], history: list[dict],
+                        accepted: list[VideoIdea] | None = None) -> tuple[list[VideoIdea], list[str]]:
+    """Descarta ideas repetidas frente al historial y entre ellas mismas."""
+    kept: list[VideoIdea] = []
+    rejected: list[str] = []
+    for idea in ideas:
+        # Comparamos tambien contra las ideas ya aceptadas (esta tanda y anteriores)
+        pool = history + [asdict(k) | {"date": TODAY} for k in (accepted or []) + kept]
+        dup = ch.find_duplicate(asdict(idea), pool, TODAY)
+        if dup:
+            print(f"   x '{idea.title}' -> {dup[1]}")
+            rejected.append(f"{idea.title} ({idea.topic_key})")
+        else:
+            kept.append(idea)
+    return kept, rejected
 
 
 # ---------------------------------------------------------------------------
@@ -454,6 +549,8 @@ def save_outputs(ideas: list[VideoIdea], signals: list[Signal]) -> tuple[Path, P
             "",
             f"**Duracion estimada:** {idea.estimated_length_min} min",
             "",
+            f"**Formato:** {idea.format} · **Tema:** {idea.topic_key} · **Entidades:** {', '.join(idea.entities)}",
+            "",
             "**Anclado en:**",
             *[f"- {s}" for s in idea.source_signals],
             "", "---", "",
@@ -478,15 +575,25 @@ def main() -> None:
     print("4/5  Reddit caliente...");      reddit  = fetch_reddit_hot()
     print(f"      -> {len(reddit)} posts")
 
-    all_signals = rss + market + macro + reddit
+    history = ch.load_history()
+    print(f"      historial: {len(history)} videos publicados")
+
+    all_signals = filter_used_signals(rss + reddit, history) + market + macro
     if not all_signals:
         raise RuntimeError("No se obtuvo ninguna senal — revisa conexion y claves.")
 
-    print(f"\n5/5  Generando 5 ideas con Gemini ({GEMINI_MODEL})...")
-    ideas = generate_ideas(all_signals)
+    print(f"\n5/5  Generando {N_IDEAS_REQUESTED} ideas con Gemini ({GEMINI_MODEL})...")
+    ideas, rejected = drop_repeated_ideas(generate_ideas(all_signals, history), history)
+
+    # Si casi todo salio repetido, segunda ronda diciendole lo que rechazamos
+    if len(ideas) < 2:
+        print(f"   . Solo {len(ideas)} ideas nuevas, pido otra tanda evitando las rechazadas...")
+        more, _ = drop_repeated_ideas(generate_ideas(all_signals, history, rejected), history, ideas)
+        ideas += more
 
     if not ideas:
-        raise RuntimeError("Groq no devolvio ideas validas.")
+        raise RuntimeError("Todas las ideas generadas repetian videos ya publicados.")
+    ideas = ideas[:N_IDEAS_KEPT]
 
     json_path, md_path = save_outputs(ideas, all_signals)
 
@@ -496,7 +603,8 @@ def main() -> None:
 
     print("=== IDEAS DE HOY ===\n")
     for n, i in enumerate(ideas, 1):
-        print(f"  {n}. {i.title}")
+        print(f"  {n}. {i.title}  [{i.format}]")
+        print(f"     Tema: {i.topic_key} | {', '.join(i.entities)}")
         print(f"     Hook: {i.hook}\n")
 
 

@@ -7,6 +7,11 @@
    - Guarda en PNG (texto sin halo de compresion JPEG)
    - Control de peso: si el PNG supera 2MB, optimiza para caber en YouTube
    - Diseño Minimalista Agresivo (Eliminación de barras, texto gigante, sombras)
+ Mejoras v4 (anti-repeticion):
+   - 4 layouts x 6 colores de acento; se evita el combo de los ultimos videos
+   - El clip de fondo no puede ser uno usado en miniaturas recientes
+   - Frame elegido en un instante aleatorio del clip
+   - Guarda thumbnail_meta_YYYY-MM-DD.json para que el uploader lo registre
 ================================================================================
 """
 
@@ -20,8 +25,10 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 import requests
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageOps
 from dotenv import load_dotenv
+
+import content_history as ch
 
 load_dotenv()
 
@@ -42,7 +49,17 @@ THUMB_W        = 1280
 THUMB_H        = 720
 
 COLOR_WHITE    = (255, 255, 255)
-COLOR_ORANGE   = (255, 107, 0)
+COLOR_BLACK    = (0, 0, 0)
+
+ACCENT_COLORS = {
+    "orange": (255, 107, 0),
+    "yellow": (255, 214, 0),
+    "red":    (235, 36, 50),
+    "green":  (0, 220, 110),
+    "cyan":   (0, 200, 255),
+    "pink":   (255, 60, 170),
+}
+LAYOUTS = ["center", "left", "box", "bottom"]
 
 OVERLAY_ALPHA  = 115
 
@@ -94,7 +111,16 @@ def download_font_if_missing() -> Path:
     raise RuntimeError("No hay fuente disponible")
 
 
-def pick_best_broll_clip(broll_manifest: dict) -> dict:
+def pick_style(history: list[dict], rng: random.Random) -> tuple[str, str]:
+    """Layout y color distintos de los de las ultimas miniaturas."""
+    recent_layouts = ch.recent_values(history, "thumb_layout", last_n=2)
+    recent_colors  = ch.recent_values(history, "thumb_color", last_n=3)
+    layouts = [l for l in LAYOUTS if l not in recent_layouts] or LAYOUTS
+    colors  = [c for c in ACCENT_COLORS if c not in recent_colors] or list(ACCENT_COLORS)
+    return rng.choice(layouts), rng.choice(colors)
+
+
+def pick_best_broll_clip(broll_manifest: dict, used_ids: set, rng: random.Random) -> dict:
     """Devuelve el dict completo del clip (con pexels_id) para poder re-bajar en HD."""
     body_clips = []
     all_clips = []
@@ -110,10 +136,10 @@ def pick_best_broll_clip(broll_manifest: dict) -> dict:
     pool = body_clips or all_clips
     if not pool:
         raise RuntimeError("No hay clips de b-roll disponibles")
-    good = [c for c in pool if c.get("duration_sec", 0) >= 10]
-    chosen_pool = good or pool
-    random.seed(hash(TODAY))
-    return random.choice(chosen_pool)
+    fresh = [c for c in pool if c.get("pexels_id") not in used_ids] or pool
+    good = [c for c in fresh if c.get("duration_sec", 0) >= 10]
+    chosen_pool = good or fresh
+    return rng.choice(chosen_pool)
 
 
 def download_hd_clip(pexels_id: int) -> Path | None:
@@ -210,8 +236,12 @@ def wrap_text_for_font(text, font, max_width, draw):
     return lines
 
 
-def draw_text_with_shadow(draw, xy, text, font, fill):
+def draw_text_with_shadow(draw, xy, text, font, fill, stroke=False):
     x, y = xy
+    if stroke:
+        # Contorno negro grueso: lee bien sobre cualquier fondo
+        draw.text((x, y), text, font=font, fill=fill, stroke_width=7, stroke_fill=COLOR_BLACK)
+        return
     # Modern drop shadow: draw text slightly offset in black, then main text
     shadow_color = (0, 0, 0, 180)
     draw.text((x + 6, y + 6), text, font=font, fill=shadow_color)
@@ -219,49 +249,118 @@ def draw_text_with_shadow(draw, xy, text, font, fill):
 
 
 def split_number_from_text(text):
-    for pat in [r'\$[\d,\.]+[KMB]?', r'\d+[\.,]?\d*\s*%', r'\d+[KMB]']:
+    for pat in [r'\$[\d,\.]+[KMBT]?', r'\d+[\.,]?\d*\s*%', r'\d+[KMBT]']:
         m = re.search(pat, text)
         if m:
             return (text[:m.start()] + text[m.end():]).strip(), m.group().strip()
     return text, ""
 
 
-def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, output_path: Path) -> None:
+def fit_font(lines_text, font_path, max_w, max_h, draw, start=150, minimum=80, extra_lines=0):
+    """Fuente lo mas grande posible que quepa en max_w x max_h."""
+    size = start
+    while True:
+        font = ImageFont.truetype(str(font_path), size)
+        lines = wrap_text_for_font(lines_text, font, max_w, draw) if lines_text else []
+        widest = max((draw.textbbox((0, 0), l, font=font)[2] for l in lines), default=0)
+        total_h = (len(lines) + extra_lines) * (size + 20)
+        if (widest <= max_w and total_h <= max_h) or size <= minimum:
+            return font, lines
+        size -= 8
+
+
+def gradient_overlay(direction: str, strong: int = 230, weak: int = 40) -> Image.Image:
+    """Degradado negro: 'left' (oscuro a la izquierda) o 'bottom' (oscuro abajo)."""
+    # linear_gradient va de negro (arriba) a blanco (abajo); girado -90 queda blanco a la izquierda
+    col = Image.linear_gradient("L")
+    if direction == "left":
+        col = col.rotate(-90)
+    col = col.resize((THUMB_W, THUMB_H)).point(lambda v: weak + (strong - weak) * v // 255)
+    overlay = Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, 0))
+    overlay.putalpha(col)
+    return overlay
+
+
+def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, output_path: Path,
+                    layout: str = "center", accent=ACCENT_COLORS["orange"]) -> Path:
     bg = Image.open(frame_path).convert("RGB")
     bg = crop_center(bg, THUMB_W, THUMB_H)
+    if layout in ("left", "box"):
+        bg = ImageOps.mirror(bg) if random.random() < 0.5 else bg
     bg = bg.convert("RGBA")
 
-    # Dramatizar el fondo: oscurecerlo más para que el texto resalte
-    overlay = Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, 160))
-    bg = Image.alpha_composite(bg, overlay)
+    if layout == "left":
+        bg = Image.alpha_composite(bg, gradient_overlay("left"))
+    elif layout == "bottom":
+        bg = Image.alpha_composite(bg, gradient_overlay("bottom", strong=235, weak=30))
+    else:
+        # Dramatizar el fondo: oscurecerlo para que el texto resalte
+        bg = Image.alpha_composite(bg, Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, 150)))
 
     draw = ImageDraw.Draw(bg)
 
-    # Texto principal dominante
     main_text = thumbnail_text.upper()
     text_before, big_number = split_number_from_text(main_text)
+    margin = 70
 
-    max_text_width = THUMB_W - 100
-    # Fuente gigante para impacto máximo
-    font_main = ImageFont.truetype(str(font_path), 140)
+    if layout == "center":
+        font, lines = fit_font(text_before, font_path, THUMB_W - 100, THUMB_H - 80, draw,
+                               extra_lines=1 if big_number else 0)
+        line_h = font.size + 20
+        y = (THUMB_H - (len(lines) + (1 if big_number else 0)) * line_h) // 2
+        for line in lines:
+            w = draw.textbbox((0, 0), line, font=font)[2]
+            draw_text_with_shadow(draw, ((THUMB_W - w) // 2, y), line, font, COLOR_WHITE)
+            y += line_h
+        if big_number:
+            w = draw.textbbox((0, 0), big_number, font=font)[2]
+            draw_text_with_shadow(draw, ((THUMB_W - w) // 2, y), big_number, font, accent)
 
-    # Calcular posicionamiento centralizado
-    lines_before = wrap_text_for_font(text_before, font_main, max_text_width, draw) if text_before else []
-    line_h = font_main.size + 20
-    total_h = (len(lines_before) + (1 if big_number else 0)) * line_h
-    y = (THUMB_H - total_h) // 2
+    elif layout == "left":
+        # Barra de color vertical + texto alineado a la izquierda en la mitad oscura
+        max_w = int(THUMB_W * 0.62)
+        font, lines = fit_font(text_before, font_path, max_w, THUMB_H - 120, draw,
+                               extra_lines=1 if big_number else 0)
+        line_h = font.size + 20
+        block_h = (len(lines) + (1 if big_number else 0)) * line_h
+        y = (THUMB_H - block_h) // 2
+        draw.rectangle([margin - 40, y, margin - 22, y + block_h - 20], fill=accent)
+        if big_number:
+            draw_text_with_shadow(draw, (margin, y), big_number, font, accent)
+            y += line_h
+        for line in lines:
+            draw_text_with_shadow(draw, (margin, y), line, font, COLOR_WHITE)
+            y += line_h
 
-    # Dibujar lineas de texto
-    for line in lines_before:
-        bbox = draw.textbbox((0, 0), line, font=font_main)
-        x = (THUMB_W - (bbox[2] - bbox[0])) // 2
-        draw_text_with_shadow(draw, (x, y), line, font_main, COLOR_WHITE)
-        y += line_h
+    elif layout == "box":
+        # Texto con contorno arriba; numero (o ultima palabra) en caja de color abajo
+        if not big_number and len(text_before.split()) > 1:
+            *rest, last = text_before.split()
+            text_before, big_number = " ".join(rest), last
+        font, lines = fit_font(text_before, font_path, THUMB_W - 2 * margin, THUMB_H * 0.5, draw)
+        y = margin
+        for line in lines:
+            draw_text_with_shadow(draw, (margin, y), line, font, COLOR_WHITE, stroke=True)
+            y += font.size + 20
+        if big_number:
+            box_font, _ = fit_font(big_number, font_path, THUMB_W - 2 * margin - 60, 200, draw, start=170)
+            bb = draw.textbbox((0, 0), big_number, font=box_font)
+            bw, bh = bb[2] - bb[0], bb[3] - bb[1]
+            bx, by = margin, THUMB_H - margin - bh - 50
+            draw.rectangle([bx, by, bx + bw + 60, by + bh + 50], fill=accent)
+            draw.text((bx + 30 - bb[0], by + 25 - bb[1]), big_number, font=box_font, fill=COLOR_BLACK)
 
-    if big_number:
-        bbox = draw.textbbox((0, 0), big_number, font=font_main)
-        x = (THUMB_W - (bbox[2] - bbox[0])) // 2
-        draw_text_with_shadow(draw, (x, y), big_number, font_main, COLOR_ORANGE)
+    else:  # bottom
+        # Texto abajo con contorno; la primera linea en color de acento
+        font, lines = fit_font(text_before, font_path, THUMB_W - 2 * margin, THUMB_H * 0.55, draw,
+                               extra_lines=1 if big_number else 0)
+        line_h = font.size + 20
+        all_lines = ([big_number] if big_number else []) + lines
+        y = THUMB_H - margin - len(all_lines) * line_h + 20
+        for n, line in enumerate(all_lines):
+            color = accent if n == 0 else COLOR_WHITE
+            draw_text_with_shadow(draw, (margin, y), line, font, color, stroke=True)
+            y += line_h
 
     # Guardar como PNG (texto perfecto, sin halo)
     final = bg.convert("RGB")
@@ -308,8 +407,15 @@ def main() -> None:
     print("\n2/4  Preparando fuente...")
     font_path = download_font_if_missing()
 
+    history = ch.load_history()
+    rng = random.Random(script_data.get("youtube_title", "") + TODAY)
+    random.seed(rng.random())
+    layout, color_name = pick_style(history, rng)
+    print(f"      estilo: layout={layout}, color={color_name}")
+
     print("\n3/4  Obteniendo frame en alta calidad...")
-    clip = pick_best_broll_clip(broll_manifest)
+    used_ids = set(ch.recent_values(history, "thumb_pexels_id")) | set(ch.recent_values(history, "broll_pexels_ids"))
+    clip = pick_best_broll_clip(broll_manifest, used_ids, rng)
     pexels_id = clip.get("pexels_id")
     local_clip = INPUT_DIR / clip["filename"]
     print(f"      clip: {local_clip.name} (pexels {pexels_id})")
@@ -319,11 +425,21 @@ def main() -> None:
     source_clip = hd_clip if hd_clip else local_clip
 
     frame_path = TEMP_DIR / "frame.png"
-    extract_frame(source_clip, frame_path, offset_sec=3.0)
+    max_offset = max(1.5, min(8.0, float(clip.get("duration_sec", 5)) - 1.0))
+    extract_frame(source_clip, frame_path, offset_sec=rng.uniform(1.0, max_offset))
 
     print("\n4/4  Componiendo thumbnail (PNG)...")
     output_path = OUTPUT_DIR / f"thumbnail_{TODAY}.png"
-    final_path = build_thumbnail(frame_path, thumbnail_text, font_path, output_path)
+    final_path = build_thumbnail(frame_path, thumbnail_text, font_path, output_path,
+                                 layout=layout, accent=ACCENT_COLORS[color_name])
+
+    (OUTPUT_DIR / f"thumbnail_meta_{TODAY}.json").write_text(json.dumps({
+        "thumbnail_text":  thumbnail_text,
+        "thumb_layout":    layout,
+        "thumb_color":     color_name,
+        "thumb_pexels_id": pexels_id,
+        "file":            final_path.name,
+    }, indent=2), encoding="utf-8")
 
     cleanup_temp()
 

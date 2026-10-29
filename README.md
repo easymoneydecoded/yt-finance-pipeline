@@ -1,5 +1,26 @@
 # Morning Pipeline — Etapa 1 del canal automatico
 
+## Memoria anti-repeticion (history/videos.json)
+
+El canal recuerda todo lo que ha publicado en `history/videos.json`
+(titulo, tema, entidades, texto y estilo de miniatura, clips de Pexels).
+GitHub Actions hace commit de este fichero tras cada subida, asi cada
+ejecucion sabe que NO repetir aunque arranque en una maquina limpia.
+
+- **Etapa 1** pasa el historial al modelo, pide 8 ideas y descarta las
+  que repiten titulo, tema o entidades (ej. Harvard + SpaceX) de los
+  ultimos 60 dias. Tambien descarta titulares ya usados.
+- **Etapa 2** escribe el guion SOBRE la idea elegida, con un estilo de
+  titulo rotativo, y regenera titulo/miniatura si se parecen a algo ya
+  publicado.
+- **Etapa 4** evita clips de Pexels usados en los ultimos 20 videos.
+- **Etapa 7** rota 4 layouts x 6 colores y no repite el combo reciente.
+- **Etapa 8** aborta si el video repite contenido y no sube dos videos
+  el mismo dia (re-ejecuciones del workflow).
+
+Para que un tema vuelva a estar permitido, borra su entrada del JSON.
+La logica de similitud esta en `content_history.py`.
+
 Genera cada manana 5 ideas de video en ingles ancladas en datos reales.
 
 ## Setup (15 minutos, una vez)

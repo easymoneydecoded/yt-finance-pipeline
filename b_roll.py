@@ -26,6 +26,8 @@ from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
+import content_history as ch
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -224,8 +226,8 @@ def fallback_keywords(script_data: dict, sections: list) -> list[list[str]]:
     }
     visual_tags = [t for t in tags if t.lower() not in abstract_terms and len(t) < 30]
 
-    # Mezcla aleatoria controlada (semilla fija para resultados estables)
-    rng = random.Random(42)
+    # Semilla distinta por video: con la fija (42) todos los fallbacks daban los mismos clips
+    rng = random.Random(script_data.get("youtube_title", "") + TODAY)
     pool = list(set(visual_tags + FINANCE_BROLL_POOL))
     rng.shuffle(pool)
 
@@ -295,7 +297,7 @@ def extract_keywords(script_data: dict) -> list[list[str]]:
 # ---------------------------------------------------------------------------
 # Pexels: busqueda y descarga
 # ---------------------------------------------------------------------------
-def search_pexels(query: str, per_page: int = 5) -> list[dict]:
+def search_pexels(query: str, per_page: int = 5, page: int = 1) -> list[dict]:
     if not PEXELS_API_KEY:
         raise RuntimeError("Falta PEXELS_API_KEY")
 
@@ -308,6 +310,7 @@ def search_pexels(query: str, per_page: int = 5) -> list[dict]:
                 params  = {
                     "query":       query,
                     "per_page":    per_page,
+                    "page":        page,
                     "orientation": "landscape",
                     "size":        "medium",
                 },
@@ -375,6 +378,9 @@ def main() -> None:
     print(f"\n3/4  Descargando clips de Pexels...")
     manifest_sections = []
     seen_video_ids = set()
+    # Clips usados en los ultimos videos: se evitan para que cada video se vea distinto
+    recently_used = set(ch.recent_values(ch.load_history(), "broll_pexels_ids"))
+    print(f"      evitando {len(recently_used)} clips usados en videos recientes")
     total_bytes = 0
     total_clips = 0
     total_failures = 0
@@ -389,10 +395,16 @@ def main() -> None:
 
         for kw in keywords:
             print(f"\n   sec {i:02d} '{kw}'")
-            videos = search_pexels(kw, per_page=CLIPS_PER_KEYWORD * 3)
+            # Pagina aleatoria: la pagina 1 de cada keyword da siempre los mismos clips
+            videos = search_pexels(kw, per_page=CLIPS_PER_KEYWORD * 4, page=random.randint(1, 3))
+            if not videos:
+                videos = search_pexels(kw, per_page=CLIPS_PER_KEYWORD * 4)
             if not videos:
                 print(f"     (sin resultados)")
                 continue
+            # Primero los clips nunca usados; los recientes solo como ultimo recurso
+            random.shuffle(videos)
+            videos.sort(key=lambda v: v.get("id") in recently_used)
 
             downloaded_for_kw = 0
             for video in videos:

@@ -1,0 +1,360 @@
+{
+  "updated": "2026-10-29T23:13:29+00:00",
+  "n_videos": 30,
+  "videos": [
+    {
+      "date": "2026-10-29",
+      "video_id": "8FpXcrpPo0w",
+      "url": "https://youtu.be/8FpXcrpPo0w",
+      "title": "The Hidden Wealth Trap Nobody Is Talking About",
+      "topic_key": "generic hidden wealth trap",
+      "entities": [],
+      "seed": true
+    },
+    {
+      "date": "2026-10-28",
+      "video_id": "6SyrlF0zCts",
+      "url": "https://youtu.be/6SyrlF0zCts",
+      "title": "Why Your Savings Account Is Actually Stealing From You",
+      "topic_key": "savings account loses to inflation",
+      "entities": [
+        "savings account"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-27",
+      "video_id": "R60Z2p7D2-E",
+      "url": "https://youtu.be/R60Z2p7D2-E",
+      "title": "Why Your Savings Account Is Actually Stealing From You",
+      "topic_key": "savings account loses to inflation",
+      "entities": [
+        "savings account"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-26",
+      "video_id": "VTUMl3Mw6AQ",
+      "url": "https://youtu.be/VTUMl3Mw6AQ",
+      "title": "The Hidden Tax Eating 90% of Your Paycheck",
+      "topic_key": "hidden taxes on paycheck",
+      "entities": [
+        "paycheck"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-25",
+      "video_id": "XDb9Vsywy_k",
+      "url": "https://youtu.be/XDb9Vsywy_k",
+      "title": "The Hidden Wealth Trap Nobody Is Talking About",
+      "topic_key": "generic hidden wealth trap",
+      "entities": [],
+      "seed": true
+    },
+    {
+      "date": "2026-10-24",
+      "video_id": "JAzI-RcFhlU",
+      "url": "https://youtu.be/JAzI-RcFhlU",
+      "title": "The Hidden Tax Eating 90% of Your Paycheck",
+      "topic_key": "hidden taxes on paycheck",
+      "entities": [
+        "paycheck"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-24",
+      "video_id": "7X326HQgT3A",
+      "url": "https://youtu.be/7X326HQgT3A",
+      "title": "Why Wall Street's $52B Loophole Just Broke Your Tech Stocks",
+      "topic_key": "wall street loophole hits tech stocks",
+      "entities": [
+        "Wall Street",
+        "tech stocks"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-23",
+      "video_id": "kluku5zQbzE",
+      "url": "https://youtu.be/kluku5zQbzE",
+      "title": "Why paying off your 2.75% mortgage costs you $42,000",
+      "topic_key": "paying off low rate mortgage early",
+      "entities": [
+        "mortgage"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-22",
+      "video_id": "_U3mYHJR-qE",
+      "url": "https://youtu.be/_U3mYHJR-qE",
+      "title": "Why Barclays Just Fired 5,000 People",
+      "topic_key": "barclays layoffs",
+      "entities": [
+        "Barclays",
+        "layoffs"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-21",
+      "video_id": "avtBFY8ByfE",
+      "url": "https://youtu.be/avtBFY8ByfE",
+      "title": "Why Ken Griffin Just Bought This $4B AI Bet",
+      "topic_key": "ken griffin citadel ai bet",
+      "entities": [
+        "Ken Griffin",
+        "Citadel",
+        "AI"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-20",
+      "video_id": "x6OmdDksc28",
+      "url": "https://youtu.be/x6OmdDksc28",
+      "title": "Why Goldman Says Your House Is About To Lose Value",
+      "topic_key": "goldman housing price forecast",
+      "entities": [
+        "Goldman Sachs",
+        "housing"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-19",
+      "video_id": "qSE_PNZ8PuM",
+      "url": "https://youtu.be/qSE_PNZ8PuM",
+      "title": "Why Harvard Just Dumped Safe Bonds",
+      "topic_key": "harvard endowment sells bonds",
+      "entities": [
+        "Harvard",
+        "endowment",
+        "bonds"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-18",
+      "video_id": "UJfigBgQoCA",
+      "url": "https://youtu.be/UJfigBgQoCA",
+      "title": "Why Harvard Just Made $12B On SpaceX",
+      "topic_key": "harvard endowment spacex stake",
+      "entities": [
+        "Harvard",
+        "SpaceX",
+        "endowment"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-17",
+      "video_id": "R7S1P_oC4sk",
+      "url": "https://youtu.be/R7S1P_oC4sk",
+      "title": "Why Harvard Just Bet Everything On SpaceX",
+      "topic_key": "harvard endowment spacex stake",
+      "entities": [
+        "Harvard",
+        "SpaceX",
+        "endowment"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-16",
+      "video_id": "MhVM4XbY5DA",
+      "url": "https://youtu.be/MhVM4XbY5DA",
+      "title": "Why Harvard Just Made $4.2B On SpaceX",
+      "topic_key": "harvard endowment spacex stake",
+      "entities": [
+        "Harvard",
+        "SpaceX",
+        "endowment"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-15",
+      "video_id": "bxl7NwWF7vk",
+      "url": "https://youtu.be/bxl7NwWF7vk",
+      "title": "Why the AI trade just cost you $14,000",
+      "topic_key": "ai trade losses for retail investors",
+      "entities": [
+        "AI",
+        "tech stocks"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-14",
+      "video_id": "YHVt_xNNxjo",
+      "url": "https://youtu.be/YHVt_xNNxjo",
+      "title": "Why JPMorgan Just Bet Billions on Bonds",
+      "topic_key": "jpmorgan bond bet",
+      "entities": [
+        "JPMorgan",
+        "bonds"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-13",
+      "video_id": "qOnsYRrs0Cc",
+      "url": "https://youtu.be/qOnsYRrs0Cc",
+      "title": "That $50K Family Gift Is Stealing Your House",
+      "topic_key": "family gift down payment housing",
+      "entities": [
+        "family gift",
+        "housing"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-12",
+      "video_id": "81FfHbKGU54",
+      "url": "https://youtu.be/81FfHbKGU54",
+      "title": "Why This 4-Year Bull Market Will Shock You",
+      "topic_key": "bull market age and history",
+      "entities": [
+        "bull market",
+        "S&P 500"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-08",
+      "video_id": "Kr1-ZolLmxk",
+      "url": "https://youtu.be/Kr1-ZolLmxk",
+      "title": "Why Rising Yields Are Crashing Your 401k",
+      "topic_key": "treasury yields rising hurt 401k",
+      "entities": [
+        "Treasury yields",
+        "401k"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-07",
+      "video_id": "4vgf9wtQkSQ",
+      "url": "https://youtu.be/4vgf9wtQkSQ",
+      "title": "Why AI Just Broke Inflation (And Your Rates Stay High)",
+      "topic_key": "ai spending keeps inflation and rates high",
+      "entities": [
+        "AI",
+        "inflation",
+        "Federal Reserve"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-06",
+      "video_id": "5fMPCoKFLCQ",
+      "url": "https://youtu.be/5fMPCoKFLCQ",
+      "title": "Michael Burry Just Dumped $140M At An 8.5-Year Low",
+      "topic_key": "michael burry sells position",
+      "entities": [
+        "Michael Burry",
+        "Scion"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-05",
+      "video_id": "AIpsGI0jEmM",
+      "url": "https://youtu.be/AIpsGI0jEmM",
+      "title": "Why 1970s Inflation Is Costing You $5,400",
+      "topic_key": "1970s inflation parallel",
+      "entities": [
+        "inflation",
+        "1970s"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-04",
+      "video_id": "HdKNGveYJKo",
+      "url": "https://youtu.be/HdKNGveYJKo",
+      "title": "Can Your $214K 401k Really Retire You Now?",
+      "topic_key": "average 401k balance retirement readiness",
+      "entities": [
+        "401k",
+        "retirement"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-03",
+      "video_id": "ePbL3ePWjJY",
+      "url": "https://youtu.be/ePbL3ePWjJY",
+      "title": "Why Big Tech Just Dumped $40B In Nvidia Chips",
+      "topic_key": "big tech nvidia chip spending",
+      "entities": [
+        "Nvidia",
+        "Big Tech"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-10-01",
+      "video_id": "TihoSwQt8gc",
+      "url": "https://youtu.be/TihoSwQt8gc",
+      "title": "Why $8M Couples Are Fighting Over Retirement",
+      "topic_key": "wealthy couples retirement disagreements",
+      "entities": [
+        "retirement",
+        "couples"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-09-30",
+      "video_id": "82eso8WOIbI",
+      "url": "https://youtu.be/82eso8WOIbI",
+      "title": "Why Goldman Sachs Warns This Market Is Rigged",
+      "topic_key": "goldman market concentration warning",
+      "entities": [
+        "Goldman Sachs",
+        "stock market"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-09-28",
+      "video_id": "7AR-4kKR_Fs",
+      "url": "https://youtu.be/7AR-4kKR_Fs",
+      "title": "Why Your Tech Stocks Are Hiding A $4.2T Hole",
+      "topic_key": "tech stocks valuation hole",
+      "entities": [
+        "tech stocks"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-09-27",
+      "video_id": "rH-oNMiCXuE",
+      "url": "https://youtu.be/rH-oNMiCXuE",
+      "title": "Why This 2000 Crash Warning Is Back In Your 401k",
+      "topic_key": "dotcom 2000 crash parallel",
+      "entities": [
+        "dotcom bubble",
+        "401k"
+      ],
+      "seed": true
+    },
+    {
+      "date": "2026-09-26",
+      "video_id": "GtCo9JqVbr8",
+      "url": "https://youtu.be/GtCo9JqVbr8",
+      "title": "Why Your Friend Only Pays Herself $50K",
+      "topic_key": "business owner salary vs dividends",
+      "entities": [
+        "salary",
+        "small business"
+      ],
+      "seed": true
+    }
+  ]
+}
