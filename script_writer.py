@@ -1,50 +1,46 @@
 """
 ================================================================================
- script_writer.py - Etapa 2 del canal de YouTube automatico (v3)
+ script_writer.py - Etapa 2 del canal de YouTube automatico (v4)
 ================================================================================
 
  Que hace:
-   1. Lee el JSON de ideas generadas por la etapa 1 (morning_pipeline.py)
-   2. Coge la primera idea que NO repita nada del historial del canal
-   3. Llama a Gemini para escribir el guion SOBRE ESA IDEA (titulo, angulo,
-      senales) con un estilo de titulo rotativo
-   4. VERIFICA palabras por seccion contra rangos minimos (todas las secciones)
-   5. Si alguna seccion esta corta de verdad, REINTENTA con expansion quirurgica
-   6. Tolera margenes razonables para no quemar tokens en perfeccionismo
-   7. Comprueba que titulo y texto de miniatura no repiten videos anteriores;
-      si repiten, regenera solo la metadata
-   8. Guarda el guion en JSON (consumible por etapa 3) y en MD (legible)
+   1. Lee las ideas del dia y descarta las que repiten el historial del canal
+   2. Construye una FICHA DE DATOS reales para la idea: senales del dia,
+      mercado, FRED, texto de los articulos fuente y busqueda en Google
+   3. Escribe el guion largo + 3 Shorts independientes con un GUION VISUAL:
+      cada seccion dice que grafico / cifra / comparativa / titular se ve y
+      en que frase exacta aparece
+   4. JUEZ DE CALIDAD: puntua hook, especificidad, retencion, titulo,
+      miniatura y Shorts. Si no llega al minimo, reescribe con las
+      correcciones; si sigue sin llegar, prueba la siguiente idea. Si
+      ninguna vale, NO se publica nada ese dia.
+   5. FACT-CHECK: corrige frases con cifras que no estan en la ficha y
+      elimina visuales con numeros no verificables
+   6. Titulo y miniatura no pueden repetir videos anteriores
+   7. Guarda script_YYYY-MM-DD.json (etapas siguientes) y .md (legible)
 
- Coste: 0 EUR (Groq free tier)
-
+ Coste: 0 EUR (Gemini free tier)
 ================================================================================
 """
 
-import os
 import json
-import time
-import re
 import random
+import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
-from dataclasses import dataclass, asdict, field
-from typing import Optional
 
 import requests
 from dotenv import load_dotenv
 
 import content_history as ch
+import llm
+
+load_dotenv()
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-load_dotenv()
-
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
-GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL    = "gemini-3.5-flash-lite"
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
-
 WEB_BACKLINK    = "https://carterapasiva.com"
 
 INPUT_DIR       = Path("data")
@@ -55,20 +51,43 @@ TODAY           = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 # Rangos esperados por tipo de seccion (min, max ideal)
 SECTION_TARGETS = {
-    "hook":      (12,  20),
-    "intro":     (50,  70),
-    "body":      (220, 280),
-    "retention": (35,  50),
-    "outro":     (80,  120),
+    "hook":  (15,  35),
+    "intro": (45,  80),
+    "body":  (200, 280),
+    "outro": (60,  110),
 }
+SHORT_WORDS = (95, 150)
 
-# Tolerancia: si la seccion esta al X% del minimo o mas, no reintentamos.
-# Solo reintentamos si la seccion esta MUY por debajo (<60% del minimo).
-TOLERANCE_RATIO     = 0.60
+# Tolerancia: solo reintentamos si una seccion esta MUY por debajo (<60% del minimo)
+TOLERANCE_RATIO      = 0.60
+MIN_TOTAL_WORDS      = 1100
 MAX_RETRY_GENERATION = 2
 MAX_METADATA_RETRIES = 3
 
-# Estilos de titulo que rotan para que el canal no suene siempre igual
+# Juez de calidad
+QUALITY_THRESHOLD    = 7.5   # nota para aceptar a la primera
+MIN_PUBLISH_SCORE    = 6.5   # por debajo de esto, no se publica nada
+MAX_IDEAS_TO_TRY     = 3
+
+VISUAL_TYPES = {"chart", "fred", "stat", "compare", "headline"}
+
+# Series de FRED que el motor visual sabe pintar (id -> (etiqueta, unidades FRED))
+FRED_CHARTS = {
+    "MORTGAGE30US": ("30-year mortgage rate (%)", "lin"),
+    "DGS10":        ("10-year Treasury yield (%)", "lin"),
+    "DFF":          ("Fed funds rate (%)", "lin"),
+    "CPIAUCSL":     ("Inflation, CPI year-over-year (%)", "pc1"),
+    "UNRATE":       ("US unemployment rate (%)", "lin"),
+    "UMCSENT":      ("Consumer sentiment index", "lin"),
+    "PSAVERT":      ("Personal saving rate (%)", "lin"),
+    "CSUSHPINSA":   ("US home prices, YoY change (%)", "pc1"),
+    "GASREGW":      ("US regular gas price ($/gal)", "lin"),
+    "T10Y2Y":       ("10Y minus 2Y Treasury spread (%)", "lin"),
+    "REVOLSL":      ("US credit card debt ($ billions)", "lin"),
+    "MSPUS":        ("Median US home sale price ($)", "lin"),
+}
+
+# Estilos de titulo que rotan (el aprendizaje favorece los que mejor rinden)
 TITLE_STYLES = [
     "NAME-FIRST: open with the specific company/person/institution/asset name, then the stake (e.g. 'Barclays Cut 5,000 Jobs. Your Bank Is Next')",
     "NUMBER-FIRST: open with a specific number or dollar figure from the story (e.g. '$42,000: The Real Cost of Paying Off a 2.75% Mortgage')",
@@ -82,34 +101,9 @@ TITLE_STYLES = [
 
 
 # ---------------------------------------------------------------------------
-# Dataclasses
+# Ideas
 # ---------------------------------------------------------------------------
-@dataclass
-class ScriptSection:
-    type:             str
-    text:             str
-    title:            str = ""
-    estimated_sec:    int = 0
-    shorts_candidate: bool = False
-    shorts_alt_hook:  str = ""
-
-@dataclass
-class VideoScript:
-    date:                  str
-    source_idea_title:     str
-    youtube_title:         str
-    thumbnail_text:        str
-    description:           str
-    tags:                  list[str]
-    estimated_duration_min: int
-    word_count:            int
-    sections:              list[ScriptSection] = field(default_factory=list)
-
-
-# ---------------------------------------------------------------------------
-# Carga de la idea del dia
-# ---------------------------------------------------------------------------
-def load_todays_idea(history: list[dict]) -> dict:
+def load_ideas_payload() -> dict:
     path = INPUT_DIR / f"ideas_{TODAY}.json"
     if not path.exists():
         candidates = sorted(INPUT_DIR.glob("ideas_*.json"), reverse=True)
@@ -117,26 +111,74 @@ def load_todays_idea(history: list[dict]) -> dict:
             raise FileNotFoundError("No hay ideas_*.json. Ejecuta morning_pipeline.py.")
         path = candidates[0]
         print(f"   . Usando JSON mas reciente: {path.name}")
-
     payload = json.loads(path.read_text(encoding="utf-8"))
-    ideas = payload.get("ideas", [])
-    if not ideas:
+    if not payload.get("ideas"):
         raise ValueError(f"El archivo {path.name} no contiene ideas.")
-    print(f"   . Cargadas {len(ideas)} ideas.")
+    return payload
+
+
+def fresh_ideas(ideas: list[dict], history: list[dict]) -> list[dict]:
+    out = []
     for n, idea in enumerate(ideas, 1):
         dup = ch.find_duplicate(idea, history, TODAY)
         if dup:
             print(f"   x idea #{n} '{idea.get('title')}' repetida: {dup[1]}")
-            continue
-        print(f"   . Eligiendo la #{n} (no repite nada del historial).")
-        return idea
-    raise RuntimeError("Todas las ideas del dia repiten videos ya publicados.")
+        else:
+            out.append(idea)
+    if not out:
+        raise RuntimeError("Todas las ideas del dia repiten videos ya publicados.")
+    return out
 
 
 def pick_title_style(history: list[dict]) -> str:
-    recent = set(ch.recent_values(history, "title_style", last_n=3))
-    options = [t for t in TITLE_STYLES if t.split(":")[0] not in recent] or TITLE_STYLES
-    return random.choice(options)
+    recent = {s for s in ch.recent_values(history, "title_style", last_n=3)}
+    return ch.weighted_choice(TITLE_STYLES, history, "title_style",
+                              exclude={t for t in TITLE_STYLES if t.split(":")[0] in recent})
+
+
+# ---------------------------------------------------------------------------
+# Ficha de datos (lo unico de donde pueden salir cifras)
+# ---------------------------------------------------------------------------
+def fetch_article_text(url: str, max_chars: int = 3500) -> str:
+    try:
+        r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130"})
+        if r.status_code != 200 or "html" not in r.headers.get("content-type", ""):
+            return ""
+    except requests.RequestException:
+        return ""
+    paragraphs = re.findall(r"<p[^>]*>(.*?)</p>", r.text, re.S | re.I)
+    text = " ".join(re.sub(r"<[^>]+>", "", p) for p in paragraphs)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[:max_chars]
+
+
+def build_fact_sheet(idea: dict, payload: dict) -> str:
+    signals = payload.get("signals", [])
+    used = {ch.normalize(h) for h in idea.get("source_signals", [])}
+
+    lines = [f"TODAY: {TODAY}", "", "SOURCE HEADLINES FOR THIS STORY:"]
+    for s in signals:
+        if ch.normalize(s.get("headline", "")) in used:
+            lines.append(f"- [{s.get('source')}] {s.get('headline')} — {s.get('detail', '')}")
+
+    lines += ["", "LIVE MARKET + MACRO DATA (real, today):"]
+    for s in signals:
+        if s.get("source", "").startswith(("Mercado", "Macro")):
+            lines.append(f"- {s.get('headline')}")
+
+    for url in idea.get("source_urls", [])[:3]:
+        text = fetch_article_text(url)
+        if text:
+            lines += ["", f"ARTICLE TEXT ({url}):", text]
+
+    print("   . buscando datos verificados con Google Search...")
+    research = llm.research(
+        topic=f"{idea.get('title')} — {idea.get('topic_key', '')}",
+        context=idea.get("angle", "") + " Sources: " + "; ".join(idea.get("source_signals", [])),
+    )
+    if research:
+        lines += ["", "WEB RESEARCH (Google Search, with sources):", research]
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -147,58 +189,50 @@ def count_words(text: str) -> int:
 
 
 def check_section(section_type: str, word_count: int) -> tuple[bool, int, int]:
-    """
-    Devuelve (is_too_short, min_target, max_target).
-    'too_short' significa "tan corto que merece reintento" (<60% del minimo).
-    """
+    """(is_too_short, min_target, max_target); 'too_short' = <60% del minimo."""
     if section_type not in SECTION_TARGETS:
         return (False, 0, 0)
     min_w, max_w = SECTION_TARGETS[section_type]
-    threshold = int(min_w * TOLERANCE_RATIO)
-    return (word_count < threshold, min_w, max_w)
+    return (word_count < int(min_w * TOLERANCE_RATIO), min_w, max_w)
 
 
 def measure_script(raw: dict) -> dict:
-    """
-    Evalua cada seccion. Marca como 'short' solo las que estan MUY por debajo
-    del minimo (para no quemar tokens en perfeccionismo).
-    """
-    sections = raw.get("sections", [])
-    per_section = []
-    total = 0
-    short_sections = []
-
-    for i, s in enumerate(sections):
+    per_section, short_sections, total = [], [], 0
+    for i, s in enumerate(raw.get("sections", [])):
         stype = s.get("type", "body")
         w = count_words(s.get("text", ""))
         too_short, min_w, max_w = check_section(stype, w)
-        per_section.append({
-            "i":         i,
-            "type":      stype,
-            "words":     w,
-            "min":       min_w,
-            "max":       max_w,
-            "too_short": too_short,
-        })
+        per_section.append({"i": i, "type": stype, "words": w, "min": min_w,
+                            "max": max_w, "too_short": too_short})
         total += w
         if too_short:
             short_sections.append((i, stype, w, min_w))
-
     return {
         "total_words":    total,
         "per_section":    per_section,
         "short_sections": short_sections,
-        "is_too_short":   len(short_sections) > 0 or total < 1400,
+        "is_too_short":   bool(short_sections) or total < MIN_TOTAL_WORDS,
     }
+
+
+def format_breakdown(stats: dict) -> str:
+    lines = []
+    for ps in stats["per_section"]:
+        if ps["min"] == 0:
+            continue
+        mark = f"  <-- SHORT, expand to {ps['min']}-{ps['max']}" if ps["too_short"] else ""
+        lines.append(f"  Section {ps['i']+1} ({ps['type']}): {ps['words']} words (target {ps['min']}-{ps['max']}){mark}")
+    lines.append(f"  TOTAL: {stats['total_words']} words (minimum {MIN_TOTAL_WORDS})")
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
 # Prompts
 # ---------------------------------------------------------------------------
-SCRIPT_WRITER_PROMPT = """You are a world-class YouTube storytelling strategist and financial analyst. Your goal is NOT to report news; your goal is to make the viewer feel like they just unlocked a secret financial superpower. You compete with top-tier creators who master curiosity, urgency, and retention-based editing.
-
-=== YOUR MISSION ===
-Write a script that causes viewers to binge-watch and share. Every single sentence must serve one purpose: to keep the viewer from clicking away.
+SCRIPT_WRITER_PROMPT = """You are the head writer of a fast-growing faceless finance YouTube channel. You write like the best
+explainer creators: concrete, punchy, every sentence earns the next. The video is built from REAL DATA
+VISUALS (charts, big numbers, comparisons, headline cards) synced to your narration, so you also direct
+what appears on screen.
 
 === TODAY'S TOPIC (THE WHOLE VIDEO MUST BE ABOUT THIS) ===
 Title idea: {idea_title}
@@ -206,85 +240,175 @@ Hook idea:  {idea_hook}
 Angle:      {idea_angle}
 Format:     {idea_format}
 Keywords:   {idea_keywords}
-Anchored on these real signals from today:
-{idea_signals}
+Suggested tickers to chart: {idea_tickers}
 
-Stay specific to THIS story: name the companies, people, numbers and dates from
-the signals. A generic "hidden trap / your savings are stealing from you" video
-that could have been written any other day is a FAILURE.
+=== FACT SHEET (the ONLY allowed source of numbers, dates and names) ===
+{fact_sheet}
+=== END FACT SHEET ===
 
-=== ALREADY PUBLISHED - DO NOT REUSE THESE TITLES OR THUMBNAIL TEXTS ===
+FACT RULES (critical - this is a finance channel, credibility is everything):
+- Every number, percentage, date and dollar figure you write MUST appear in the fact sheet above.
+- If you need a number that is not in the fact sheet, describe it qualitatively instead. Never invent.
+- Attribute claims ("according to CNBC...", "Fed data shows...").
+
+=== WHAT THIS AUDIENCE RESPONDS TO (real channel analytics) ===
+{performance_block}
+
+=== ALREADY PUBLISHED - DO NOT REUSE THESE TITLES, THUMBNAILS OR ANGLES ===
 {history_block}
 
-=== TONE RULES (CRITICAL) ===
-1.  NO "News Anchor" talk. No "In this video we explore..." / "Let's dive in..." / "It's pretty straightforward..."
-2.  Be raw, conversational, and opinionated. Use the tone of a high-stakes conversation over a coffee with an expert.
-3.  Speed is life. Every paragraph must have a punchy opening.
-4.  If a fact isn't shocking, money-related, or directly affecting the viewer's wallet, CUT IT.
+=== TONE ===
+- Talk to ONE viewer ("you"), like a sharp friend who works on Wall Street explaining it over coffee.
+- No "In this video", "Let's dive in", "buckle up", "game-changer", "here's the thing", "let that sink in".
+- Short sentences. Vary rhythm. Concrete over abstract. Always connect to the viewer's wallet.
+- Educational, not financial advice. Never say "buy" or "sell" this.
+- Write for the ear (TTS will read it): spell things the way they are said, no bullet points, no emojis,
+  no parentheses, no abbreviations a voice would stumble on.
 
-=== STRUCTURE - THE "RETENTION ENGINE" (NON-NEGOTIABLE) ===
-Do NOT follow a "news report" structure. Follow this "Binge-Watch" structure:
+=== STRUCTURE (retention engine) ===
+1. HOOK (15-35 words): the most surprising TRUE fact of the story + why the viewer's money is involved.
+   The first sentence must work with the sound off as on-screen text. No greeting, no channel name.
+2. INTRO (45-80 words): stakes for the viewer + an open loop ("by the end you'll know ...") that is only
+   paid off in the last body section.
+3. BODY (4 sections, 200-280 words each, each with a short punchy "title"): each one escalates.
+   Use pattern interrupts every ~40 seconds (a counter-intuitive fact, a mini-story with a real name,
+   a "but here's what nobody priced in"). End each body section with a tease of the next one.
+4. OUTRO (60-110 words): pay off the open loop, ONE concrete thing the viewer can check or do today,
+   a one-line disclaimer ("this is education, not financial advice"), then a CTA that gives a reason
+   to subscribe tied to the topic (not "like and subscribe").
 
-1.  **THE JOLT (Hook - 15-25 words)**: Start with a concrete, shocking paradox or a high-stakes outcome directly related to the viewer's money. DO NOT summarize. Make them feel losing money or missing an opportunity *right now*.
-2.  **THE PROMISE (Intro - 30-50 words)**: Connect the Jolt to their specific situation. Explain the "why it matters" immediately. End with a curiosity gap that can only be answered by staying until the end.
-3.  **THE STORY (Body - 3-4 sections of 200-250 words each)**:
-    - Each body MUST build on the previous one.
-    - Use concrete examples: names, actual dollars, dates.
-    - Use "Pattern Interrupts": Every 45 seconds, introduce a new angle, a counter-intuitive fact, or a sharp realization.
-    - NEVER end a body section with a conclusion. End it with a tease of a bigger problem/solution in the next section.
-4.  **THE REVEAL (Outro - 50-80 words)**: Summarize the actionable realization. No boring recaps. Give them ONE concrete step to take. Add the disclaimer briefly. Finish with a sharp CTA.
+=== ON-SCREEN VISUALS (each section gets a "visuals" list) ===
+Visual types (use ONLY these):
+  {{"type": "chart", "anchor": "...", "ticker": "COST", "period": "1y", "label": "Costco stock, last 12 months"}}
+      period one of: 5d, 1mo, 6mo, 1y, 5y. Ticker = Yahoo Finance symbol (stocks, ETFs, ^GSPC, ^IXIC, BTC-USD, GC=F, CL=F, EURUSD=X).
+  {{"type": "fred", "anchor": "...", "series": "MORTGAGE30US", "period": "5y"}}
+      series one of: {fred_list}
+  {{"type": "stat", "anchor": "...", "value": "$65", "label": "New Costco membership fee", "direction": "up"}}
+      direction: up | down | neutral. value MUST be copied from the fact sheet.
+  {{"type": "compare", "anchor": "...", "title": "What $10,000 earns in a year", "items": [{{"label": "Big bank savings", "value": 0.4, "display": "$40"}}, {{"label": "High-yield savings", "value": 4.3, "display": "$430"}}]}}
+      2-4 items; every display value MUST come from the fact sheet.
+  {{"type": "headline", "anchor": "...", "source": "CNBC", "text": "Costco raises membership fee for first time since 2017"}}
+      text = a real headline from the fact sheet.
+"anchor" = 3-6 words copied EXACTLY from that section's text: the visual appears when the voice says them.
+Per section: hook 1 (a stat or headline - the very first seconds must show something concrete),
+intro 1, each body 2-3, outro 0-1. Use at least 2 chart/fred visuals in the whole video.
 
-=== YOUTUBE METADATA (HIGH-CTR) ===
-- `youtube_title`: 40-60 chars, about TODAY'S TOPIC, naming its specific subject. MUST use: Curiosity, Contradiction, or Personal Stake.
+=== 3 STANDALONE SHORTS ("shorts" list) ===
+Each Short is a separate 40-55 second vertical video (95-150 words) about ONE striking fact from this story:
+- First sentence <= 12 words, a pattern-breaking claim. No intro, no "did you know".
+- One idea, one payoff. Last sentence loops back into the first so it rewatches naturally.
+- Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" (same types/rules).
+
+=== YOUTUBE METADATA ===
+- youtube_title: 40-60 chars about TODAY'S TOPIC, naming its specific subject.
   Title style for today: {title_style}
   Do NOT start the title with: {overused_openers}
-- `thumbnail_text`: 2-4 punchy words specific to today's topic (a name, number or claim from THIS story). Must not match any thumbnail listed above.
-- `description`: 150-250 words. Hook, value prop, call to action, a one-line "educational, not financial advice" disclaimer. End with: "Read the Spanish-language deep dive at {web_backlink}"
+- thumbnail_text: 2-4 punchy words specific to this story (a name, number or claim). Must not match any
+  thumbnail listed above. It complements the title, it does not repeat it.
+- description: 150-250 words. First 2 lines hook the reader (they show in search). Then what they'll learn,
+  the sources used, a one-line "educational, not financial advice" disclaimer, and end with:
+  "Read the Spanish-language deep dive at {web_backlink}"
+- tags: 10-15 specific search phrases people actually type.
 
 === OUTPUT ===
-Return ONLY JSON. Do not add any text before or after the JSON.
+Return ONLY this JSON:
 {{
   "youtube_title": "...",
   "thumbnail_text": "...",
   "description": "...",
   "tags": ["..."],
-  "estimated_duration_min": 10,
-  "word_count": <REAL count>,
   "sections": [
-    {{ "type": "hook",      "text": "..." }},
-    {{ "type": "intro",     "text": "..." }},
-    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "body",      "title": "...", "text": "...", "shorts_candidate": true, "shorts_alt_hook": "..." }},
-    {{ "type": "body",      "title": "...", "text": "..." }},
-    {{ "type": "outro",     "text": "..." }}
+    {{"type": "hook",  "text": "...", "visuals": [...]}},
+    {{"type": "intro", "text": "...", "visuals": [...]}},
+    {{"type": "body",  "title": "...", "text": "...", "visuals": [...]}},
+    {{"type": "body",  "title": "...", "text": "...", "visuals": [...]}},
+    {{"type": "body",  "title": "...", "text": "...", "visuals": [...]}},
+    {{"type": "body",  "title": "...", "text": "...", "visuals": [...]}},
+    {{"type": "outro", "text": "...", "visuals": [...]}}
+  ],
+  "shorts": [
+    {{"title": "...", "text": "...", "visuals": [...]}},
+    {{"title": "...", "text": "...", "visuals": [...]}},
+    {{"title": "...", "text": "...", "visuals": [...]}}
   ]
 }}
 """
 
-
-EXPANSION_PROMPT = """Your previous draft was REJECTED because some sections were too short. Here is your previous draft:
+EXPANSION_PROMPT = """Your previous draft was REJECTED because some sections were too short.
 
 {previous_draft}
 
 Word counts vs targets:
 {word_breakdown}
 
-You MUST rewrite ONLY the sections marked SHORT to hit their target word range. Keep ALL OTHER sections (including hook, intro, retention, outro) EXACTLY as they were unless they are also flagged. Do not rewrite what is already fine.
+Rewrite ONLY the sections marked SHORT to hit their target range (keep everything else identical,
+including visuals and shorts). Add substance, not filler: another concrete example from the fact sheet,
+a historical comparison, a second-order effect most people miss, or a misconception to correct.
+Numbers must still come from this fact sheet:
+{fact_sheet}
 
-For SHORT body sections, ADD (do not pad with filler):
-  - Another specific example with names and dollar figures
-  - A historical comparison (e.g. "Back in 2008...")
-  - A second-order effect most people miss
-  - A common misconception you can correct
-
-For SHORT retention sections, ADD a specific tease of the next section's payoff.
-
-For SHORT outro, ADD a stronger recap or a sharper actionable step.
-
-Return the FULL JSON in the same shape, with corrections applied. Output ONLY the JSON.
+Return the FULL JSON in the same shape. Output ONLY the JSON.
 """
 
+JUDGE_PROMPT = """You are a ruthless YouTube strategist who has grown finance channels to 1M subscribers.
+Score this script package for a faceless finance channel. Be harsh: 7 means "good enough to compete",
+9+ is rare. A generic script that could have been written any day scores <= 5.
+
+Channel analytics (what this audience responds to):
+{performance_block}
+
+Recently published (originality reference):
+{history_block}
+
+SCRIPT PACKAGE:
+{script}
+
+Score 1-10 each:
+- hook: would 70%+ of viewers still be watching after 30 seconds?
+- specificity: real names, numbers, dates from a fresh story (not generic advice)?
+- retention: escalation, open loops, pattern interrupts, teases between sections?
+- title_ctr: would a US viewer browsing YouTube click this title?
+- thumbnail: is thumbnail_text 2-4 words, punchy, and complementary to the title?
+- originality: clearly different from the recently published list?
+- shorts: do the 3 Shorts hook in the first sentence and loop?
+
+Return ONLY JSON:
+{{"scores": {{"hook": 0, "specificity": 0, "retention": 0, "title_ctr": 0, "thumbnail": 0, "originality": 0, "shorts": 0}},
+  "overall": 0.0,
+  "fixes": ["concrete, actionable fix 1", "fix 2", "..."]}}
+"""
+
+REWRITE_PROMPT = """A senior strategist reviewed your script package and scored it {overall}/10. Required fixes:
+{fixes}
+
+Previous package:
+{previous_draft}
+
+Rewrite the package applying EVERY fix. Keep the same JSON shape (sections with visuals, 3 shorts,
+metadata) and the same length targets. Every number must still come from this fact sheet:
+{fact_sheet}
+
+Title style: {title_style}. Do NOT start the title with: {overused_openers}.
+Return ONLY the JSON.
+"""
+
+FACT_CHECK_PROMPT = """You are a meticulous financial fact-checker. Compare every factual claim in the SCRIPT
+against the FACT SHEET. A claim is UNSUPPORTED if it states a number, percentage, date, dollar amount,
+or specific event that does not appear in (or directly follow from) the fact sheet.
+
+FACT SHEET:
+{fact_sheet}
+
+SCRIPT (numbered texts):
+{texts}
+
+For each unsupported claim, give the exact original sentence and a corrected sentence that either uses
+the right figure from the fact sheet or removes the specific number (keep the same meaning and tone,
+written for voice-over). Do not touch supported sentences.
+
+Return ONLY JSON: {{"issues": [{{"id": "S3", "original": "...", "fixed": "...", "reason": "..."}}]}}
+Return {{"issues": []}} if everything is supported.
+"""
 
 METADATA_RETRY_PROMPT = """The YouTube title and/or thumbnail text below are too similar to videos this channel already published.
 
@@ -304,116 +428,31 @@ Return ONLY JSON: {{"youtube_title": "...", "thumbnail_text": "..."}}
 
 
 # ---------------------------------------------------------------------------
-# Llamada a Groq con retry para 429/5xx
+# Llamadas al modelo
 # ---------------------------------------------------------------------------
-def call_groq(prompt: str, max_tokens: int = 16000) -> dict:
-    """
-    Llama a Gemini (nombre por compat con el resto del pipeline).
-    Devuelve dict con el JSON parseado. Lanza RuntimeError si falla del todo.
-    """
-    if not GEMINI_API_KEY:
-        raise RuntimeError("Falta GEMINI_API_KEY")
-
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }],
-        "generationConfig": {
-            "temperature":      0.75,
-            "maxOutputTokens":  max_tokens,
-            "responseMimeType": "application/json",
-        },
-    }
-
-    content = _call_gemini_with_retries(payload)
+def call_model(prompt: str, max_tokens: int = 16000, temperature: float = 0.75) -> dict:
+    """Modelo SMART (cae a FAST si no hay cuota). Devuelve el JSON parseado."""
+    content = llm.generate(prompt, smart=True, temperature=temperature, max_tokens=max_tokens)
     return _parse_gemini_response(content)
-
-
-def _call_gemini_with_retries(payload: dict, max_attempts: int = 7) -> str:
-    """Llama a Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
-    last_err = None
-    for attempt in range(1, max_attempts + 1):
-        try:
-            r = requests.post(
-                GEMINI_ENDPOINT,
-                headers = {
-                    "x-goog-api-key": GEMINI_API_KEY,
-                    "Content-Type":   "application/json",
-                },
-                json    = payload,
-                timeout = 180,
-            )
-            if r.status_code == 200:
-                data = r.json()
-                try:
-                    return data["candidates"][0]["content"]["parts"][0]["text"]
-                except (KeyError, IndexError) as e:
-                    last_err = f"Respuesta Gemini sin texto: {e} / {str(data)[:300]}"
-                    print(f"   ! {last_err}")
-                    if attempt < max_attempts:
-                        wait = 30 * attempt
-                        print(f"     reintento en {wait}s...")
-                        time.sleep(wait)
-                        continue
-            elif r.status_code in (429, 500, 502, 503, 504):
-                wait = 30 * attempt
-                snippet = r.text[:250].replace("\n", " ")
-                print(f"   . Gemini devolvio {r.status_code}: {snippet}")
-                print(f"     reintento en {wait}s (intento {attempt}/{max_attempts})...")
-                time.sleep(wait)
-                continue
-            else:
-                # Otros errores: mostrar body para debug y raise
-                print(f"   ! Gemini error {r.status_code}: {r.text[:400]}")
-                r.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            last_err = str(e)
-            wait = 30 * attempt
-            print(f"   . Gemini error de red: {e}. Reintento en {wait}s...")
-            time.sleep(wait)
-    raise RuntimeError(f"Gemini fallo tras {max_attempts} intentos: {last_err}")
 
 
 def _parse_gemini_response(content: str) -> dict:
     """Parsea la respuesta JSON de Gemini de forma tolerante."""
-    content = (content or "").strip()
-
-    # Limpiar markdown code blocks si vienen (```json ... ```)
-    if content.startswith("```"):
-        lines = content.split("\n")
-        content = "\n".join(lines[1:])
-        if content.rstrip().endswith("```"):
-            content = content.rstrip()[:-3]
-    content = content.strip()
-
-    if not content:
-        raise RuntimeError("Gemini devolvio respuesta vacia")
-
-    # Intento 1: parsear tal cual
     try:
-        return json.loads(content)
-    except json.JSONDecodeError:
+        parsed = llm.parse_json(content)
+        if isinstance(parsed, dict):
+            return parsed
+    except llm.LLMError:
         pass
 
-    # Intento 2: extraer entre primer { y ultimo }
-    start = content.find("{")
-    end = content.rfind("}")
-    if start >= 0 and end > start:
-        try:
-            return json.loads(content[start:end + 1])
-        except json.JSONDecodeError:
-            pass
-
-    # Intento 3 (RESCATE): reparar JSON malformado y extraer campo por campo
     print("   . JSON global roto, intentando rescate por campos...")
-    rescued = _rescue_script_fields(content)
+    rescued = _rescue_script_fields(content or "")
     if rescued and rescued.get("sections"):
         print(f"   . Rescate OK: {len(rescued.get('sections', []))} secciones recuperadas")
         return rescued
 
-    # Ultimo recurso: mostrar contenido y raise
     print(f"   ! No se encontro JSON valido en la respuesta")
-    print(f"     Contenido: '{content[:500]}'")
+    print(f"     Contenido: '{(content or '')[:500]}'")
     raise RuntimeError("Respuesta de Gemini sin JSON valido")
 
 
@@ -422,162 +461,253 @@ def _rescue_script_fields(content: str) -> dict:
     Ultimo recurso: si el JSON del guion esta malformado, extraer campo por campo
     con regex y balance de llaves. Recupera al menos las secciones del guion.
     """
-    import re
     result = {}
-
-    # Extraer campos string simples con regex (youtube_title, thumbnail_text, description)
     for field in ("youtube_title", "thumbnail_text", "description"):
-        # Busca "campo": "..." permitiendo escapes internos
         m = re.search(rf'"{field}"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
         if m:
-            # Deshacer escapes basicos
-            val = m.group(1).replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
-            result[field] = val
+            result[field] = m.group(1).replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
 
-    # Extraer tags (array de strings)
     m = re.search(r'"tags"\s*:\s*\[([^\]]*)\]', content, re.DOTALL)
     if m:
         try:
             result["tags"] = json.loads("[" + m.group(1) + "]")
         except json.JSONDecodeError:
-            # Fallback: extraer strings individuales
-            tags = re.findall(r'"([^"\\]+)"', m.group(1))
-            result["tags"] = tags[:20]
+            result["tags"] = re.findall(r'"([^"\\]+)"', m.group(1))[:20]
 
-    # Extraer sections: recorrer buscando cada objeto {..} dentro de "sections": [..]
-    # Localizar el inicio del array sections
     sec_match = re.search(r'"sections"\s*:\s*\[', content)
     if not sec_match:
         return result
 
-    array_start = sec_match.end()
-    sections = []
-    depth = 0
-    obj_start = -1
-    in_string = False
-    escape = False
-    i = array_start
-
+    sections, depth, obj_start = [], 0, -1
+    in_string = escape = False
+    i = sec_match.end()
     while i < len(content):
-        ch = content[i]
+        c = content[i]
         if escape:
             escape = False
-            i += 1
-            continue
-        if ch == "\\":
+        elif c == "\\":
             escape = True
-            i += 1
-            continue
-        if ch == '"':
+        elif c == '"':
             in_string = not in_string
-            i += 1
-            continue
-        if in_string:
-            i += 1
-            continue
-        if ch == "{":
-            if depth == 0:
-                obj_start = i
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0 and obj_start != -1:
-                obj_str = content[obj_start:i+1]
-                try:
-                    obj = json.loads(obj_str)
-                    if "text" in obj:
-                        sections.append(obj)
-                except json.JSONDecodeError:
-                    # Intentar reparar comas faltantes al final antes de }
-                    repaired = re.sub(r',\s*}', '}', obj_str)
-                    repaired = re.sub(r',\s*]', ']', repaired)
-                    try:
-                        obj = json.loads(repaired)
-                        if "text" in obj:
-                            sections.append(obj)
-                    except json.JSONDecodeError:
-                        pass
-                obj_start = -1
-        elif ch == "]" and depth == 0:
-            # Fin del array sections
-            break
+        elif not in_string:
+            if c == "{":
+                if depth == 0:
+                    obj_start = i
+                depth += 1
+            elif c == "}":
+                depth -= 1
+                if depth == 0 and obj_start != -1:
+                    obj_str = content[obj_start:i + 1]
+                    for candidate in (obj_str, re.sub(r',\s*([}\]])', r'\1', obj_str)):
+                        try:
+                            obj = json.loads(candidate)
+                            if "text" in obj:
+                                sections.append(obj)
+                            break
+                        except json.JSONDecodeError:
+                            continue
+                    obj_start = -1
+            elif c == "]" and depth == 0:
+                break
         i += 1
 
     if sections:
         result["sections"] = sections
-
     return result
 
 
-def format_breakdown(stats: dict) -> str:
-    lines = []
-    for ps in stats["per_section"]:
-        if ps["min"] == 0:  # tipo desconocido
-            continue
-        mark = ""
-        if ps["too_short"]:
-            mark = f"  <-- SHORT, expand to {ps['min']}-{ps['max']}"
-        elif ps["words"] < ps["min"]:
-            mark = f"  (slightly under {ps['min']} but acceptable)"
-        elif ps["words"] > ps["max"]:
-            mark = f"  (over {ps['max']} but acceptable)"
-        lines.append(f"  Section {ps['i']+1} ({ps['type']}): {ps['words']} words (target {ps['min']}-{ps['max']}){mark}")
-    return "\n".join(lines)
-
-
-def generate_script(idea: dict, history: list[dict], title_style: str) -> dict:
-    if not GEMINI_API_KEY:
-        raise RuntimeError("Falta GEMINI_API_KEY")
-
-    signals_text = "\n".join(f"  - {s}" for s in idea.get("source_signals", []))
+# ---------------------------------------------------------------------------
+# Generacion, juez y reescritura
+# ---------------------------------------------------------------------------
+def prompt_context(idea: dict, history: list[dict], title_style: str, fact_sheet: str) -> dict:
     overused = ch.overused_title_openers(history)
-    prompt = SCRIPT_WRITER_PROMPT.format(
-        idea_title       = idea.get("title", ""),
-        idea_hook        = idea.get("hook", ""),
-        idea_angle       = idea.get("angle", ""),
-        idea_format      = idea.get("format", "") or "free",
-        idea_keywords    = ", ".join(idea.get("target_keywords", [])),
-        idea_signals     = signals_text or "  (none)",
-        history_block    = ch.recent_for_prompt(history, limit=40),
-        title_style      = title_style,
-        overused_openers = ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
-        web_backlink     = WEB_BACKLINK,
-    )
+    return {
+        "idea_title":        idea.get("title", ""),
+        "idea_hook":         idea.get("hook", ""),
+        "idea_angle":        idea.get("angle", ""),
+        "idea_format":       idea.get("format", "") or "free",
+        "idea_keywords":     ", ".join(idea.get("target_keywords", [])),
+        "idea_tickers":      ", ".join(idea.get("tickers", [])) or "(none - use fred or index charts)",
+        "fact_sheet":        fact_sheet,
+        "performance_block": ch.performance_report(history),
+        "history_block":     ch.recent_for_prompt(history, limit=40),
+        "title_style":       title_style,
+        "overused_openers":  ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
+        "fred_list":         ", ".join(FRED_CHARTS),
+        "web_backlink":      WEB_BACKLINK,
+    }
 
+
+def generate_script(ctx: dict) -> dict:
     print("   . Pasada inicial...")
-    raw = call_groq(prompt)
+    raw = call_model(SCRIPT_WRITER_PROMPT.format(**ctx))
     stats = measure_script(raw)
-    print(f"   . Resultado: {stats['total_words']} palabras totales, {len(stats['short_sections'])} secciones muy cortas.")
+    print(f"   . {stats['total_words']} palabras, {len(stats['short_sections'])} secciones muy cortas, "
+          f"{len(raw.get('shorts', []))} shorts")
 
     for retry in range(1, MAX_RETRY_GENERATION + 1):
         if not stats["is_too_short"]:
             break
-
-        # Listar las secciones cortas para el log
-        short_summary = ", ".join(f"{stype}({w}<{m})" for _, stype, w, m in stats["short_sections"])
-        if short_summary:
-            print(f"   . Secciones cortas: {short_summary}")
         print(f"   . Reintento {retry}/{MAX_RETRY_GENERATION} con expansion quirurgica...")
-
-        expansion_prompt = EXPANSION_PROMPT.format(
-            previous_draft = json.dumps(raw, indent=2),
-            word_breakdown = format_breakdown(stats),
-        )
-
-        raw_new = call_groq(expansion_prompt, max_tokens=8000)
+        try:
+            raw_new = call_model(EXPANSION_PROMPT.format(
+                previous_draft=json.dumps(raw, indent=1, ensure_ascii=False),
+                word_breakdown=format_breakdown(stats),
+                fact_sheet=ctx["fact_sheet"],
+            ))
+        except (RuntimeError, llm.LLMError) as e:
+            print(f"   ! expansion fallo: {e}")
+            break
         stats_new = measure_script(raw_new)
-
-        # Solo aceptamos la nueva version si MEJORA
-        if stats_new["total_words"] >= stats["total_words"] - 50:  # margen
-            raw = raw_new
-            stats = stats_new
-        else:
-            print(f"   ! La expansion empeoro el guion ({stats_new['total_words']} < {stats['total_words']}), descartada.")
-        print(f"   . Tras retry {retry}: {stats['total_words']} palabras, {len(stats['short_sections'])} cortas.")
-
+        if stats_new["total_words"] >= stats["total_words"] - 50 and raw_new.get("sections"):
+            raw, stats = raw_new, stats_new
+        print(f"   . Tras retry {retry}: {stats['total_words']} palabras")
     return raw
 
 
+def package_for_judge(raw: dict) -> str:
+    parts = [f"TITLE: {raw.get('youtube_title')}", f"THUMBNAIL TEXT: {raw.get('thumbnail_text')}", ""]
+    for s in raw.get("sections", []):
+        parts.append(f"[{s.get('type', '').upper()}{' - ' + s['title'] if s.get('title') else ''}] {s.get('text', '')}")
+    for n, sh in enumerate(raw.get("shorts", []), 1):
+        parts.append(f"[SHORT {n} - {sh.get('title', '')}] {sh.get('text', '')}")
+    return "\n\n".join(parts)
+
+
+def judge(raw: dict, ctx: dict) -> dict:
+    try:
+        verdict = llm.generate_json(JUDGE_PROMPT.format(
+            performance_block=ctx["performance_block"],
+            history_block=ctx["history_block"],
+            script=package_for_judge(raw),
+        ), smart=True, temperature=0.2, max_tokens=2000)
+    except llm.LLMError as e:
+        print(f"   ! juez no disponible ({e}); acepto el guion sin nota")
+        return {"overall": QUALITY_THRESHOLD, "scores": {}, "fixes": [], "unavailable": True}
+    scores = verdict.get("scores", {})
+    try:
+        overall = float(verdict.get("overall") or 0)
+    except (TypeError, ValueError):
+        overall = 0.0
+    if scores and not overall:
+        overall = sum(float(v) for v in scores.values()) / len(scores)
+    # Un hook o titulo flojo hunde el video aunque el resto sea bueno
+    weakest = min((float(scores.get(k, 10)) for k in ("hook", "title_ctr", "specificity")), default=10)
+    overall = round(min(overall, weakest + 1.5), 2)
+    verdict["overall"] = overall
+    print(f"   . Juez: {overall}/10  {json.dumps(scores)}")
+    return verdict
+
+
+def rewrite(raw: dict, verdict: dict, ctx: dict) -> dict:
+    fixes = "\n".join(f"- {f}" for f in verdict.get("fixes", [])) or "- Make it more specific and gripping."
+    return call_model(REWRITE_PROMPT.format(
+        overall=verdict.get("overall"),
+        fixes=fixes,
+        previous_draft=json.dumps(raw, indent=1, ensure_ascii=False),
+        fact_sheet=ctx["fact_sheet"],
+        title_style=ctx["title_style"],
+        overused_openers=ctx["overused_openers"],
+    ))
+
+
+def best_script_for_idea(idea: dict, payload: dict, history: list[dict]) -> tuple[dict, dict, dict]:
+    """Devuelve (raw, verdict, ctx) del mejor intento para esta idea."""
+    title_style = pick_title_style(history)
+    print(f"   . estilo de titulo: {title_style.split(':')[0]}")
+    fact_sheet = build_fact_sheet(idea, payload)
+    print(f"   . ficha de datos: {len(fact_sheet)} caracteres")
+    ctx = prompt_context(idea, history, title_style, fact_sheet)
+
+    raw = generate_script(ctx)
+    verdict = judge(raw, ctx)
+    if verdict["overall"] >= QUALITY_THRESHOLD or verdict.get("unavailable"):
+        return raw, verdict, ctx
+
+    print(f"   . Nota {verdict['overall']} < {QUALITY_THRESHOLD}: reescribo con las correcciones del juez...")
+    try:
+        raw2 = rewrite(raw, verdict, ctx)
+        if measure_script(raw2)["total_words"] >= MIN_TOTAL_WORDS * 0.85:
+            verdict2 = judge(raw2, ctx)
+            if verdict2["overall"] >= verdict["overall"]:
+                return raw2, verdict2, ctx
+    except (RuntimeError, llm.LLMError) as e:
+        print(f"   ! reescritura fallo: {e}")
+    return raw, verdict, ctx
+
+
+# ---------------------------------------------------------------------------
+# Fact-check y validacion de visuales
+# ---------------------------------------------------------------------------
+def _numbers(text: str) -> set[str]:
+    """Numeros normalizados: '$4.2B' -> {'4.2'}, '5,000' -> {'5000'}."""
+    return {n.replace(",", "").rstrip(".") for n in re.findall(r"\d[\d,]*\.?\d*", text or "")}
+
+
+def fact_check(raw: dict, fact_sheet: str) -> dict:
+    texts = {}
+    for i, s in enumerate(raw.get("sections", [])):
+        texts[f"S{i+1}"] = s.get("text", "")
+    for i, sh in enumerate(raw.get("shorts", [])):
+        texts[f"SH{i+1}"] = sh.get("text", "")
+
+    try:
+        result = llm.generate_json(FACT_CHECK_PROMPT.format(
+            fact_sheet=fact_sheet,
+            texts="\n\n".join(f"[{k}] {v}" for k, v in texts.items()),
+        ), smart=True, temperature=0.1, max_tokens=4000)
+        issues = result.get("issues", []) if isinstance(result, dict) else []
+    except llm.LLMError as e:
+        print(f"   ! fact-check no disponible: {e}")
+        issues = []
+
+    fixed = 0
+    for issue in issues:
+        orig, new = str(issue.get("original", "")).strip(), str(issue.get("fixed", "")).strip()
+        if not orig or not new:
+            continue
+        for container in raw.get("sections", []) + raw.get("shorts", []):
+            if orig in container.get("text", ""):
+                container["text"] = container["text"].replace(orig, new)
+                fixed += 1
+                print(f"   . corregido: '{orig[:70]}...' ({issue.get('reason', '')[:60]})")
+                break
+    print(f"   . fact-check: {len(issues)} problemas detectados, {fixed} corregidos")
+
+    # Visuales con cifras: cada numero tiene que estar en la ficha
+    sheet_numbers = _numbers(fact_sheet)
+    dropped = 0
+    for container in raw.get("sections", []) + raw.get("shorts", []):
+        kept = []
+        for v in container.get("visuals", []) or []:
+            if not isinstance(v, dict) or v.get("type") not in VISUAL_TYPES:
+                dropped += 1
+                continue
+            if v["type"] == "stat":
+                ok = _numbers(str(v.get("value", ""))) <= sheet_numbers and _numbers(str(v.get("value", "")))
+            elif v["type"] == "compare":
+                items = v.get("items", [])
+                ok = 2 <= len(items) <= 5 and all(
+                    _numbers(str(it.get("display", it.get("value", "")))) <= sheet_numbers for it in items)
+            elif v["type"] == "fred":
+                ok = v.get("series") in FRED_CHARTS
+            elif v["type"] == "chart":
+                ok = bool(re.fullmatch(r"[\^A-Z0-9.=\-]{1,12}", str(v.get("ticker", "")).upper()))
+            else:
+                ok = bool(v.get("text"))
+            if ok:
+                kept.append(v)
+            else:
+                dropped += 1
+        container["visuals"] = kept
+    if dropped:
+        print(f"   . {dropped} visuales descartados (cifras no verificables o formato invalido)")
+    return raw
+
+
+# ---------------------------------------------------------------------------
+# Metadata unica
+# ---------------------------------------------------------------------------
 def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_style: str) -> dict:
     """Si titulo o miniatura repiten un video anterior, regenera solo la metadata."""
     def _check(title: str, thumb: str):
@@ -597,7 +727,7 @@ def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_sty
             break
         print(f"   ! Metadata repetida ({dup[1]}). Regenerando titulo/miniatura {attempt}/{MAX_METADATA_RETRIES}...")
         try:
-            new = call_groq(METADATA_RETRY_PROMPT.format(
+            new = call_model(METADATA_RETRY_PROMPT.format(
                 idea_title    = idea.get("title", ""),
                 idea_angle    = idea.get("angle", ""),
                 bad_title     = title,
@@ -606,7 +736,7 @@ def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_sty
                 history_block = ch.recent_for_prompt(history, limit=40),
                 title_style   = title_style,
             ), max_tokens=500)
-        except RuntimeError as e:
+        except (RuntimeError, llm.LLMError) as e:
             print(f"   ! Fallo regenerando metadata: {e}")
             break
         title = str(new.get("youtube_title", title)).strip()
@@ -619,72 +749,80 @@ def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_sty
         title = idea.get("title", title)
         thumb = " ".join(title.upper().split()[:3])
 
-    raw["youtube_title"]  = title
+    raw["youtube_title"]  = title[:100]
     raw["thumbnail_text"] = thumb
     return raw
 
 
 # ---------------------------------------------------------------------------
-# Persistencia
+# Normalizacion y persistencia
 # ---------------------------------------------------------------------------
-def save_outputs(script: VideoScript, raw_idea: dict, real_word_count: int, title_style: str) -> tuple[Path, Path]:
+def clean_sections(raw: dict) -> list[dict]:
+    out = []
+    for s in raw.get("sections", []):
+        text = str(s.get("text", "")).strip()
+        if not text:
+            continue
+        out.append({
+            "type":    str(s.get("type", "body")),
+            "title":   str(s.get("title", "")),
+            "text":    text,
+            "visuals": [v for v in s.get("visuals", []) or [] if isinstance(v, dict)],
+        })
+    return out
+
+
+def clean_shorts(raw: dict) -> list[dict]:
+    out = []
+    for sh in raw.get("shorts", []) or []:
+        text = str(sh.get("text", "")).strip()
+        if count_words(text) < SHORT_WORDS[0] * 0.6:
+            continue
+        out.append({
+            "title":   str(sh.get("title", "")).strip()[:90],
+            "text":    text,
+            "visuals": [v for v in sh.get("visuals", []) or [] if isinstance(v, dict)],
+        })
+    return out[:3]
+
+
+def save_outputs(raw: dict, idea: dict, verdict: dict, title_style: str, fact_sheet: str) -> tuple[Path, Path]:
     json_path = OUTPUT_DIR / f"script_{TODAY}.json"
     md_path   = OUTPUT_DIR / f"script_{TODAY}.md"
+    (OUTPUT_DIR / f"factsheet_{TODAY}.txt").write_text(fact_sheet, encoding="utf-8")
+
+    sections, shorts = clean_sections(raw), clean_shorts(raw)
+    real_words = sum(count_words(s["text"]) for s in sections)
 
     json_path.write_text(json.dumps({
-        "date":                 script.date,
-        "source_idea":          raw_idea,
-        "topic_key":            raw_idea.get("topic_key", ""),
-        "entities":             raw_idea.get("entities", []),
-        "format":               raw_idea.get("format", ""),
-        "title_style":          title_style.split(":")[0],
-        "youtube_title":        script.youtube_title,
-        "thumbnail_text":       script.thumbnail_text,
-        "description":          script.description,
-        "tags":                 script.tags,
-        "estimated_duration_min": script.estimated_duration_min,
-        "word_count_real":      real_word_count,
-        "word_count_claimed":   script.word_count,
-        "sections":             [asdict(s) for s in script.sections],
+        "date":            TODAY,
+        "source_idea":     idea,
+        "topic_key":       idea.get("topic_key", ""),
+        "entities":        idea.get("entities", []),
+        "format":          idea.get("format", ""),
+        "title_style":     title_style.split(":")[0],
+        "youtube_title":   raw.get("youtube_title", ""),
+        "thumbnail_text":  raw.get("thumbnail_text", ""),
+        "description":     str(raw.get("description", "")),
+        "tags":            [str(t) for t in raw.get("tags", [])][:25],
+        "word_count_real": real_words,
+        "quality":         {"overall": verdict.get("overall"), "scores": verdict.get("scores", {}),
+                            "fixes": verdict.get("fixes", [])},
+        "sections":        sections,
+        "shorts":          shorts,
     }, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    md = [
-        f"# {script.youtube_title}",
-        "",
-        f"_{TODAY} . {script.estimated_duration_min} min . {real_word_count} words (real)_",
-        "",
-        f"**Thumbnail text:** {script.thumbnail_text}",
-        "",
-        "---",
-        "",
-        "## Description",
-        "",
-        script.description,
-        "",
-        "**Tags:** " + ", ".join(script.tags),
-        "",
-        "---",
-        "",
-        "## Script",
-        "",
-    ]
-    for i, s in enumerate(script.sections, 1):
-        label = s.type.upper()
-        if s.title:
-            label += f" - {s.title}"
-        if s.shorts_candidate:
-            label += "  [SHORT CANDIDATE]"
-        w = count_words(s.text)
-        md += [
-            f"### {i}. {label} ({s.estimated_sec}s . {w} words)",
-            "",
-            s.text,
-            "",
-        ]
-        if s.shorts_candidate and s.shorts_alt_hook:
-            md += [f"_Short alt hook: {s.shorts_alt_hook}_", ""]
+    md = [f"# {raw.get('youtube_title')}", "",
+          f"_{TODAY} . {real_words} words . quality {verdict.get('overall')}/10_", "",
+          f"**Thumbnail text:** {raw.get('thumbnail_text')}", "", "## Description", "",
+          str(raw.get("description", "")), "", "## Script", ""]
+    for i, s in enumerate(sections, 1):
+        md += [f"### {i}. {s['type'].upper()}{' - ' + s['title'] if s['title'] else ''} "
+               f"({count_words(s['text'])} words)", "", s["text"], ""]
+        md += [f"> visual: `{json.dumps(v, ensure_ascii=False)}`" for v in s["visuals"]] + [""]
+    for i, sh in enumerate(shorts, 1):
+        md += [f"## Short {i}: {sh['title']}", "", sh["text"], ""]
     md_path.write_text("\n".join(md), encoding="utf-8")
-
     return json_path, md_path
 
 
@@ -696,71 +834,57 @@ def main() -> None:
     print(f"\n=== SCRIPT WRITER . {TODAY} ===\n")
 
     history = ch.load_history()
-    print(f"1/3  Cargando la idea del dia (historial: {len(history)} videos)...")
-    idea = load_todays_idea(history)
-    print(f"      -> '{idea.get('title', 'sin titulo')}'")
-    title_style = pick_title_style(history)
-    print(f"      -> estilo de titulo: {title_style.split(':')[0]}")
+    print(f"1/4  Cargando ideas (historial: {len(history)} videos)...")
+    payload = load_ideas_payload()
+    candidates = fresh_ideas(payload["ideas"], history)[:MAX_IDEAS_TO_TRY]
 
-    print(f"\n2/3  Generando guion con Gemini ({GEMINI_MODEL})...")
-    raw = generate_script(idea, history, title_style)
-    raw = ensure_unique_metadata(raw, idea, history, title_style)
-
-    sections = []
-    for s in raw.get("sections", []):
+    print(f"\n2/4  Guion + juez de calidad (modelo {llm.MODEL_SMART}, respaldo {llm.MODEL_FAST})...")
+    best = None
+    for n, idea in enumerate(candidates, 1):
+        print(f"\n   --- Idea {n}/{len(candidates)}: '{idea.get('title')}' ---")
         try:
-            sections.append(ScriptSection(
-                type             = str(s.get("type", "body")),
-                text             = str(s.get("text", "")).strip(),
-                title            = str(s.get("title", "")),
-                estimated_sec    = int(s.get("estimated_sec", 0)),
-                shorts_candidate = bool(s.get("shorts_candidate", False)),
-                shorts_alt_hook  = str(s.get("shorts_alt_hook", "")),
-            ))
-        except (ValueError, TypeError) as e:
-            print(f"   ! Seccion malformada, ignorada: {e}")
+            raw, verdict, ctx = best_script_for_idea(idea, payload, history)
+        except (RuntimeError, llm.LLMError) as e:
+            print(f"   ! fallo con esta idea: {e}")
+            continue
+        if not best or verdict["overall"] > best[1]["overall"]:
+            best = (raw, verdict, ctx, idea)
+        if verdict["overall"] >= QUALITY_THRESHOLD:
+            break
 
-    if not sections:
-        raise RuntimeError("Groq no devolvio secciones validas.")
+    if not best:
+        raise RuntimeError("No se pudo generar ningun guion.")
+    raw, verdict, ctx, idea = best
+    if verdict["overall"] < MIN_PUBLISH_SCORE:
+        raise RuntimeError(
+            f"Calidad insuficiente ({verdict['overall']}/10 < {MIN_PUBLISH_SCORE}). "
+            "Hoy no se publica: mejor ningun video que uno malo."
+        )
 
-    real_total = sum(count_words(s.text) for s in sections)
+    print(f"\n3/4  Fact-check y metadata (idea elegida: '{idea.get('title')}', nota {verdict['overall']})...")
+    raw = fact_check(raw, ctx["fact_sheet"])
+    raw = ensure_unique_metadata(raw, idea, history, ctx["title_style"])
 
-    script = VideoScript(
-        date                  = TODAY,
-        source_idea_title     = idea.get("title", ""),
-        youtube_title         = str(raw.get("youtube_title", ""))[:80],
-        thumbnail_text        = str(raw.get("thumbnail_text", "")),
-        description           = str(raw.get("description", "")),
-        tags                  = list(raw.get("tags", []))[:25],
-        estimated_duration_min = int(raw.get("estimated_duration_min", 10)),
-        word_count            = int(raw.get("word_count", 0)),
-        sections              = sections,
-    )
+    if not clean_sections(raw):
+        raise RuntimeError("El guion no tiene secciones validas.")
 
-    print("\n3/3  Guardando guion...")
-    json_path, md_path = save_outputs(script, idea, real_total, title_style)
+    print("\n4/4  Guardando guion...")
+    json_path, md_path = save_outputs(raw, idea, verdict, ctx["title_style"], ctx["fact_sheet"])
 
-    n_shorts = sum(1 for s in sections if s.shorts_candidate)
-    estimated_minutes = real_total / 150
-
+    sections, shorts = clean_sections(raw), clean_shorts(raw)
+    total = sum(count_words(s["text"]) for s in sections)
+    n_vis = sum(len(s["visuals"]) for s in sections)
     print(f"\n  Listo en {time.time()-t0:.1f}s")
-    print(f"     JSON:       {json_path}")
-    print(f"     Resumen MD: {md_path}\n")
-
+    print(f"     JSON: {json_path}\n     MD:   {md_path}\n")
     print("=== RESUMEN DEL GUION ===\n")
-    print(f"  Titulo:           {script.youtube_title}")
-    print(f"  Thumbnail:        {script.thumbnail_text}")
-    print(f"  Palabras reales:  {real_total} (modelo declaro {script.word_count})")
-    print(f"  Duracion proy:    ~{estimated_minutes:.1f} min hablado")
-    print(f"  Secciones:        {len(sections)} ({n_shorts} candidatas a Short)")
-
-    print(f"\n  Desglose:")
+    print(f"  Titulo:     {raw.get('youtube_title')}")
+    print(f"  Miniatura:  {raw.get('thumbnail_text')}")
+    print(f"  Calidad:    {verdict['overall']}/10")
+    print(f"  Palabras:   {total} (~{total/155:.1f} min)")
+    print(f"  Secciones:  {len(sections)} con {n_vis} visuales de datos")
+    print(f"  Shorts:     {len(shorts)}")
     for i, s in enumerate(sections, 1):
-        w = count_words(s.text)
-        min_w, max_w = SECTION_TARGETS.get(s.type, (0, 0))
-        in_range = min_w <= w <= max_w if min_w else True
-        flag = "" if in_range else f"  (fuera de {min_w}-{max_w})"
-        print(f"    {i}. {s.type:10s} {w:>4} palabras{flag}")
+        print(f"    {i}. {s['type']:6s} {count_words(s['text']):>4} palabras, {len(s['visuals'])} visuales")
     print()
 
 

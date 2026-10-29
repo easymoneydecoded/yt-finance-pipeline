@@ -5,9 +5,9 @@
 
  Que hace:
    1. Lee el JSON de guion generado por la etapa 2
-   2. Pide a Groq que extraiga keywords VISUALES por seccion
-   3. Si Groq falla (rate limit, error), usa FALLBACK LOCAL con keywords
-      genericas de finanzas - el pipeline NUNCA se rompe por culpa de Groq
+   2. Pide a Gemini que extraiga keywords VISUALES por seccion
+   3. Si Gemini falla (rate limit, error), usa FALLBACK LOCAL con keywords
+      genericas de finanzas - el pipeline NUNCA se rompe por culpa de Gemini
    4. Busca y descarga clips de stock video gratis desde Pexels
    5. Guarda los MP4 en data/broll/section_XX/ y un manifest JSON
 
@@ -27,18 +27,16 @@ import requests
 from dotenv import load_dotenv
 
 import content_history as ch
+import llm
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
 PEXELS_API_KEY  = os.getenv("PEXELS_API_KEY")
 
-GEMINI_MODEL    = "gemini-3.5-flash-lite"
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 PEXELS_ENDPOINT = "https://api.pexels.com/videos/search"
 
@@ -62,7 +60,7 @@ MIN_CLIP_DURATION_SEC = 5
 MAX_CLIP_DURATION_SEC = 60
 
 
-# Pool de keywords visuales evergreen para finanzas (fallback si Groq falla)
+# Pool de keywords visuales evergreen para finanzas (fallback si Gemini falla)
 FINANCE_BROLL_POOL = [
     "stock market chart",
     "wall street building",
@@ -107,7 +105,7 @@ def load_todays_script() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Extraccion de keywords con Groq (con fallback)
+# Extraccion de keywords con Gemini (con fallback)
 # ---------------------------------------------------------------------------
 KEYWORDS_PROMPT = """You are a video editor's research assistant. For each script section below, suggest visual keywords that would work as stock footage b-roll on Pexels.
 
@@ -144,74 +142,20 @@ Output ONLY the JSON. No prose. No markdown fences.
 
 def call_groq(prompt: str, max_tokens: int = 2000) -> dict | None:
     """
-    Llama a Gemini (nombre por compat con el resto del pipeline).
-    Devuelve dict si OK, None si agota reintentos.
-    NO lanza excepcion: la decision de fallback la toma el caller.
+    Llama a Gemini (modelo rapido) via llm.py. Devuelve dict si OK, None si falla:
+    la decision de fallback la toma el caller.
     """
-    if not GEMINI_API_KEY:
-        print("   ! Falta GEMINI_API_KEY, no puedo llamar a IA")
+    try:
+        raw = llm.generate_json(prompt, temperature=0.7, max_tokens=max_tokens)
+        return raw if isinstance(raw, dict) else None
+    except llm.LLMError as e:
+        print(f"   ! Gemini fallo: {e}")
         return None
-
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }],
-        "generationConfig": {
-            "temperature":      0.7,
-            "maxOutputTokens":  max_tokens,
-            "responseMimeType": "application/json",
-        },
-    }
-    max_attempts = 3  # menos reintentos para no inflar tiempo total
-    for attempt in range(1, max_attempts + 1):
-        try:
-            r = requests.post(
-                GEMINI_ENDPOINT,
-                headers = {
-                    "x-goog-api-key": GEMINI_API_KEY,
-                    "Content-Type":   "application/json",
-                },
-                json    = payload,
-                timeout = 90,
-            )
-        except Exception as e:
-            print(f"   . Gemini conexion fallo: {e}")
-            return None
-
-        if r.status_code == 200:
-            try:
-                data = r.json()
-                content = data["candidates"][0]["content"]["parts"][0]["text"]
-                # Parseo tolerante: si vino con texto extra alrededor del JSON, extraer
-                try:
-                    return json.loads(content)
-                except json.JSONDecodeError:
-                    i, j = content.find("{"), content.rfind("}")
-                    if i != -1 and j != -1:
-                        return json.loads(content[i:j+1])
-                    print(f"   ! Gemini devolvio sin JSON: {content[:200]}")
-                    return None
-            except Exception as e:
-                print(f"   ! Gemini parseo fallo: {e}")
-                return None
-
-        if r.status_code in (429, 500, 502, 503, 504) and attempt < max_attempts:
-            wait = 30 * attempt
-            snippet = r.text[:150].replace("\n", " ")
-            print(f"   . Gemini devolvio {r.status_code}: {snippet}. Espero {wait}s...")
-            time.sleep(wait)
-            continue
-
-        # Otros errores o ultimo intento fallido
-        print(f"   ! Gemini error final: {r.status_code} - {r.text[:200]}")
-        return None
-
-    return None
 
 
 def fallback_keywords(script_data: dict, sections: list) -> list[list[str]]:
     """
-    Genera keywords visuales SIN llamar a Groq. Mezcla:
+    Genera keywords visuales SIN llamar a Gemini. Mezcla:
       1. Tags del video (filtradas, solo las visualmente plausibles)
       2. Pool evergreen de finanzas
     """
@@ -267,10 +211,10 @@ def extract_keywords(script_data: dict) -> list[list[str]]:
         sections_block = sections_block,
     )
 
-    print(f"   . Pidiendo keywords a Groq para {len(sections)} secciones...")
+    print(f"   . Pidiendo keywords a Gemini para {len(sections)} secciones...")
     raw = call_groq(prompt)
 
-    # Si Groq fallo, fallback completo
+    # Si Gemini fallo, fallback completo
     if raw is None:
         return fallback_keywords(script_data, sections)
 
@@ -282,14 +226,14 @@ def extract_keywords(script_data: dict) -> list[list[str]]:
             kws = entry.get("keywords", [])
             result[idx] = [str(k).strip() for k in kws if k]
 
-    # Fallback PARCIAL: para secciones sueltas que Groq dejo vacias
+    # Fallback PARCIAL: para secciones sueltas que Gemini dejo vacias
     fb = None
     for i, kws in enumerate(result):
         if not kws:
             if fb is None:
                 fb = fallback_keywords(script_data, sections)
             result[i] = fb[i]
-            print(f"   . Seccion {i+1} sin keywords de Groq, uso fallback parcial")
+            print(f"   . Seccion {i+1} sin keywords de Gemini, uso fallback parcial")
 
     return result
 

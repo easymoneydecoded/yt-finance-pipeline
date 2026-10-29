@@ -2,8 +2,15 @@ name: Morning Pipeline
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    # Lunes, miercoles, viernes y domingo a las 07:00 UTC. El video se programa
+    # para las 14:00 UTC (10:00 Nueva York) y los Shorts cubren los dias intermedios.
+    - cron: '0 7 * * 1,3,5,0'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Modo prueba: genera todo pero NO sube a YouTube (descarga los videos del artefacto)'
+        type: boolean
+        default: false
 
 # Nunca dos ejecuciones a la vez: evitaba subir el mismo video dos veces
 concurrency:
@@ -14,10 +21,16 @@ concurrency:
 permissions:
   contents: write
 
+env:
+  DRY_RUN: ${{ inputs.dry_run == true }}
+  GEMINI_MODEL_SMART: ${{ vars.GEMINI_MODEL_SMART || 'gemini-3.5-flash' }}
+  GEMINI_MODEL_FAST:  ${{ vars.GEMINI_MODEL_FAST || 'gemini-3.5-flash-lite' }}
+  KOKORO_VOICE:       ${{ vars.KOKORO_VOICE || 'af_heart' }}
+
 jobs:
   generate-content:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -27,50 +40,71 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
 
-      - name: Instalar dependencias del sistema (ffmpeg)
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Cache de modelos (Kokoro, Whisper)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/whisper
+          key: models-v1
 
-      - name: Instalar dependencias Python
-        run: pip install -r requirements.txt
+      - name: Instalar dependencias del sistema (ffmpeg, espeak-ng, fuentes)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng fonts-dejavu-core
+
+      - name: Instalar dependencias Python (PyTorch CPU + resto)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Etapa 0 - Aprender de los resultados del canal
+        continue-on-error: true
+        env:
+          YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python analytics.py
 
       - name: Etapa 1 - Generar ideas
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           REDDIT_CLIENT_ID:     ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
         run: python morning_pipeline.py
 
-      - name: Etapa 2 - Escribir guion
+      - name: Etapa 2 - Guion, juez de calidad y fact-check
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python script_writer.py
 
-      - name: Etapa 3 - Voz en off
+      - name: Etapa 3 - Voz (Kokoro)
         run: python voiceover.py
 
       - name: Etapa 4 - Descargar b-roll
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GROQ_API_KEY:   ${{ secrets.GROQ_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python b_roll.py
 
-      - name: Etapa 5 - Montar video final
+      - name: Etapa 5 - Montar video largo con visuales de datos
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python editor.py
 
-      - name: Etapa 6 - Cortar Shorts verticales
-        run: python shorts_clipper.py
+      - name: Etapa 6 - Montar Shorts verticales
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python shorts_maker.py
 
       - name: Etapa 7 - Generar thumbnail custom
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python thumbnail_maker.py
 
-      - name: Etapa 8 - Subir a YouTube
+      - name: Etapa 8 - Subir y programar en YouTube
+        if: env.DRY_RUN != 'true'
         env:
           YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
@@ -78,7 +112,7 @@ jobs:
         run: python uploader.py
 
       # Se ejecuta aunque falle algo despues de subir: el historial es lo que
-      # impide que manana se repita el mismo tema
+      # impide que manana se repita el mismo tema (y guarda las metricas)
       - name: Guardar historial del canal en el repo
         if: always()
         run: |
@@ -89,7 +123,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
           git add history/
-          git commit -m "Historial: video del $(date -u +%F)"
+          git commit -m "Historial: $(date -u +%F)"
           for i in 1 2 3; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             sleep 5
@@ -97,6 +131,7 @@ jobs:
           echo "No se pudo guardar el historial" && exit 1
 
       - name: Etapa 9 - Publicar Shorts en TikTok/IG via Webhook
+        if: env.DRY_RUN != 'true'
         run: |
           if [ -f publisher_webhook.py ]; then
             python publisher_webhook.py
@@ -104,18 +139,27 @@ jobs:
             echo "publisher_webhook.py no existe en el repo, salto la etapa 9"
           fi
 
-      - name: Guardar artefacto (ligero, solo metadata + thumbnail)
+      - name: Guardar artefacto (metadata + thumbnail)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: content-${{ github.run_id }}
           path: |
             data/*.json
+            data/*.md
+            data/*.txt
             data/audio/*.json
             data/broll/*.json
             data/output/*.json
             data/output/thumbnail_*.png
             data/output/thumbnail_*.jpg
-            data/*.md
             history/videos.json
+          retention-days: 3
+
+      - name: Guardar videos (solo en modo prueba)
+        if: always() && env.DRY_RUN == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ github.run_id }}
+          path: data/output/*.mp4
           retention-days: 3

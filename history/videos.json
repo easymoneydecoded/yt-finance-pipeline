@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29T23:13:29+00:00",
+  "updated": "2026-10-29T23:47:30+00:00",
   "n_videos": 30,
   "videos": [
     {
@@ -9,7 +9,12 @@
       "title": "The Hidden Wealth Trap Nobody Is Talking About",
       "topic_key": "generic hidden wealth trap",
       "entities": [],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 0,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-28",
@@ -20,7 +25,12 @@
       "entities": [
         "savings account"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 0,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-27",
@@ -31,7 +41,12 @@
       "entities": [
         "savings account"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 5,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-26",
@@ -42,7 +57,12 @@
       "entities": [
         "paycheck"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 6,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-25",
@@ -51,7 +71,12 @@
       "title": "The Hidden Wealth Trap Nobody Is Talking About",
       "topic_key": "generic hidden wealth trap",
       "entities": [],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 9,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-24",
@@ -62,7 +87,12 @@
       "entities": [
         "paycheck"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 5,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-24",
@@ -74,7 +104,12 @@
         "Wall Street",
         "tech stocks"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 6,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-23",
@@ -85,7 +120,12 @@
       "entities": [
         "mortgage"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 7,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-22",
@@ -97,7 +137,12 @@
         "Barclays",
         "layoffs"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 37,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-21",
@@ -110,7 +155,12 @@
         "Citadel",
         "AI"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 4,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-20",
@@ -122,7 +172,12 @@
         "Goldman Sachs",
         "housing"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 21,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-19",
@@ -135,7 +190,12 @@
         "endowment",
         "bonds"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 6,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-18",
@@ -148,7 +208,12 @@
         "SpaceX",
         "endowment"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 13,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-17",
@@ -161,7 +226,12 @@
         "SpaceX",
         "endowment"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 18,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-16",
@@ -174,7 +244,12 @@
         "SpaceX",
         "endowment"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 58,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-15",
@@ -186,7 +261,12 @@
         "AI",
         "tech stocks"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 0,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-14",
@@ -198,7 +278,12 @@
         "JPMorgan",
         "bonds"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 38,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-13",
@@ -210,7 +295,12 @@
         "family gift",
         "housing"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 8,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-12",
@@ -222,7 +312,12 @@
         "bull market",
         "S&P 500"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 3,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-08",
@@ -234,7 +329,12 @@
         "Treasury yields",
         "401k"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 11,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-07",
@@ -247,7 +347,12 @@
         "inflation",
         "Federal Reserve"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 2,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-06",
@@ -259,7 +364,12 @@
         "Michael Burry",
         "Scion"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 10,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-05",
@@ -271,7 +381,12 @@
         "inflation",
         "1970s"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 22,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-04",
@@ -283,7 +398,12 @@
         "401k",
         "retirement"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 9,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-03",
@@ -295,7 +415,12 @@
         "Nvidia",
         "Big Tech"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 22,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-10-01",
@@ -307,7 +432,12 @@
         "retirement",
         "couples"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 2,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-09-30",
@@ -319,7 +449,12 @@
         "Goldman Sachs",
         "stock market"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 3,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-09-28",
@@ -330,7 +465,12 @@
       "entities": [
         "tech stocks"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 8,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-09-27",
@@ -342,7 +482,12 @@
         "dotcom bubble",
         "401k"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 2,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     },
     {
       "date": "2026-09-26",
@@ -354,7 +499,12 @@
         "salary",
         "small business"
       ],
-      "seed": true
+      "seed": true,
+      "stats": {
+        "views": 2,
+        "updated": "2026-10-29T23:47:30+00:00",
+        "source": "public"
+      }
     }
   ]
 }

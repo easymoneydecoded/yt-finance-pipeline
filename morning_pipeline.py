@@ -37,21 +37,19 @@ import praw
 from dotenv import load_dotenv
 
 import content_history as ch
+import llm
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 load_dotenv()
 
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")  # legacy, no usado
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
 FRED_API_KEY    = os.getenv("FRED_API_KEY")
 REDDIT_ID       = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_SECRET   = os.getenv("REDDIT_CLIENT_SECRET")
 REDDIT_AGENT    = os.getenv("REDDIT_USER_AGENT", "youtube-finance-bot:v1 (by /u/your_user)")
 
-GEMINI_MODEL    = "gemini-3.5-flash-lite"
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 
 OUTPUT_DIR      = Path("data")
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -92,6 +90,8 @@ class VideoIdea:
     entities: list[str] = field(default_factory=list)
     format: str = ""
     source_urls: list[str] = field(default_factory=list)
+    tickers: list[str] = field(default_factory=list)
+    viral_score: int = 5
 
 
 # ---------------------------------------------------------------------------
@@ -256,7 +256,12 @@ Below are real, fresh signals from today: financial news headlines, a live marke
 Your job: pick {n_ideas} distinct video angles. Each should be:
   - **Currently relevant** (anchored in a real signal you can see below)
   - **High retention** (curiosity, contrast, urgency, money-on-the-line)
-  - **Mid-length friendly** (8-12 min long video that we'll later cut into 8-10 Shorts)
+  - **Mid-length friendly** (8-10 min long video + 3 standalone Shorts)
+  - **Mass-market stake**: the best performers on faceless finance channels hit a money worry that
+    millions share (rent/mortgage, paycheck, 401k, taxes, prices, jobs, savings, debt) through a
+    SPECIFIC fresh story. Niche institutional gossip with no viewer stake underperforms.
+  - **Chartable**: prefer stories with real data we can SHOW on screen (a stock/index/crypto price,
+    a rate, an economic series) - the video is built around real charts.
   - **NOT generic** (avoid "how to budget", "what is a 401k" — those are evergreen blog topics; we need angles that feel like today)
   - **NOT financial advice** (educational tone only — "what this means", "how this works", never "buy this")
   - **Rotated in format**: every idea uses a DIFFERENT format from: {formats}
@@ -271,6 +276,9 @@ NO idea may involve Harvard or SpaceX). Generic evergreen fear titles like
 "The Hidden Wealth Trap Nobody Is Talking About" are banned.
 {history_block}
 
+=== WHAT THIS CHANNEL'S AUDIENCE ACTUALLY WATCHES (real analytics) ===
+{performance_block}
+
 Title openers that are OVERUSED on this channel (do NOT start titles with them): {overused}
 Vary title structure: statements, questions, numbers first, names first, "X vs Y".
 
@@ -284,6 +292,8 @@ For each idea give me strict JSON with:
   - topic_key:    5-8 lowercase words that identify the STORY (e.g. "harvard endowment spacex stake")
   - entities:     list of the named companies, people, institutions, assets or laws involved (e.g. ["Harvard", "SpaceX"]); use [] only if none
   - format:       the format used, copied from the list above
+  - tickers:      0-3 Yahoo Finance symbols whose price chart illustrates the story (e.g. ["COST", "^GSPC", "BTC-USD"]); [] if none
+  - viral_score:  integer 1-10, your honest estimate of click + watch potential for a broad US audience
 
 Return ONLY a JSON array of {n_ideas} objects. No prose before or after, no markdown fences.
 
@@ -291,46 +301,6 @@ Return ONLY a JSON array of {n_ideas} objects. No prose before or after, no mark
 {signals_text}
 === END SIGNALS ===
 """
-
-def _call_gemini_with_retries(payload: dict, max_attempts: int = 7) -> str:
-    """Llama a la API de Gemini con reintentos ante 429/5xx. Devuelve el texto de respuesta."""
-    last_err = None
-    for attempt in range(1, max_attempts + 1):
-        try:
-            r = requests.post(
-                GEMINI_ENDPOINT,
-                headers = {
-                    "x-goog-api-key": GEMINI_API_KEY,
-                    "Content-Type":   "application/json",
-                },
-                json    = payload,
-                timeout = 120,
-            )
-            if r.status_code == 200:
-                data = r.json()
-                try:
-                    return data["candidates"][0]["content"]["parts"][0]["text"]
-                except (KeyError, IndexError) as e:
-                    last_err = f"Respuesta Gemini sin texto: {e} / {str(data)[:200]}"
-                    print(f"   ! {last_err}")
-            elif r.status_code in (429, 500, 502, 503, 504):
-                wait = 30 * attempt
-                snippet = r.text[:200].replace("\n", " ")
-                print(f"   . Gemini devolvio {r.status_code}: {snippet}")
-                print(f"     reintento en {wait}s (intento {attempt}/{max_attempts})...")
-                time.sleep(wait)
-                continue
-            else:
-                # Otros errores: mostrar body y raise
-                print(f"   ! Gemini error {r.status_code}: {r.text[:300]}")
-                r.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            last_err = str(e)
-            wait = 30 * attempt
-            print(f"   . Gemini error de red: {e}. Reintento en {wait}s...")
-            time.sleep(wait)
-    raise RuntimeError(f"Gemini fallo tras {max_attempts} intentos: {last_err}")
-
 
 def _robust_parse_ideas(content: str) -> dict:
     """
@@ -425,9 +395,6 @@ def filter_used_signals(signals: list[Signal], history: list[dict]) -> list[Sign
 
 def generate_ideas(signals: list[Signal], history: list[dict],
                    rejected: list[str] | None = None) -> list[VideoIdea]:
-    if not GEMINI_API_KEY:
-        raise RuntimeError("Falta GEMINI_API_KEY en .env")
-
     # Barajamos para que el modelo no se ancle siempre en las primeras lineas
     signals = list(signals)
     random.shuffle(signals)
@@ -451,24 +418,14 @@ def generate_ideas(signals: list[Signal], history: list[dict],
         recent_formats = ", ".join(f for f in VIDEO_FORMATS if f not in recent_formats),
         history_block  = ch.recent_for_prompt(history),
         overused       = ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
+        performance_block = ch.performance_report(history),
     )
     if rejected:
         prompt_text += ("\n\nThese ideas were just REJECTED as repeats of published videos. "
                         "Go somewhere completely different:\n" + "\n".join(f"  - {r}" for r in rejected))
     prompt_text += f'\n\nReturn shape: {{"ideas": [ ...{N_IDEAS_REQUESTED} objects... ]}}'
 
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt_text}]
-        }],
-        "generationConfig": {
-            "temperature":      0.95,
-            "maxOutputTokens":  9000,
-            "responseMimeType": "application/json",
-        },
-    }
-
-    content = _call_gemini_with_retries(payload)
+    content = llm.generate(prompt_text, temperature=0.95, max_tokens=9000)
 
     parsed = _robust_parse_ideas(content)
 
@@ -497,6 +454,8 @@ def generate_ideas(signals: list[Signal], history: list[dict],
                 entities             = [str(e) for e in raw.get("entities", [])][:8],
                 format               = str(raw.get("format", "")),
                 source_urls          = [u for u in (url_by_headline.get(ch.normalize(h)) for h in source_signals) if u],
+                tickers              = [str(t).upper() for t in raw.get("tickers", [])][:3],
+                viral_score          = max(1, min(10, int(raw.get("viral_score", 5)))),
             ))
         except (KeyError, ValueError, TypeError) as e:
             print(f"   ! Idea malformada, ignorada: {e}")
@@ -582,7 +541,7 @@ def main() -> None:
     if not all_signals:
         raise RuntimeError("No se obtuvo ninguna senal — revisa conexion y claves.")
 
-    print(f"\n5/5  Generando {N_IDEAS_REQUESTED} ideas con Gemini ({GEMINI_MODEL})...")
+    print(f"\n5/5  Generando {N_IDEAS_REQUESTED} ideas con Gemini ({llm.MODEL_FAST})...")
     ideas, rejected = drop_repeated_ideas(generate_ideas(all_signals, history), history)
 
     # Si casi todo salio repetido, segunda ronda diciendole lo que rechazamos
@@ -593,6 +552,8 @@ def main() -> None:
 
     if not ideas:
         raise RuntimeError("Todas las ideas generadas repetian videos ya publicados.")
+    # Mejores primero: potencial viral, y a igualdad, las que tienen datos que mostrar
+    ideas.sort(key=lambda i: (i.viral_score, bool(i.tickers)), reverse=True)
     ideas = ideas[:N_IDEAS_KEPT]
 
     json_path, md_path = save_outputs(ideas, all_signals)
@@ -603,7 +564,7 @@ def main() -> None:
 
     print("=== IDEAS DE HOY ===\n")
     for n, i in enumerate(ideas, 1):
-        print(f"  {n}. {i.title}  [{i.format}]")
+        print(f"  {n}. {i.title}  [{i.format}] viral={i.viral_score} tickers={i.tickers}")
         print(f"     Tema: {i.topic_key} | {', '.join(i.entities)}")
         print(f"     Hook: {i.hook}\n")
 

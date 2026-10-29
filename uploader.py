@@ -11,6 +11,11 @@
    5. Guarda un manifest final con los video_id de YouTube
    6. Registra el video en history/videos.json (memoria anti-repeticion)
 
+ Programacion (las primeras horas deciden si YouTube empuja el video):
+   - Video largo: PUBLISH_HOUR_UTC (14:00 UTC = 10:00 Nueva York)
+   - Shorts en franjas buenas de EE. UU. (14/18/22 UTC), separados >= 8h
+   - Capitulos automaticos en la descripcion (timeline del editor)
+
  Protecciones:
    - Si hoy ya se subio un video (re-ejecucion del workflow), no sube otro
    - Si el titulo/miniatura repite un video anterior, aborta en vez de publicar
@@ -24,7 +29,7 @@
 import os
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from google.oauth2.credentials import Credentials
@@ -52,9 +57,72 @@ YT_SCOPES        = ["https://www.googleapis.com/auth/youtube.upload"]
 
 CATEGORY_ID      = "27"  # Education
 
-PRIVACY_STATUS   = "public"
 MADE_FOR_KIDS    = False
-NOTIFY_SUBS      = True
+
+PUBLISH_HOUR_UTC = int(os.getenv("PUBLISH_HOUR_UTC", "14"))
+SHORT_HOURS_UTC  = [14, 18, 22]         # 10:00, 14:00 y 18:00 en Nueva York
+SHORT_MIN_GAP_H  = 8                    # separacion minima entre Shorts
+MIN_LEAD_MIN     = 20                   # YouTube necesita margen para procesar
+
+HASHTAGS = "#finance #investing #money"
+
+
+# ---------------------------------------------------------------------------
+# Programacion y capitulos
+# ---------------------------------------------------------------------------
+def long_publish_time(now: datetime | None = None) -> datetime | None:
+    """Hora de publicacion del video largo; None = publicar ya (la hora punta ya paso)."""
+    now = now or datetime.now(timezone.utc)
+    slot = now.replace(hour=PUBLISH_HOUR_UTC, minute=0, second=0, microsecond=0)
+    return slot if slot - now >= timedelta(minutes=MIN_LEAD_MIN) else None
+
+
+def short_slots(base: datetime, n: int) -> list[datetime]:
+    """n huecos en horas buenas de EE. UU., el primero >= 4h tras el video largo."""
+    slots, t = [], base + timedelta(hours=4)
+    day = t.replace(minute=0, second=0, microsecond=0)
+    for d in range(0, 7):
+        for hour in SHORT_HOURS_UTC:
+            cand = (day + timedelta(days=d)).replace(hour=hour)
+            if cand >= t and (not slots or cand - slots[-1] >= timedelta(hours=SHORT_MIN_GAP_H)):
+                slots.append(cand)
+                if len(slots) == n:
+                    return slots
+    return slots
+
+
+def status_block(publish_at: datetime | None) -> dict:
+    status = {
+        "privacyStatus":           "private" if publish_at else "public",
+        "selfDeclaredMadeForKids": MADE_FOR_KIDS,
+        "embeddable":              True,
+        "publicStatsViewable":     True,
+    }
+    if publish_at:
+        status["publishAt"] = publish_at.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return status
+
+
+def _ts(sec: float) -> str:
+    sec = int(sec)
+    return f"{sec // 3600}:{sec % 3600 // 60:02d}:{sec % 60:02d}" if sec >= 3600 else f"{sec // 60}:{sec % 60:02d}"
+
+
+def build_chapters(timeline: dict) -> str:
+    """Capitulos de YouTube: empiezan en 0:00, minimo 3, cada uno >= 10s."""
+    chapters = [(0.0, "Intro")]
+    for sec in timeline.get("sections", []):
+        if sec.get("type") == "body" and sec.get("title"):
+            chapters.append((sec["start"], sec["title"]))
+        elif sec.get("type") == "outro":
+            chapters.append((sec["start"], "The bottom line"))
+    clean = [chapters[0]]
+    for start, title in chapters[1:]:
+        if start - clean[-1][0] >= 10:
+            clean.append((start, title.strip()[:60]))
+    if len(clean) < 3:
+        return ""
+    return "Chapters:\n" + "\n".join(f"{_ts(st)} {t}" for st, t in clean)
 
 
 # ---------------------------------------------------------------------------
@@ -148,6 +216,10 @@ def build_history_entry(script_data: dict, long_video: dict, shorts: list[dict])
         "broll_pexels_ids": broll_ids,
         "shorts_titles":    [s["title"].replace(" #Shorts", "") for s in shorts],
         "shorts_ids":       [s["video_id"] for s in shorts],
+        "publish_at":       long_video.get("publish_at", ""),
+        "quality":          script_data.get("quality", {}).get("overall"),
+        "voice":            load_optional_json(INPUT_DIR / "audio" / f"audio_manifest_{TODAY}.json",
+                                               "audio_manifest_*.json", INPUT_DIR / "audio").get("voice", ""),
     }
 
 
@@ -173,9 +245,16 @@ def get_youtube_client():
 # ---------------------------------------------------------------------------
 # Metadata builders
 # ---------------------------------------------------------------------------
-def build_long_video_metadata(script_data: dict) -> dict:
+def build_long_video_metadata(script_data: dict, publish_at: datetime | None = None,
+                              timeline: dict | None = None) -> dict:
     title       = script_data.get("youtube_title", "Untitled")[:100]
-    description = script_data.get("description", "")
+    chapters    = build_chapters(timeline or {})
+    description = "\n\n".join(x for x in (
+        script_data.get("description", "").strip(),
+        chapters,
+        "Data: Yahoo Finance, FRED (Federal Reserve Bank of St. Louis) and the news sources cited.",
+        HASHTAGS,
+    ) if x)[:4900]
     tags        = script_data.get("tags", [])[:25]
 
     return {
@@ -188,22 +267,20 @@ def build_long_video_metadata(script_data: dict) -> dict:
             "defaultAudioLanguage": "en",
         },
         "status": {
-            "privacyStatus":           PRIVACY_STATUS,
-            "selfDeclaredMadeForKids": MADE_FOR_KIDS,
-            "embeddable":              True,
-            "publicStatsViewable":     True,
         },
+        "status": status_block(publish_at),
     }
 
 
 def build_short_metadata(short_info: dict, script_data: dict, short_index: int,
-                         taken: list[dict]) -> dict:
+                         taken: list[dict], publish_at: datetime | None = None) -> dict:
     parent_title  = script_data.get("youtube_title", "Untitled")
+    own_title     = short_info.get("title", "").strip()
     section_title = short_info.get("section_title", "").strip()
     alt_hook      = short_info.get("alt_hook", "").strip()
 
     # Primer candidato que no repita ningun titulo publicado (ni de este mismo lote)
-    candidates = [c for c in (alt_hook, section_title) if c]
+    candidates = [c for c in (own_title, alt_hook, section_title) if c]
     candidates.append(f"{parent_title} - Part {short_index}")
     short_title = candidates[-1]
     for c in candidates:
@@ -214,11 +291,12 @@ def build_short_metadata(short_info: dict, script_data: dict, short_index: int,
 
     short_title = f"{short_title} #Shorts"[:100]
 
+    first_line = (short_info.get("text", "").split(". ")[0] or section_title).strip()
     description = (
-        f"{section_title}\n\n"
-        f"Watch the full video for the deep breakdown.\n\n"
-        f"This is for education, not financial advice.\n\n"
-        f"#Shorts #Finance #Investing #Money"
+        f"{first_line}.\n\n"
+        f"Full breakdown: {parent_title}\n\n"
+        f"Education, not financial advice.\n\n"
+        f"#Shorts {HASHTAGS}"
     )
 
     tags = script_data.get("tags", [])[:15]
@@ -232,12 +310,7 @@ def build_short_metadata(short_info: dict, script_data: dict, short_index: int,
             "defaultLanguage":      "en",
             "defaultAudioLanguage": "en",
         },
-        "status": {
-            "privacyStatus":           PRIVACY_STATUS,
-            "selfDeclaredMadeForKids": MADE_FOR_KIDS,
-            "embeddable":              True,
-            "publicStatsViewable":     True,
-        },
+        "status": status_block(publish_at),
     }
 
 
@@ -359,8 +432,11 @@ def main() -> None:
     # Video largo
     # -----------------------------------------------------------------------
     print(f"\n3/5  Subiendo video largo...")
-    long_metadata = build_long_video_metadata(script_data)
+    publish_at = long_publish_time()
+    timeline = load_optional_json(OUTPUT_DIR / f"timeline_{TODAY}.json", "timeline_*.json", OUTPUT_DIR)
+    long_metadata = build_long_video_metadata(script_data, publish_at, timeline)
     print(f"      titulo: {long_metadata['snippet']['title']}")
+    print(f"      publicacion: {publish_at.isoformat() if publish_at else 'inmediata'}")
     try:
         long_video_id = upload_video(youtube, video_path, long_metadata, label="LONG")
         long_video_url = f"https://youtu.be/{long_video_id}"
@@ -371,6 +447,7 @@ def main() -> None:
             "url":       long_video_url,
             "title":     long_metadata["snippet"]["title"],
             "filename":  video_path.name,
+            "publish_at": (publish_at or datetime.now(timezone.utc)).isoformat(timespec="minutes"),
         }
     except Exception as e:
         error_msg = f"Fallo subiendo video largo: {e}"
@@ -402,6 +479,7 @@ def main() -> None:
     if not shorts_manifest or not shorts_manifest.get("shorts"):
         print("      ! no hay Shorts para subir")
     else:
+        slots = short_slots(publish_at or datetime.now(timezone.utc), len(shorts_manifest["shorts"]))
         taken_titles = [{"title": t, "date": v.get("date", "")}
                         for v in history for t in [v.get("title", "")] + v.get("shorts_titles", [])]
         for i, short_info in enumerate(shorts_manifest["shorts"], 1):
@@ -412,7 +490,9 @@ def main() -> None:
                 uploaded["errors"].append(f"Short {i} no encontrado: {short_filename}")
                 continue
 
-            metadata = build_short_metadata(short_info, script_data, i, taken_titles)
+            short_at = slots[i - 1]
+            metadata = build_short_metadata(short_info, script_data, i, taken_titles, short_at)
+            print(f"      programado: {short_at.strftime('%Y-%m-%d %H:%M')} UTC")
             metadata["snippet"]["description"] = (
                 metadata["snippet"]["description"] +
                 f"\n\nFull video: {uploaded['long_video']['url']}"

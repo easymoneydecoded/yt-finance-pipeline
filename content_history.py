@@ -252,3 +252,80 @@ def used_source_urls(history: list[dict], last_n: int = 90) -> set[str]:
 
 def used_source_headlines(history: list[dict], last_n: int = 90) -> set[str]:
     return {normalize(h) for h in recent_values(history, "source_headlines", last_n) if h}
+
+
+# ---------------------------------------------------------------------------
+# Aprendizaje: que funciona en este canal (lo rellena analytics.py)
+# ---------------------------------------------------------------------------
+MIN_AGE_DAYS_FOR_SCORE = 3   # un video de 1 dia aun no tiene datos fiables
+
+
+def _age_days(entry: dict) -> int:
+    try:
+        d = datetime.strptime(entry.get("date", "")[:10], "%Y-%m-%d")
+    except ValueError:
+        return 0
+    return (datetime.now(timezone.utc).replace(tzinfo=None) - d).days
+
+
+def performance_score(entry: dict) -> float | None:
+    """Visitas ponderadas por retencion. None si no hay datos o es muy reciente."""
+    s = entry.get("stats")
+    if not s or "views" not in s or _age_days(entry) < MIN_AGE_DAYS_FOR_SCORE:
+        return None
+    retention = s.get("avg_view_pct")
+    factor = 0.5 + retention / 100 if retention is not None else 1.0
+    return (s["views"] + 0.2 * s.get("shorts_views", 0)) * factor
+
+
+def scored(history: list[dict]) -> list[tuple[float, dict]]:
+    out = [(performance_score(v), v) for v in history if not v.get("seed") or v.get("stats")]
+    return sorted([(sc, v) for sc, v in out if sc is not None], key=lambda x: x[0], reverse=True)
+
+
+def performance_report(history: list[dict], n: int = 5) -> str:
+    """Texto para los prompts: mejores y peores videos con su formato y estilo."""
+    ranked = scored(history)
+    if len(ranked) < 4:
+        return "  (not enough performance data yet - explore different formats)"
+
+    def _line(sc, v):
+        s = v["stats"]
+        ret = f", {s['avg_view_pct']}% avg viewed" if s.get("avg_view_pct") is not None else ""
+        extra = " | ".join(x for x in (v.get("format"), v.get("title_style")) if x)
+        return f'  - "{v.get("title")}" -> {s["views"]} views{ret}' + (f" [{extra}]" if extra else "")
+
+    lines = ["BEST performing videos (do more of what made these work):"]
+    lines += [_line(sc, v) for sc, v in ranked[:n]]
+    lines += ["WORST performing videos (avoid their topics/angles/title patterns):"]
+    lines += [_line(sc, v) for sc, v in ranked[-n:]]
+    return "\n".join(lines)
+
+
+def weighted_choice(options: list[str], history: list[dict], key: str, rng=None,
+                    exclude: set | None = None) -> str:
+    """
+    Elige una opcion favoreciendo las que mejor rinden en este canal, pero
+    dejando siempre margen para explorar (las nunca probadas pesan 1.3).
+    """
+    import random as _random
+    rng = rng or _random
+    pool = [o for o in options if o not in (exclude or set())] or list(options)
+
+    ranked = scored(history)
+    by_opt: dict[str, list[float]] = {}
+    for sc, v in ranked:
+        val = v.get(key)
+        if val:
+            by_opt.setdefault(val, []).append(sc)
+    mean_all = (sum(sc for sc, _ in ranked) / len(ranked)) if ranked else 0
+
+    weights = []
+    for o in pool:
+        tag = o.split(":")[0]
+        scores = by_opt.get(o) or by_opt.get(tag)
+        if not scores or mean_all <= 0:
+            weights.append(1.3)
+        else:
+            weights.append(min(3.0, max(0.4, (sum(scores) / len(scores)) / mean_all)))
+    return rng.choices(pool, weights=weights, k=1)[0]
