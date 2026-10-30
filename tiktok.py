@@ -117,3 +117,24 @@ def upload(video: Path, caption: str) -> str:
             raise TikTokError("TikTok marco la subida como fallida")
         time.sleep(10)
     return publish_id
+
+
+def check() -> None:
+    """Comprueba credenciales sin subir nada (python tiktok.py check)."""
+    if not enabled():
+        raise SystemExit("Faltan TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / TIKTOK_REFRESH_TOKEN")
+    token = access_token()
+    r = requests.get(f"{API}/user/info/", timeout=30, params={"fields": "open_id,display_name"},
+                     headers={"Authorization": f"Bearer {token}"})
+    data = r.json()
+    user = data.get("data", {}).get("user", {})
+    if not user:
+        raise SystemExit(f"TikTok no devolvio la cuenta: {str(data)[:300]}")
+    print(f"TikTok: cuenta '{user.get('display_name')}' conectada - token renovado OK")
+    print(f"Modo: {MODE} ({'borradores en la bandeja de TikTok' if MODE != 'direct' else 'publicacion directa'})")
+
+
+if __name__ == "__main__":
+    import sys
+    if sys.argv[1:] == ["check"]:
+        check()
