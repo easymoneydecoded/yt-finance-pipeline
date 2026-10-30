@@ -69,6 +69,14 @@ MAX_METADATA_RETRIES = 3
 QUALITY_THRESHOLD    = 7.5   # nota para aceptar a la primera
 MIN_PUBLISH_SCORE    = 6.5   # por debajo de esto, no se publica nada
 MAX_IDEAS_TO_TRY     = 3
+# Presupuesto de tiempo: si Gemini va lento (saturado), no se prueban mas ideas
+# ni reescrituras y se usa el mejor guion conseguido (si pasa la nota minima)
+STAGE_BUDGET_SEC     = 28 * 60
+_T0                  = time.time()
+
+
+def over_budget(margin_sec: int = 0) -> bool:
+    return time.time() - _T0 > STAGE_BUDGET_SEC - margin_sec
 
 VISUAL_TYPES = {"chart", "fred", "stat", "compare", "headline"}
 
@@ -554,7 +562,7 @@ def generate_script(ctx: dict) -> dict:
           f"{len(raw.get('shorts', []))} shorts")
 
     for retry in range(1, MAX_RETRY_GENERATION + 1):
-        if not stats["is_too_short"]:
+        if not stats["is_too_short"] or over_budget(margin_sec=8 * 60):
             break
         print(f"   . Reintento {retry}/{MAX_RETRY_GENERATION} con expansion quirurgica...")
         try:
@@ -632,6 +640,9 @@ def best_script_for_idea(idea: dict, payload: dict, history: list[dict]) -> tupl
     if verdict["overall"] >= QUALITY_THRESHOLD or verdict.get("unavailable"):
         return raw, verdict, ctx
 
+    if over_budget(margin_sec=6 * 60):
+        print("   . Sin tiempo para reescribir, me quedo con esta version")
+        return raw, verdict, ctx
     print(f"   . Nota {verdict['overall']} < {QUALITY_THRESHOLD}: reescribo con las correcciones del juez...")
     try:
         raw2 = rewrite(raw, verdict, ctx)
@@ -853,6 +864,9 @@ def main() -> None:
     print(f"\n2/4  Guion + juez de calidad (modelo {llm.MODEL_SMART}, respaldo {llm.MODEL_FAST})...")
     best = None
     for n, idea in enumerate(candidates, 1):
+        if best and over_budget(margin_sec=12 * 60):
+            print("\n   . Presupuesto de tiempo agotado: no pruebo mas ideas")
+            break
         print(f"\n   --- Idea {n}/{len(candidates)}: '{idea.get('title')}' ---")
         try:
             raw, verdict, ctx = best_script_for_idea(idea, payload, history)

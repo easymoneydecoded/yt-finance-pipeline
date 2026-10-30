@@ -99,7 +99,7 @@ jobs:
         run: python morning_pipeline.py
 
       - name: Etapa 2 - Guion, juez de calidad y fact-check
-        timeout-minutes: 30
+        timeout-minutes: 45
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python script_writer.py

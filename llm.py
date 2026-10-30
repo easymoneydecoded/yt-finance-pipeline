@@ -14,6 +14,7 @@
 """
 
 import os
+import re
 import json
 import time
 
@@ -28,6 +29,10 @@ MODEL_SMART    = os.getenv("GEMINI_MODEL_SMART", "gemini-3.5-flash")
 ENDPOINT       = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 ATTEMPTS_PER_MODEL = 4
+OVERLOAD_ATTEMPTS  = 2    # 503 "modelo saturado": tras 2 intentos, mejor el siguiente modelo
+MAX_RATE_WAIT      = 65   # espera maxima ante limite por minuto
+
+_research_disabled = False   # si Google Search no esta en el plan, no se reintenta en todo el run
 
 
 class LLMError(RuntimeError):
@@ -93,17 +98,28 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
                 time.sleep(10)
                 continue
 
-            snippet = str(data)[:200].replace("\n", " ")
-            last_err = f"{status}: {snippet}"
+            body = json.dumps(data) if isinstance(data, (dict, list)) else str(data)
+            last_err = f"{status}: {body[:200]}"
             if status in (400, 403, 404) and attempt == 1:
                 # Modelo inexistente / no disponible en free tier: siguiente modelo
                 print(f"   . {model} no disponible ({status}), pruebo el siguiente modelo")
                 break
-            if status == 429 and "PerDay" in snippet:
-                print(f"   . {model} sin cuota diaria, pruebo el siguiente modelo")
-                break
-            if status in (429, 500, 502, 503, 504):
-                wait = 20 * attempt
+            if status == 429:
+                # Cuota diaria agotada o funcion fuera del plan (limit 0): esperar no sirve
+                if "PerDay" in body or re.search(r'"?limit"?:\s*0(?!\d)', body) or tools:
+                    print(f"   . {model} sin cuota para esta peticion, pruebo el siguiente modelo")
+                    break
+                # Limite por minuto: esperar lo que pide la API
+                m = re.search(r'"retryDelay":\s*"(\d+)', body)
+                wait = min(MAX_RATE_WAIT, int(m.group(1)) + 2 if m else 20 * attempt)
+                print(f"   . {model} limite por minuto, espero {wait}s ({attempt}/{ATTEMPTS_PER_MODEL})")
+                time.sleep(wait)
+                continue
+            if status in (500, 502, 503, 504):
+                if attempt >= OVERLOAD_ATTEMPTS and model != _models(smart)[-1]:
+                    print(f"   . {model} saturado ({status}), paso al siguiente modelo")
+                    break
+                wait = 15 * attempt
                 print(f"   . {model} devolvio {status}, reintento en {wait}s ({attempt}/{ATTEMPTS_PER_MODEL})")
                 time.sleep(wait)
                 continue
@@ -150,6 +166,9 @@ Only include facts you found in sources. No opinions, no predictions."""
 
 def research(topic: str, context: str = "") -> str:
     """Fact sheet con Google Search (grounding). Devuelve '' si no esta disponible."""
+    global _research_disabled
+    if _research_disabled:
+        return ""
     try:
         text = generate(
             RESEARCH_PROMPT.format(topic=topic, context=context[:1500]),
@@ -158,5 +177,6 @@ def research(topic: str, context: str = "") -> str:
         )
         return text.strip()
     except LLMError as e:
-        print(f"   ! research no disponible: {e}")
+        _research_disabled = True
+        print(f"   ! Google Search no disponible en este plan ({str(e)[:90]}); sigo sin el")
         return ""
