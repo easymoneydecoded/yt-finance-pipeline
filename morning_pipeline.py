@@ -25,6 +25,7 @@ import os
 import json
 import time
 import random
+import socket
 from datetime import datetime, timezone
 from pathlib import Path
 from dataclasses import dataclass, asdict, field
@@ -43,6 +44,11 @@ import llm
 # Config
 # ---------------------------------------------------------------------------
 load_dotenv()
+
+# Red de seguridad: ninguna conexion puede quedarse colgada indefinidamente
+# (en los servidores de GitHub algunas webs dejan la conexion abierta sin responder)
+socket.setdefaulttimeout(30)
+RSS_TIMEOUT = (10, 20)   # (conectar, leer) en segundos
 
 GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY")
 FRED_API_KEY    = os.getenv("FRED_API_KEY")
@@ -98,8 +104,6 @@ class VideoIdea:
 # Fuente 1: RSS de noticias financieras
 # ---------------------------------------------------------------------------
 RSS_FEEDS = {
-    "Reuters Business":   "https://www.reutersagency.com/feed/?best-sectors=business-finance&post_type=best",
-    "Yahoo Finance":      "https://finance.yahoo.com/news/rssindex",
     "MarketWatch Top":    "https://www.marketwatch.com/rss/topstories",
     "CNBC Finance":       "https://www.cnbc.com/id/10000664/device/rss/rss.html",
     "Investing.com":      "https://www.investing.com/rss/news.rss",
@@ -114,7 +118,11 @@ def fetch_rss_headlines(max_per_feed: int = 5) -> list[Signal]:
     out: list[Signal] = []
     for name, url in RSS_FEEDS.items():
         try:
-            feed = feedparser.parse(url)
+            # requests con timeout: feedparser.parse(url) no tiene limite y puede colgarse
+            r = requests.get(url, timeout=RSS_TIMEOUT,
+                             headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130"})
+            r.raise_for_status()
+            feed = feedparser.parse(r.content)
             for entry in feed.entries[:max_per_feed]:
                 out.append(Signal(
                     source   = f"RSS · {name}",
@@ -123,7 +131,7 @@ def fetch_rss_headlines(max_per_feed: int = 5) -> list[Signal]:
                     url      = entry.get("link", ""),
                 ))
         except Exception as e:
-            print(f"   ! RSS {name} fallo: {e}")
+            print(f"   ! RSS {name} fallo: {str(e)[:120]}")
     return out
 
 

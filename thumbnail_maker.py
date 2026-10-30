@@ -25,7 +25,6 @@ import re
 import json
 import random
 import subprocess
-import urllib.request
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -108,7 +107,9 @@ def download_font_if_missing() -> Path:
         return ANTON_PATH
     try:
         print(f"   . descargando fuente Anton...")
-        urllib.request.urlretrieve(ANTON_URL, str(ANTON_PATH))
+        r = requests.get(ANTON_URL, timeout=30)
+        r.raise_for_status()
+        ANTON_PATH.write_bytes(r.content)
         if ANTON_PATH.stat().st_size > 10000:
             return ANTON_PATH
     except Exception as e:
