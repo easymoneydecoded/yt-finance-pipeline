@@ -1,0 +1,30 @@
+name: Branding (cabecera)
+
+# Manual: sube la cabecera del canal (branding/banner.jpg por defecto).
+# Para volver a la anterior, lanzalo con: branding/old/banner_antiguo.jpg
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Imagen a subir'
+        default: 'branding/banner.jpg'
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  banner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install google-api-python-client google-auth
+      - name: Subir cabecera
+        env:
+          YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python branding/set_banner.py "${{ inputs.image }}"
