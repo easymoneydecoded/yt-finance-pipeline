@@ -50,6 +50,12 @@ def _load(name: str, base: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def sentence_cut(words: list[dict], limit: float, minimum: float = 20.0) -> float:
+    """Final de la ultima frase completa antes de 'limit' (o 'limit' si no hay ninguna)."""
+    ends = [w["end"] for w in words if w["word"].endswith((".", "!", "?")) and minimum <= w["end"] <= limit]
+    return (ends[-1] + 0.25) if ends else limit
+
+
 def short_jobs(script: dict, audio: dict) -> list[dict]:
     jobs = []
     script_shorts = script.get("shorts", [])
@@ -96,13 +102,19 @@ def main() -> None:
         tag = f"_s{n}"
         try:
             voice = TEMP_DIR / f"voice{tag}.wav"
-            cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(job["audio"])]
+            tl.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(job["audio"]),
+                    "-ar", "44100", "-ac", "1", str(voice)])
+            words = tl.transcribe_words(voice, job["text"])
             if job["trim"]:
-                cmd += ["-t", f"{job['trim']:.2f}", "-af", f"afade=t=out:st={job['trim']-1.2:.2f}:d=1.2"]
-            tl.run(cmd + ["-ar", "44100", "-ac", "1", str(voice)])
+                # Respaldo: cortar en el ultimo final de frase antes del limite, nunca a mitad de frase
+                cut = sentence_cut(words, job["trim"])
+                trimmed = TEMP_DIR / f"voice{tag}_cut.wav"
+                tl.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(voice), "-t", f"{cut:.2f}",
+                        "-af", f"afade=t=out:st={max(0, cut - 0.3):.2f}:d=0.3", str(trimmed)])
+                voice, words = trimmed, [w for w in words if w["end"] <= cut + 0.05]
+                print(f"   . respaldo recortado a {cut:.1f}s (final de frase)")
             total = tl.ffprobe_duration(voice)
 
-            words = tl.transcribe_words(voice, "" if job["trim"] else job["text"])
             planned = tl.plan_beats([{"start": 0.0, "end": total, "visuals": job["visuals"]}], words, total)
             track, seg_log = tl.build_video_track(planned, lambda t: list(clips), total, SIZE, TEMP_DIR, tag)
             mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / f"mix{tag}.wav",

@@ -442,12 +442,80 @@ Return ONLY JSON: {{"youtube_title": "...", "thumbnail_text": "..."}}
 """
 
 
+SHORTS_PROMPT = """Write 3 standalone YouTube Shorts (vertical, 40-55 seconds, 95-150 words each) based on
+this video script. Each Short covers ONE striking fact from the story.
+- First sentence <= 12 words, a pattern-breaking claim. No intro, no "did you know".
+- One idea, one payoff. The last sentence loops back into the first so it rewatches naturally.
+- Every number must come from the fact sheet. Written for voice-over (no emojis, no parentheses).
+- Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" using ONLY these types:
+  {{"type": "stat", "anchor": "3-6 exact words from the text", "value": "$5B", "label": "...", "direction": "up"}}
+  {{"type": "chart", "anchor": "...", "ticker": "JPM", "period": "1y", "label": "..."}}
+  {{"type": "headline", "anchor": "...", "source": "CNBC", "text": "a real headline from the fact sheet"}}
+
+VIDEO TITLE: {title}
+SCRIPT:
+{script}
+
+FACT SHEET:
+{fact_sheet}
+
+Return ONLY JSON: {{"shorts": [{{"title": "...", "text": "...", "visuals": [...]}}, ...3 items]}}
+"""
+
+OUTRO_PROMPT = """This finance video script is missing its OUTRO. Write it (60-110 words, for voice-over):
+pay off the open loop from the intro, give ONE concrete thing the viewer can check or do today, a one-line
+disclaimer ("this is education, not financial advice"), then a CTA that gives a topic-specific reason to
+subscribe (not "like and subscribe"). Only use numbers that appear in the script.
+
+VIDEO TITLE: {title}
+SCRIPT SO FAR:
+{script}
+
+Return ONLY JSON: {{"text": "..."}}
+"""
+
+OUTRO_FALLBACK = ("So that is the real story behind the headline. Before you react, check how much of this "
+                  "already sits inside the funds and accounts you own. This is education, not financial advice. "
+                  "If you want the next money story explained with real data before it hits the news, subscribe.")
+
+
+def ensure_structure(raw: dict, ctx: dict) -> dict:
+    """El modelo (o un JSON roto) puede perder el outro o los Shorts: se reponen aparte."""
+    sections = raw.setdefault("sections", [])
+    script_text = "\n\n".join(f"[{x.get('type', '').upper()}] {x.get('text', '')}" for x in sections)
+
+    if sections and sections[-1].get("type") != "outro":
+        print("   ! al guion le falta el outro: lo genero aparte")
+        try:
+            text = str(call_model(OUTRO_PROMPT.format(title=raw.get("youtube_title", ""), script=script_text),
+                                  max_tokens=1000, smart=False).get("text", "")).strip()
+        except (RuntimeError, llm.LLMError) as e:
+            print(f"   ! fallo generando outro ({e}); uso el cierre por defecto")
+            text = ""
+        sections.append({"type": "outro", "text": text if count_words(text) >= 40 else OUTRO_FALLBACK, "visuals": []})
+
+    if len(clean_shorts(raw)) < 3:
+        print(f"   ! el guion trae {len(clean_shorts(raw))} Shorts validos: genero los Shorts aparte")
+        try:
+            new = call_model(SHORTS_PROMPT.format(title=raw.get("youtube_title", ""), script=script_text,
+                                                  fact_sheet=ctx["fact_sheet"]), max_tokens=6000, smart=False)
+            existing = [x for x in raw.get("shorts", []) or [] if isinstance(x, dict)]
+            raw["shorts"] = existing + [x for x in new.get("shorts", []) if isinstance(x, dict)]
+            print(f"   . Shorts tras regenerar: {len(clean_shorts(raw))}")
+        except (RuntimeError, llm.LLMError) as e:
+            print(f"   ! no pude generar los Shorts: {e}")
+    return raw
+
+
 # ---------------------------------------------------------------------------
 # Llamadas al modelo
 # ---------------------------------------------------------------------------
-def call_model(prompt: str, max_tokens: int = 16000, temperature: float = 0.75) -> dict:
-    """Modelo SMART (cae a FAST si no hay cuota). Devuelve el JSON parseado."""
-    content = llm.generate(prompt, smart=True, temperature=temperature, max_tokens=max_tokens)
+def call_model(prompt: str, max_tokens: int = 16000, temperature: float = 0.75, smart: bool = True) -> dict:
+    """
+    Devuelve el JSON parseado. smart=True usa el modelo bueno (cae al ligero si
+    no hay cuota); el resto de tareas usan el ligero para no gastar su cuota diaria.
+    """
+    content = llm.generate(prompt, smart=smart, temperature=temperature, max_tokens=max_tokens)
     return _parse_gemini_response(content)
 
 
@@ -477,7 +545,7 @@ def _rescue_script_fields(content: str) -> dict:
     con regex y balance de llaves. Recupera al menos las secciones del guion.
     """
     result = {}
-    for field in ("youtube_title", "thumbnail_text", "description"):
+    for field in ("youtube_title", "thumbnail_text", "description", "pinned_comment", "playlist"):
         m = re.search(rf'"{field}"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
         if m:
             result[field] = m.group(1).replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
@@ -489,9 +557,51 @@ def _rescue_script_fields(content: str) -> dict:
         except json.JSONDecodeError:
             result["tags"] = re.findall(r'"([^"\\]+)"', m.group(1))[:20]
 
-    sec_match = re.search(r'"sections"\s*:\s*\[', content)
-    if not sec_match:
-        return result
+    for key in ("sections", "shorts"):
+        items = _rescue_array(content, key)
+        if items:
+            result[key] = items
+    return result
+
+
+def _rescue_array(content: str, key: str) -> list[dict]:
+    """Objetos {...} completos (con "text") dentro de "key": [...], aunque el JSON este roto."""
+    m = re.search(rf'"{key}"\s*:\s*\[', content)
+    if not m:
+        return []
+    items, depth, obj_start = [], 0, -1
+    in_string = escape = False
+    i = m.end()
+    while i < len(content):
+        c = content[i]
+        if escape:
+            escape = False
+        elif c == "\\":
+            escape = True
+        elif c == '"':
+            in_string = not in_string
+        elif not in_string:
+            if c == "{":
+                if depth == 0:
+                    obj_start = i
+                depth += 1
+            elif c == "}":
+                depth -= 1
+                if depth == 0 and obj_start != -1:
+                    obj_str = content[obj_start:i + 1]
+                    for candidate in (obj_str, re.sub(r',\s*([}\]])', r'\1', obj_str)):
+                        try:
+                            obj = json.loads(candidate)
+                            if "text" in obj:
+                                items.append(obj)
+                            break
+                        except json.JSONDecodeError:
+                            continue
+                    obj_start = -1
+            elif c == "]" and depth == 0:
+                break
+        i += 1
+    return items
 
     sections, depth, obj_start = [], 0, -1
     in_string = escape = False
@@ -570,7 +680,7 @@ def generate_script(ctx: dict) -> dict:
                 previous_draft=json.dumps(raw, indent=1, ensure_ascii=False),
                 word_breakdown=format_breakdown(stats),
                 fact_sheet=ctx["fact_sheet"],
-            ))
+            ), smart=False)
         except (RuntimeError, llm.LLMError) as e:
             print(f"   ! expansion fallo: {e}")
             break
@@ -596,7 +706,7 @@ def judge(raw: dict, ctx: dict) -> dict:
             performance_block=ctx["performance_block"],
             history_block=ctx["history_block"],
             script=package_for_judge(raw),
-        ), smart=True, temperature=0.2, max_tokens=2000)
+        ), temperature=0.2, max_tokens=2000)
     except llm.LLMError as e:
         print(f"   ! juez no disponible ({e}); acepto el guion sin nota")
         return {"overall": QUALITY_THRESHOLD, "scores": {}, "fixes": [], "unavailable": True}
@@ -674,7 +784,7 @@ def fact_check(raw: dict, fact_sheet: str) -> dict:
         result = llm.generate_json(FACT_CHECK_PROMPT.format(
             fact_sheet=fact_sheet,
             texts="\n\n".join(f"[{k}] {v}" for k, v in texts.items()),
-        ), smart=True, temperature=0.1, max_tokens=4000)
+        ), temperature=0.1, max_tokens=4000)
         issues = result.get("issues", []) if isinstance(result, dict) else []
     except llm.LLMError as e:
         print(f"   ! fact-check no disponible: {e}")
@@ -754,7 +864,7 @@ def ensure_unique_metadata(raw: dict, idea: dict, history: list[dict], title_sty
                 reason        = dup[1],
                 history_block = ch.recent_for_prompt(history, limit=40),
                 title_style   = title_style,
-            ), max_tokens=500)
+            ), max_tokens=500, smart=False)
         except (RuntimeError, llm.LLMError) as e:
             print(f"   ! Fallo regenerando metadata: {e}")
             break
@@ -888,6 +998,7 @@ def main() -> None:
         )
 
     print(f"\n3/4  Fact-check y metadata (idea elegida: '{idea.get('title')}', nota {verdict['overall']})...")
+    raw = ensure_structure(raw, ctx)
     raw = fact_check(raw, ctx["fact_sheet"])
     raw = ensure_unique_metadata(raw, idea, history, ctx["title_style"])
 
