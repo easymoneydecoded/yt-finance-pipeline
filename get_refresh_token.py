@@ -12,9 +12,10 @@
  3. Imprime el refresh token nuevo -> pegalo en GitHub:
     Settings > Secrets and variables > Actions > YOUTUBE_REFRESH_TOKEN
 
- Permisos: subir videos + leer estadisticas y analiticas (para que el canal
- aprenda que funciona). Si el cliente OAuth es de tipo "Web", anade
- http://localhost:8080/ como URI de redireccion en Google Cloud Console.
+ Permisos: subir videos, leer estadisticas y analiticas (aprendizaje) y
+ gestionar comentarios y listas de reproduccion (engagement.py).
+ Si el cliente OAuth es de tipo "Web", anade http://localhost:8080/ como URI
+ de redireccion en Google Cloud Console.
 ================================================================================
 """
 
@@ -29,6 +30,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube.readonly",
     "https://www.googleapis.com/auth/yt-analytics.readonly",
+    "https://www.googleapis.com/auth/youtube.force-ssl",   # comentarios + listas
 ]
 
 

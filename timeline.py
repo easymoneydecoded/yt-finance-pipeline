@@ -245,19 +245,63 @@ def build_video_track(planned: list[dict], broll_for_time, total: float, size: t
 # ---------------------------------------------------------------------------
 # Audio: voz + musica
 # ---------------------------------------------------------------------------
-def mix_music(voice: Path, duration: float, music_dir: Path, volume: float, out: Path) -> Path:
+SFX_DIR    = Path("data/sfx")
+SFX_VOLUME = 0.32
+# Efectos generados con ffmpeg (sin archivos externos ni derechos de autor)
+SFX = {
+    "whoosh": "anoisesrc=d=0.55:c=pink:a=0.55,highpass=f=350,lowpass=f=4500,"
+              "afade=t=in:st=0:d=0.25,afade=t=out:st=0.25:d=0.3",
+    "ding":   "sine=f=1318:d=0.4,afade=t=out:st=0.01:d=0.39,volume=0.55",
+}
+
+
+def sfx_file(kind: str) -> Path:
+    SFX_DIR.mkdir(parents=True, exist_ok=True)
+    path = SFX_DIR / f"{kind}.wav"
+    if not path.exists():
+        run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", SFX[kind],
+             "-ar", "44100", "-ac", "1", str(path)])
+    return path
+
+
+def sfx_events(seg_log: list[dict]) -> list[tuple[float, str]]:
+    """Whoosh al entrar cada visual de datos y ding cuando aparece una cifra."""
+    events, t = [], 0.0
+    for seg in seg_log:
+        if seg["kind"] == "visual":
+            events.append((max(0.0, t - 0.12), "whoosh"))
+            if seg.get("beat") == "stat":
+                events.append((t + 0.35, "ding"))
+        t += seg["dur"]
+    return events
+
+
+def mix_music(voice: Path, duration: float, music_dir: Path, volume: float, out: Path,
+              events: list[tuple[float, str]] | None = None) -> Path:
+    """Voz normalizada (-16 LUFS) + musica de fondo + efectos de sonido."""
     tracks = sorted(music_dir.glob("*.mp3")) + sorted(music_dir.glob("*.wav"))
-    if not tracks:
+    inputs = ["-i", str(voice)]
+    filters = ["[0:a]loudnorm=I=-16:TP=-1.5:LRA=11[v]"]
+    labels = ["[v]"]
+    if tracks:
+        chosen = random.choice(tracks)
+        print(f"   . musica: {chosen.name}")
+        inputs += ["-stream_loop", "-1", "-i", str(chosen)]
+        filters.append(f"[1:a]volume={volume},afade=t=in:d=1.5,"
+                       f"afade=t=out:st={max(0, duration-2.5):.2f}:d=2.5[m]")
+        labels.append("[m]")
+    else:
         print("   ! sin musica de fondo")
-        return voice
-    chosen = random.choice(tracks)
-    print(f"   . musica: {chosen.name}")
-    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(voice), "-stream_loop", "-1", "-i", str(chosen),
-         "-filter_complex",
-         (f"[1:a]volume={volume},afade=t=in:d=1.5,afade=t=out:st={max(0, duration-2.5):.2f}:d=2.5[m];"
-          f"[0:a]loudnorm=I=-16:TP=-1.5:LRA=11[v];[v][m]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[out]"),
+    for k, (t, kind) in enumerate(events or []):
+        idx = len(labels)
+        inputs += ["-i", str(sfx_file(kind))]
+        ms = int(t * 1000)
+        filters.append(f"[{idx}:a]adelay={ms}|{ms},volume={SFX_VOLUME}[x{k}]")
+        labels.append(f"[x{k}]")
+    filters.append(f"{''.join(labels)}amix=inputs={len(labels)}:duration=first:dropout_transition=0:normalize=0[out]")
+    run(["ffmpeg", "-y", "-loglevel", "error", *inputs, "-filter_complex", ";".join(filters),
          "-map", "[out]", "-c:a", "pcm_s16le", "-ar", "44100", "-t", f"{duration:.3f}", str(out)],
-        "mezclando voz + musica")
+        f"mezclando voz + musica + {len(events or [])} efectos")
     return out
 
 
@@ -354,9 +398,14 @@ def ass_filter(subs: Path) -> str:
     return f"ass='{_filter_path(subs)}':fontsdir='{_filter_path(visuals.FONTS_DIR)}'"
 
 
-def render_final(track: Path, audio: Path, subs: Path, duration: float, out: Path, crf: int = 21) -> Path:
-    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(track), "-i", str(audio),
-         "-vf", ass_filter(subs), "-map", "0:v", "-map", "1:a",
+def render_final(track: Path, audio: Path, subs: Path, duration: float, out: Path, crf: int = 21,
+                 vertical: bool = False) -> Path:
+    """Subtitulos + marca del canal (arriba a la derecha en 16:9, arriba centrada en 9:16)."""
+    badge = visuals.brand_badge(46 if vertical else 40)
+    pos = "x=(W-w)/2:y=120" if vertical else "x=W-w-36:y=30"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(track), "-i", str(audio), "-i", str(badge),
+         "-filter_complex", f"[0:v]{ass_filter(subs)}[s];[s][2:v]overlay={pos}[vout]",
+         "-map", "[vout]", "-map", "1:a",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf), "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-t", f"{duration:.3f}", "-movflags", "+faststart", str(out)],
         f"render final -> {out.name}")

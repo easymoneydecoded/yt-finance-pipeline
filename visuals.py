@@ -41,6 +41,7 @@ NEUTRAL    = (59, 160, 255)
 GOLD       = (255, 196, 0)
 
 FRED_API_KEY = os.getenv("FRED_API_KEY")
+CHANNEL_NAME = os.getenv("CHANNEL_NAME", "TICKERPRESS")
 
 FRED_SERIES = {
     "MORTGAGE30US": ("30-year mortgage rate", "lin", "%"),
@@ -462,6 +463,32 @@ def render_headline(source: str, text: str, size, duration, out_path: Path) -> N
             y += line_h
         frames.append(frame)
     write_clip(frames, size, duration, out_path)
+
+
+# ---------------------------------------------------------------------------
+# Marca del canal (watermark)
+# ---------------------------------------------------------------------------
+def brand_badge(height: int = 40) -> Path:
+    """Etiqueta semitransparente '▲ TICKERPRESS' para la esquina del video."""
+    out = Path("data/brand") / f"badge_{height}.png"
+    if out.exists():
+        return out
+    out.parent.mkdir(parents=True, exist_ok=True)
+    f = font("bold", int(height * 0.52))
+    probe = ImageDraw.Draw(Image.new("RGBA", (10, 10)))
+    tw = text_w(probe, CHANNEL_NAME, f)
+    pad, tri = int(height * 0.38), int(height * 0.42)
+    w = pad + tri + int(height * 0.25) + tw + pad
+    img = Image.new("RGBA", (w, height), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([0, 0, w - 1, height - 1], radius=height // 2, fill=(0, 0, 0, 125))
+    cy = height // 2
+    d.polygon([(pad, cy + tri // 2), (pad + tri, cy + tri // 2), (pad + tri // 2, cy - tri // 2)], fill=UP + (235,))
+    bb = d.textbbox((0, 0), CHANNEL_NAME, font=f)
+    d.text((pad + tri + int(height * 0.25), cy - (bb[3] - bb[1]) // 2 - bb[1]), CHANNEL_NAME, font=f,
+           fill=(255, 255, 255, 220))
+    img.save(out)
+    return out
 
 
 # ---------------------------------------------------------------------------

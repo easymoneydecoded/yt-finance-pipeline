@@ -105,9 +105,11 @@ def main() -> None:
             words = tl.transcribe_words(voice, "" if job["trim"] else job["text"])
             planned = tl.plan_beats([{"start": 0.0, "end": total, "visuals": job["visuals"]}], words, total)
             track, seg_log = tl.build_video_track(planned, lambda t: list(clips), total, SIZE, TEMP_DIR, tag)
-            mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / f"mix{tag}.wav")
+            mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / f"mix{tag}.wav",
+                                  tl.sfx_events(seg_log))
             subs = tl.build_short_captions(words, TEMP_DIR / f"subs{tag}.ass")
-            out = tl.render_final(track, mixed, subs, total, OUTPUT_DIR / f"short_{n}_{TODAY}.mp4", crf=20)
+            out = tl.render_final(track, mixed, subs, total, OUTPUT_DIR / f"short_{n}_{TODAY}.mp4",
+                                  crf=20, vertical=True)
         except Exception as e:
             print(f"   ! Short {n} fallo: {e}")
             continue

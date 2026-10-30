@@ -15,6 +15,7 @@
    - Video largo: PUBLISH_HOUR_UTC (14:00 UTC = 10:00 Nueva York)
    - Shorts en franjas buenas de EE. UU. (14/18/22 UTC), separados >= 8h
    - Capitulos automaticos en la descripcion (timeline del editor)
+   - Lista de reproduccion por tema + comentario del canal (engagement.py)
 
  Protecciones:
    - Si hoy ya se subio un video (re-ejecucion del workflow), no sube otro
@@ -39,6 +40,7 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
 
 import content_history as ch
+import engagement
 
 # ---------------------------------------------------------------------------
 # Config
@@ -217,6 +219,9 @@ def build_history_entry(script_data: dict, long_video: dict, shorts: list[dict])
         "shorts_titles":    [s["title"].replace(" #Shorts", "") for s in shorts],
         "shorts_ids":       [s["video_id"] for s in shorts],
         "publish_at":       long_video.get("publish_at", ""),
+        "shorts_publish_at": [s.get("publish_at", "") for s in shorts],
+        "pinned_comment":   script_data.get("pinned_comment", ""),
+        "playlist":         long_video.get("playlist", script_data.get("playlist", "")),
         "quality":          script_data.get("quality", {}).get("overall"),
         "voice":            load_optional_json(INPUT_DIR / "audio" / f"audio_manifest_{TODAY}.json",
                                                "audio_manifest_*.json", INPUT_DIR / "audio").get("voice", ""),
@@ -472,6 +477,14 @@ def main() -> None:
     else:
         print(f"      ! sin thumbnail custom, YouTube usara frame automatico")
 
+    # Lista de reproduccion del tema (necesita el permiso youtube.force-ssl)
+    yt_manage = engagement.client()
+    if yt_manage:
+        added = engagement.add_to_playlist(yt_manage, long_video_id, script_data.get("playlist", ""))
+        if added:
+            uploaded["long_video"]["playlist"] = added
+            print(f"      anadido a la lista: {added}")
+
     # -----------------------------------------------------------------------
     # Shorts
     # -----------------------------------------------------------------------
@@ -509,6 +522,7 @@ def main() -> None:
                     "url":       short_url,
                     "title":     metadata["snippet"]["title"],
                     "filename":  short_filename,
+                    "publish_at": short_at.isoformat(timespec="minutes"),
                 })
 
                 if i < len(shorts_manifest["shorts"]):

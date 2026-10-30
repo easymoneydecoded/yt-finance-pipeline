@@ -7,6 +7,11 @@
    - Guarda en PNG (texto sin halo de compresion JPEG)
    - Control de peso: si el PNG supera 2MB, optimiza para caber en YouTube
    - Diseño Minimalista Agresivo (Eliminación de barras, texto gigante, sombras)
+ Mejoras v5 (miniaturas con datos):
+   - Layout "chart": el grafico real del video (verde/rojo) + flecha + texto
+   - Layout "bignum": la cifra clave gigante con flecha sobre fondo desenfocado
+   - Se prefieren cuando el guion tiene datos; el aprendizaje favorece el
+     layout que mejor rinde en el canal
  Mejoras v4 (anti-repeticion):
    - 4 layouts x 6 colores de acento; se evita el combo de los ultimos videos
    - El clip de fondo no puede ser uno usado en miniaturas recientes
@@ -29,6 +34,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageOps
 from dotenv import load_dotenv
 
 import content_history as ch
+import visuals
 
 load_dotenv()
 
@@ -60,6 +66,9 @@ ACCENT_COLORS = {
     "pink":   (255, 60, 170),
 }
 LAYOUTS = ["center", "left", "box", "bottom"]
+DATA_LAYOUTS = ["chart", "bignum"]
+COLOR_UP   = (0, 220, 110)
+COLOR_DOWN = (235, 36, 50)
 
 OVERLAY_ALPHA  = 115
 
@@ -111,13 +120,41 @@ def download_font_if_missing() -> Path:
     raise RuntimeError("No hay fuente disponible")
 
 
-def pick_style(history: list[dict], rng: random.Random) -> tuple[str, str]:
-    """Layout y color distintos de los de las ultimas miniaturas."""
-    recent_layouts = ch.recent_values(history, "thumb_layout", last_n=2)
+def pick_style(history: list[dict], rng: random.Random, has_chart: bool = False,
+               has_number: bool = False) -> tuple[str, str]:
+    """
+    Layout y color distintos de los de las ultimas miniaturas. Los layouts con
+    datos pesan el doble cuando hay datos; el rendimiento real ajusta el resto.
+    """
+    recent_layouts = set(ch.recent_values(history, "thumb_layout", last_n=2))
     recent_colors  = ch.recent_values(history, "thumb_color", last_n=3)
-    layouts = [l for l in LAYOUTS if l not in recent_layouts] or LAYOUTS
+    data = (["chart"] if has_chart else []) + (["bignum"] if has_number else [])
+    options = data * 2 + LAYOUTS
+    layout = ch.weighted_choice(options, history, "thumb_layout", rng=rng, exclude=recent_layouts)
     colors  = [c for c in ACCENT_COLORS if c not in recent_colors] or list(ACCENT_COLORS)
-    return rng.choice(layouts), rng.choice(colors)
+    return layout, rng.choice(colors)
+
+
+def thumbnail_data(script_data: dict, thumbnail_text: str) -> dict:
+    """Cifra clave, direccion y puntos del grafico principal del video."""
+    beats = [v for s in script_data.get("sections", []) for v in s.get("visuals", []) if isinstance(v, dict)]
+    _, number = split_number_from_text(thumbnail_text.upper())
+    stat = next((b for b in beats if b.get("type") == "stat"), None)
+    if not number and stat:
+        number = str(stat.get("value", ""))
+    direction = (stat or {}).get("direction", "neutral")
+
+    points = None
+    for b in beats:
+        if b.get("type") == "chart":
+            points = visuals.fetch_ticker(str(b.get("ticker", "")).upper(), b.get("period", "1y"))
+        elif b.get("type") == "fred":
+            points = visuals.fetch_fred(b.get("series", ""), b.get("period", "5y"))
+        if points:
+            if direction == "neutral":
+                direction = "up" if points[-1][1] >= points[0][1] else "down"
+            break
+    return {"number": number, "direction": direction, "points": points}
 
 
 def pick_best_broll_clip(broll_manifest: dict, used_ids: set, rng: random.Random) -> dict:
@@ -386,6 +423,89 @@ def build_thumbnail(frame_path: Path, thumbnail_text: str, font_path: Path, outp
     return output_path
 
 
+def draw_arrow(draw, cx: int, cy: int, size: int, up: bool, color) -> None:
+    """Flecha gruesa con contorno negro."""
+    s, d = size, (-1 if up else 1)
+    pts = [(cx, cy + d * s), (cx - s * 0.75, cy), (cx - s * 0.32, cy), (cx - s * 0.32, cy - d * s),
+           (cx + s * 0.32, cy - d * s), (cx + s * 0.32, cy), (cx + s * 0.75, cy)]
+    draw.polygon(pts, fill=color, outline=(0, 0, 0), width=8)
+
+
+def _dark_bg(frame_path: Path, blur: float, darkness: int) -> Image.Image:
+    bg = crop_center(Image.open(frame_path).convert("RGB"), THUMB_W, THUMB_H)
+    if blur:
+        bg = bg.filter(ImageFilter.GaussianBlur(blur))
+    return Image.alpha_composite(bg.convert("RGBA"), Image.new("RGBA", (THUMB_W, THUMB_H), (0, 0, 0, darkness)))
+
+
+def build_data_thumbnail(frame_path: Path, thumbnail_text: str, data: dict, font_path: Path,
+                         output_path: Path, layout: str, accent) -> Path:
+    direction = data.get("direction", "neutral")
+    color = COLOR_UP if direction == "up" else COLOR_DOWN if direction == "down" else accent
+    text_before, number = split_number_from_text(thumbnail_text.upper())
+    number = number or data.get("number", "")
+    text_before = text_before or thumbnail_text.upper()
+
+    if layout == "chart" and data.get("points"):
+        bg = Image.alpha_composite(_dark_bg(frame_path, 2, 175), gradient_overlay("left", strong=200, weak=0))
+        layer = Image.new("RGBA", (THUMB_W * 2, THUMB_H * 2), (0, 0, 0, 0))
+        ld = ImageDraw.Draw(layer)
+        pts = visuals.downsample(data["points"], 90)
+        vals = [v for _, v in pts]
+        lo, hi = min(vals), max(vals)
+        span = (hi - lo) or 1
+        x0, x1, y0, y1 = 1100, 2480, 260, 1240
+        line = [(x0 + (x1 - x0) * i / (len(vals) - 1), y1 - (y1 - y0) * (v - lo) / span) for i, v in enumerate(vals)]
+        ld.polygon(line + [(x1, 1440), (x0, 1440)], fill=color + (70,))
+        ld.line(line, fill=(0, 0, 0, 255), width=44, joint="curve")
+        ld.line(line, fill=color + (255,), width=26, joint="curve")
+        ex, ey = line[-1]
+        ld.ellipse([ex - 34, ey - 34, ex + 34, ey + 34], fill=color + (255,), outline=(0, 0, 0, 255), width=8)
+        bg = Image.alpha_composite(bg, layer.resize((THUMB_W, THUMB_H), Image.LANCZOS))
+        draw = ImageDraw.Draw(bg)
+        draw_arrow(draw, 1110, 150 if direction != "down" else 570, 110, direction != "down", color)
+
+        font, lines = fit_font(text_before, font_path, 560, 360 if number else 560, draw, start=130, minimum=70)
+        y = 60
+        for ln in lines:
+            draw_text_with_shadow(draw, (50, y), ln, font, COLOR_WHITE, stroke=True)
+            y += font.size + 14
+        if number:
+            nf, _ = fit_font(number, font_path, 600, 240, draw, start=230, minimum=90)
+            draw_text_with_shadow(draw, (50, max(y + 10, THUMB_H - nf.size - 90)), number, nf, color, stroke=True)
+
+    else:  # bignum
+        bg = _dark_bg(frame_path, 9, 150)
+        draw = ImageDraw.Draw(bg)
+        number = number or text_before.split()[-1]
+        font, lines = fit_font(text_before, font_path, THUMB_W - 140, 210, draw, start=110, minimum=60)
+        y = 50
+        for ln in lines:
+            w = draw.textbbox((0, 0), ln, font=font)[2]
+            draw_text_with_shadow(draw, ((THUMB_W - w) // 2, y), ln, font, COLOR_WHITE, stroke=True)
+            y += font.size + 12
+        has_arrow = direction in ("up", "down")
+        nf, _ = fit_font(number, font_path, THUMB_W - (420 if has_arrow else 140), THUMB_H - y - 60, draw,
+                         start=400, minimum=120)
+        bb = draw.textbbox((0, 0), number, font=nf)
+        nw, nh = bb[2] - bb[0], bb[3] - bb[1]
+        total_w = nw + (250 if has_arrow else 0)
+        nx = (THUMB_W - total_w) // 2 + (250 if has_arrow else 0)
+        ny = y + (THUMB_H - y - nh) // 2 - bb[1] - 10
+        if has_arrow:
+            draw_arrow(draw, nx - 140, ny + bb[1] + nh // 2, 115, direction == "up", color)
+        draw.text((nx - bb[0], ny), number, font=nf, fill=color, stroke_width=10, stroke_fill=(0, 0, 0))
+
+    final = bg.convert("RGB")
+    final.save(str(output_path), "PNG", optimize=True)
+    if output_path.stat().st_size > MAX_THUMB_BYTES:
+        jpg_path = output_path.with_suffix(".jpg")
+        final.save(str(jpg_path), "JPEG", quality=93, optimize=True, subsampling=0)
+        output_path.unlink()
+        return jpg_path
+    return output_path
+
+
 def cleanup_temp():
     import shutil
     try:
@@ -410,7 +530,9 @@ def main() -> None:
     history = ch.load_history()
     rng = random.Random(script_data.get("youtube_title", "") + TODAY)
     random.seed(rng.random())
-    layout, color_name = pick_style(history, rng)
+    data = thumbnail_data(script_data, thumbnail_text)
+    layout, color_name = pick_style(history, rng, has_chart=bool(data["points"]), has_number=bool(data["number"]))
+    print(f"      datos: cifra={data['number'] or '-'} direccion={data['direction']} grafico={'si' if data['points'] else 'no'}")
     print(f"      estilo: layout={layout}, color={color_name}")
 
     print("\n3/4  Obteniendo frame en alta calidad...")
@@ -430,8 +552,12 @@ def main() -> None:
 
     print("\n4/4  Componiendo thumbnail (PNG)...")
     output_path = OUTPUT_DIR / f"thumbnail_{TODAY}.png"
-    final_path = build_thumbnail(frame_path, thumbnail_text, font_path, output_path,
-                                 layout=layout, accent=ACCENT_COLORS[color_name])
+    if layout in DATA_LAYOUTS:
+        final_path = build_data_thumbnail(frame_path, thumbnail_text, data, font_path, output_path,
+                                          layout, ACCENT_COLORS[color_name])
+    else:
+        final_path = build_thumbnail(frame_path, thumbnail_text, font_path, output_path,
+                                     layout=layout, accent=ACCENT_COLORS[color_name])
 
     (OUTPUT_DIR / f"thumbnail_meta_{TODAY}.json").write_text(json.dumps({
         "thumbnail_text":  thumbnail_text,

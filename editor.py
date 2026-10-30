@@ -9,8 +9,8 @@
    3. Coloca cada visual del guion (grafico real, cifra, comparativa,
       titular) en el momento exacto en que la voz dice su frase ancla
    4. Rellena los huecos con b-roll de la seccion correspondiente
-   5. Mezcla voz normalizada (-16 LUFS) + musica de fondo
-   6. Subtitulos en frases cortas y render final 1920x1080
+   5. Mezcla voz normalizada (-16 LUFS) + musica + efectos (whoosh/ding)
+   6. Subtitulos en frases cortas, marca del canal y render final 1920x1080
    7. Guarda timeline_YYYY-MM-DD.json (inicio de cada seccion -> capitulos)
 
  Coste: 0 EUR
@@ -111,7 +111,7 @@ def main() -> None:
     track, seg_log = tl.build_video_track(planned, broll_picker(broll, bounds), total, SIZE, TEMP_DIR)
 
     print("\n5/6  Audio + subtitulos...")
-    mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / "mix.wav")
+    mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / "mix.wav", tl.sfx_events(seg_log))
     subs = tl.build_long_subs(words, TEMP_DIR / "subs.ass")
 
     print("\n6/6  Render final...")

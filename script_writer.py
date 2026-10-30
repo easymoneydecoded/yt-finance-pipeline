@@ -35,6 +35,7 @@ from dotenv import load_dotenv
 
 import content_history as ch
 import llm
+from engagement import PLAYLISTS
 
 load_dotenv()
 
@@ -309,6 +310,10 @@ Each Short is a separate 40-55 second vertical video (95-150 words) about ONE st
   the sources used, a one-line "educational, not financial advice" disclaimer, and end with:
   "Read the Spanish-language deep dive at {web_backlink}"
 - tags: 10-15 specific search phrases people actually type.
+- pinned_comment: the channel's own comment under the video. ONE specific question (max 180 chars) about
+  this story that viewers can answer from their own life or opinion (e.g. "Would you still renew at $65,
+  or is Costco losing you?"). No links, no "like and subscribe", no emojis.
+- playlist: exactly one of: {playlists}
 
 === OUTPUT ===
 Return ONLY this JSON:
@@ -317,6 +322,8 @@ Return ONLY this JSON:
   "thumbnail_text": "...",
   "description": "...",
   "tags": ["..."],
+  "pinned_comment": "...",
+  "playlist": "...",
   "sections": [
     {{"type": "hook",  "text": "...", "visuals": [...]}},
     {{"type": "intro", "text": "...", "visuals": [...]}},
@@ -535,6 +542,7 @@ def prompt_context(idea: dict, history: list[dict], title_style: str, fact_sheet
         "overused_openers":  ", ".join(f'"{w.capitalize()}"' for w in overused) or "(none)",
         "fred_list":         ", ".join(FRED_CHARTS),
         "web_backlink":      WEB_BACKLINK,
+        "playlists":         " | ".join(PLAYLISTS),
     }
 
 
@@ -805,6 +813,8 @@ def save_outputs(raw: dict, idea: dict, verdict: dict, title_style: str, fact_sh
         "thumbnail_text":  raw.get("thumbnail_text", ""),
         "description":     str(raw.get("description", "")),
         "tags":            [str(t) for t in raw.get("tags", [])][:25],
+        "pinned_comment":  str(raw.get("pinned_comment", "")).strip()[:300],
+        "playlist":        raw.get("playlist") if raw.get("playlist") in PLAYLISTS else "Stock Market Explained",
         "word_count_real": real_words,
         "quality":         {"overall": verdict.get("overall"), "scores": verdict.get("scores", {}),
                             "fixes": verdict.get("fixes", [])},
@@ -814,7 +824,9 @@ def save_outputs(raw: dict, idea: dict, verdict: dict, title_style: str, fact_sh
 
     md = [f"# {raw.get('youtube_title')}", "",
           f"_{TODAY} . {real_words} words . quality {verdict.get('overall')}/10_", "",
-          f"**Thumbnail text:** {raw.get('thumbnail_text')}", "", "## Description", "",
+          f"**Thumbnail text:** {raw.get('thumbnail_text')}", "",
+          f"**Comment:** {raw.get('pinned_comment', '')}  ·  **Playlist:** {raw.get('playlist', '')}", "",
+          "## Description", "",
           str(raw.get("description", "")), "", "## Script", ""]
     for i, s in enumerate(sections, 1):
         md += [f"### {i}. {s['type'].upper()}{' - ' + s['title'] if s['title'] else ''} "

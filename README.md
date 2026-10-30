@@ -14,8 +14,12 @@ largo + 3 Shorts, 4 veces por semana, en GitHub Actions.
 | 4 | `b_roll.py` | Clips de Pexels sin repetir los de videos recientes |
 | 5 | `editor.py` | Video 16:9: graficos/cifras/comparativas sincronizados con la voz + b-roll + subtitulos |
 | 6 | `shorts_maker.py` | 3 Shorts verticales propios con captions palabra a palabra |
-| 7 | `thumbnail_maker.py` | Miniatura (4 layouts x 6 colores, sin repetir) |
-| 8 | `uploader.py` | Programa el video a las 14:00 UTC, Shorts en franjas de EE. UU., capitulos automaticos |
+| 7 | `thumbnail_maker.py` | Miniatura con datos (grafico real / cifra gigante + flecha) o clasica; aprende que layout rinde mas |
+| 8 | `uploader.py` | Programa el video a las 14:00 UTC, Shorts en franjas de EE. UU., capitulos y lista de reproduccion por tema |
+| - | `engagement.py` | Workflow aparte (14/18/22 UTC): comentario-pregunta del canal y enlace al video completo en cada Short |
+
+Montaje: efectos de sonido generados con ffmpeg (whoosh/ding) y marca del canal
+(`CHANNEL_NAME`, por defecto TICKERPRESS) en la esquina.
 
 Modulos compartidos: `llm.py` (Gemini), `visuals.py` (motor de graficos),
 `timeline.py` (montaje), `content_history.py` (memoria + aprendizaje).
@@ -46,7 +50,9 @@ Modulos compartidos: `llm.py` (Gemini), `visuals.py` (motor de graficos),
 
 **Metricas completas (retencion, suscriptores)**: ejecuta una vez en tu PC
 `python get_refresh_token.py` y pega el token nuevo en `YOUTUBE_REFRESH_TOKEN`.
-Sin el, el canal aprende solo de las visitas publicas.
+Sin el, el canal aprende solo de las visitas publicas. El mismo token activa los
+comentarios y las listas (permiso `youtube.force-ssl`). La API no permite
+*fijar* comentarios: si quieres anclarlo, es un clic en YouTube Studio.
 
 ## Probar sin publicar
 
