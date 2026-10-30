@@ -3,8 +3,13 @@
  instagram.py - Publica Reels en Instagram (API oficial, gratis)
 ================================================================================
 
- API: "Instagram API with Instagram Login" (cuenta profesional, sin pagina
- de Facebook). Flujo:
+ Acepta dos tipos de token (se detecta solo):
+   - Token de Instagram ("IG..."): API con inicio de sesion de Instagram
+     (graph.instagram.com). Dura 60 dias y se renueva solo.
+   - Token de pagina de Facebook ("EAA..."): API con inicio de sesion de
+     Facebook (graph.facebook.com), con el Instagram vinculado a una pagina.
+     Si se saca de un token de usuario de larga duracion, NO caduca.
+ Flujo de publicacion (igual en los dos):
    1. crear contenedor REELS con subida "resumable"
    2. subir el MP4 directamente a rupload.facebook.com (sin alojarlo fuera)
    3. esperar a que Instagram lo procese (status_code = FINISHED)
@@ -29,7 +34,15 @@ import secret_store
 load_dotenv()
 
 API_VERSION   = os.getenv("INSTAGRAM_API_VERSION", "v23.0")
-GRAPH         = f"https://graph.instagram.com/{API_VERSION}"
+
+
+def _is_facebook_token(token: str) -> bool:
+    return token.startswith("EAA")
+
+
+def _graph(token: str) -> str:
+    host = "graph.facebook.com" if _is_facebook_token(token) else "graph.instagram.com"
+    return f"https://{host}/{API_VERSION}"
 REFRESH_DAYS  = 20
 PROCESS_WAIT  = 10 * 60   # Instagram puede tardar varios minutos en procesar el video
 
@@ -54,6 +67,8 @@ def get_token() -> str | None:
     token = stored.get("token") or os.getenv("INSTAGRAM_TOKEN")
     if not token:
         return None
+    if _is_facebook_token(token):
+        return token  # token de pagina de Facebook: no caduca, no se renueva
     refreshed = stored.get("refreshed_at")
     age_days = (datetime.now(timezone.utc) - datetime.fromisoformat(refreshed)).days if refreshed else 99
     if age_days >= REFRESH_DAYS:
@@ -73,13 +88,31 @@ def enabled() -> bool:
     return bool(secret_store.get("instagram").get("token") or os.getenv("INSTAGRAM_TOKEN"))
 
 
+def _find_user_id(token: str) -> str:
+    """ID de la cuenta de Instagram si no esta en INSTAGRAM_USER_ID."""
+    if not _is_facebook_token(token):
+        return _check(requests.get(f"{_graph(token)}/me", timeout=30,
+                                   params={"fields": "user_id,username", "access_token": token}))["user_id"]
+    # Token de Facebook: la cuenta de Instagram vinculada a la pagina
+    me = _check(requests.get(f"{_graph(token)}/me", timeout=30,
+                             params={"fields": "instagram_business_account", "access_token": token}))
+    if me.get("instagram_business_account"):
+        return me["instagram_business_account"]["id"]
+    pages = _check(requests.get(f"{_graph(token)}/me/accounts", timeout=30,
+                                params={"fields": "instagram_business_account", "access_token": token}))
+    for page in pages.get("data", []):
+        if page.get("instagram_business_account"):
+            return page["instagram_business_account"]["id"]
+    raise InstagramError("ninguna pagina de Facebook del token tiene un Instagram vinculado")
+
+
 def publish_reel(video: Path, caption: str) -> str:
     """Publica el Reel y devuelve su id de Instagram."""
     token = get_token()
     if not token:
         raise InstagramError("falta INSTAGRAM_TOKEN")
-    user_id = os.getenv("INSTAGRAM_USER_ID") or _check(
-        requests.get(f"{GRAPH}/me", params={"fields": "user_id,username", "access_token": token}, timeout=30))["user_id"]
+    GRAPH = _graph(token)
+    user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
 
     container = _check(requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
         "media_type": "REELS", "upload_type": "resumable", "caption": caption,
