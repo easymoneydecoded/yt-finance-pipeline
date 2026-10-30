@@ -11,8 +11,8 @@
                            audite la app solo permite privacidad SELF_ONLY,
                            asi que activalo cuando la auditoria este aprobada.
 
- En modo direct el video se marca como contenido generado con IA (is_aigc).
- En modo draft esa etiqueta se activa en la app al publicar.
+ Etiqueta "contenido generado con IA": desactivada por defecto. Para activarla
+ en modo direct, crea la variable TIKTOK_AIGC_LABEL=true.
 
  Credenciales: TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET y TIKTOK_REFRESH_TOKEN
  (se obtiene una vez con get_tiktok_token.py). El access token dura 24 h y se
@@ -34,6 +34,7 @@ load_dotenv()
 API          = "https://open.tiktokapis.com/v2"
 MODE         = os.getenv("TIKTOK_MODE", "draft")
 PRIVACY      = os.getenv("TIKTOK_PRIVACY", "PUBLIC_TO_EVERYONE")
+AIGC_LABEL   = os.getenv("TIKTOK_AIGC_LABEL", "false").lower() == "true"   # etiqueta "generado con IA"
 MAX_CHUNK    = 64 * 1024 * 1024
 MIN_CHUNK    = 5 * 1024 * 1024
 
@@ -89,8 +90,7 @@ def upload(video: Path, caption: str) -> str:
         init = _api(token, "/post/publish/video/init/", {
             "post_info": {"title": caption, "privacy_level": PRIVACY, "disable_comment": False,
                           "disable_duet": False, "disable_stitch": False,
-                          # Etiqueta "contenido generado con IA" (voz sintetica), como dicen las paginas legales
-                          "is_aigc": True},
+                          "is_aigc": AIGC_LABEL},
             "source_info": source})
     else:
         init = _api(token, "/post/publish/inbox/video/init/", {"source_info": source})
