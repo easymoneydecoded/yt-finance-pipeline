@@ -143,3 +143,29 @@ def publish_reel(video: Path, caption: str) -> str:
     published = _check(requests.post(f"{GRAPH}/{user_id}/media_publish", timeout=60,
                                      data={"creation_id": cid, "access_token": token}))
     return published["id"]
+
+
+def check() -> None:
+    """Comprueba token y permisos sin publicar nada (python instagram.py check)."""
+    token = get_token()
+    if not token:
+        raise SystemExit("Falta INSTAGRAM_TOKEN")
+    user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
+    graph = _graph(token)
+    tipo = "pagina/usuario del sistema de Facebook (no caduca)" if _is_facebook_token(token) else "Instagram (60 dias)"
+    print(f"Token: {tipo}")
+    acc = _check(requests.get(f"{graph}/{user_id}", timeout=30,
+                              params={"fields": "username,name,media_count", "access_token": token}))
+    print(f"Cuenta: @{acc.get('username')} ({acc.get('name')}) - {acc.get('media_count')} publicaciones")
+    # Este endpoint solo responde si el token tiene permiso de publicar
+    limit = _check(requests.get(f"{graph}/{user_id}/content_publishing_limit", timeout=30,
+                                params={"fields": "quota_usage,config", "access_token": token}))
+    data = (limit.get("data") or [{}])[0]
+    print(f"Permiso de publicar: OK - usadas {data.get('quota_usage', 0)} de "
+          f"{data.get('config', {}).get('quota_total', '?')} publicaciones por API en 24 h")
+
+
+if __name__ == "__main__":
+    import sys
+    if sys.argv[1:] == ["check"]:
+        check()
