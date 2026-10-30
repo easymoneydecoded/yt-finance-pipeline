@@ -2,9 +2,13 @@ name: Morning Pipeline
 
 on:
   schedule:
-    # Lunes, miercoles, viernes y domingo a las 07:00 UTC. El video se programa
-    # para las 14:00 UTC (10:00 Nueva York) y los Shorts cubren los dias intermedios.
-    - cron: '0 7 * * 1,3,5,0'
+    # Lunes, miercoles, viernes y domingo. El video se programa para las 14:00 UTC
+    # (10:00 Nueva York) y los Shorts cubren los dias intermedios.
+    # GitHub retrasa (o a veces salta) los crons cuando esta saturado, sobre todo
+    # en punto: por eso un minuto "raro", con margen, y una ejecucion de respaldo
+    # que se salta sola si la primera ya publico.
+    - cron: '17 5 * * 1,3,5,0'
+    - cron: '47 8 * * 1,3,5,0'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -29,7 +33,24 @@ env:
   KOKORO_VOICE:       ${{ vars.KOKORO_VOICE || 'af_heart' }}
 
 jobs:
+  # Comprobacion rapida (~10s): si hoy ya se publico (p. ej. esta es la ejecucion
+  # de respaldo y la primera funciono), no se repite todo el trabajo.
+  check:
+    runs-on: ubuntu-24.04
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          SKIP=$(python3 -c "import content_history as ch, datetime; t=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'); print('true' if ch.already_uploaded_on(t) else 'false')")
+          if [ "${{ github.event_name }}" != "schedule" ]; then SKIP=false; fi
+          echo "Ya publicado hoy: $SKIP"
+          echo "skip=$SKIP" >> "$GITHUB_OUTPUT"
+
   generate-content:
+    needs: check
+    if: needs.check.outputs.skip != 'true'
     runs-on: ubuntu-24.04   # fijado: ubuntu-latest pasa a Ubuntu 26 y podria cambiar paquetes
     timeout-minutes: 150
 

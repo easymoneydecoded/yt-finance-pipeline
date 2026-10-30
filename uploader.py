@@ -62,6 +62,7 @@ CATEGORY_ID      = "27"  # Education
 MADE_FOR_KIDS    = False
 
 PUBLISH_HOUR_UTC = int(os.getenv("PUBLISH_HOUR_UTC", "14"))
+LATE_CUTOFF_UTC  = 20                   # despues de esta hora, mejor esperar a manana
 SHORT_HOURS_UTC  = [14, 18, 22]         # 10:00, 14:00 y 18:00 en Nueva York
 SHORT_MIN_GAP_H  = 8                    # separacion minima entre Shorts
 MIN_LEAD_MIN     = 20                   # YouTube necesita margen para procesar
@@ -73,10 +74,20 @@ HASHTAGS = "#finance #investing #money"
 # Programacion y capitulos
 # ---------------------------------------------------------------------------
 def long_publish_time(now: datetime | None = None) -> datetime | None:
-    """Hora de publicacion del video largo; None = publicar ya (la hora punta ya paso)."""
+    """
+    Hora de publicacion del video largo; None = publicar ya.
+      - antes de las 14:00 UTC       -> programado a las 14:00 de hoy
+      - entre las 14:00 y las 20:00  -> ya (sigue siendo buena hora en EE. UU.)
+      - despues de las 20:00 UTC     -> programado a las 14:00 de manana
+    (GitHub puede retrasar las ejecuciones programadas cuando esta saturado)
+    """
     now = now or datetime.now(timezone.utc)
     slot = now.replace(hour=PUBLISH_HOUR_UTC, minute=0, second=0, microsecond=0)
-    return slot if slot - now >= timedelta(minutes=MIN_LEAD_MIN) else None
+    if slot - now >= timedelta(minutes=MIN_LEAD_MIN):
+        return slot
+    if now.hour < LATE_CUTOFF_UTC:
+        return None
+    return slot + timedelta(days=1)
 
 
 def short_slots(base: datetime, n: int) -> list[datetime]:
