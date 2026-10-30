@@ -47,6 +47,17 @@ def tracked_width(draw, text, font, tracking):
     return sum(draw.textlength(c, font=font) for c in text) + tracking * (len(text) - 1)
 
 
+def press_triangle(draw, cx, top, base, half_base, fill, n=5, gap_ratio=0.42):
+    """Simbolo de la marca: un ▲ formado por n franjas (columnas de periodico)."""
+    h = (base - top) / (n + (n - 1) * gap_ratio)
+    for i in range(n):
+        y0 = top + i * h * (1 + gap_ratio)
+        y1 = y0 + h
+        w0 = half_base * (y0 - top) / (base - top)
+        w1 = half_base * (y1 - top) / (base - top)
+        draw.polygon([(cx - w0, y0), (cx + w0, y0), (cx + w1, y1), (cx - w1, y1)], fill=fill)
+
+
 # ----------------------------------------------------------------------------- avatar
 def make_avatar():
     S, ss = 800, 3
@@ -153,7 +164,7 @@ def make_banner():
     ty = safe_top + 10 * ss - bb[1]
     th = bb[3] - bb[1]
     tri_cy = ty + bb[1] + th / 2
-    d.polygon([(x0, tri_cy + tri * 0.43), (x0 + tri, tri_cy + tri * 0.43), (x0 + tri / 2, tri_cy - tri * 0.43)], fill=GREEN)
+    press_triangle(d, x0 + tri / 2, tri_cy - tri * 0.5, tri_cy + tri * 0.5, tri * 0.56, GREEN)
     tracked(d, (x0 + tri + gap, ty), title, title_f, WHITE, tracking)
 
     # Linea de acento

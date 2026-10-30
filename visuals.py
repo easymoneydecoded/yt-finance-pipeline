@@ -468,9 +468,20 @@ def render_headline(source: str, text: str, size, duration, out_path: Path) -> N
 # ---------------------------------------------------------------------------
 # Marca del canal (watermark)
 # ---------------------------------------------------------------------------
+def press_triangle(draw, cx, top, base, half_base, fill, n=5, gap_ratio=0.42):
+    """Simbolo de la marca: un ▲ formado por n franjas (columnas de periodico)."""
+    h = (base - top) / (n + (n - 1) * gap_ratio)
+    for i in range(n):
+        y0 = top + i * h * (1 + gap_ratio)
+        y1 = y0 + h
+        w0 = half_base * (y0 - top) / (base - top)
+        w1 = half_base * (y1 - top) / (base - top)
+        draw.polygon([(cx - w0, y0), (cx + w0, y0), (cx + w1, y1), (cx - w1, y1)], fill=fill)
+
+
 def brand_badge(height: int = 40) -> Path:
-    """Etiqueta semitransparente '▲ TICKERPRESS' para la esquina del video."""
-    out = Path("data/brand") / f"badge_{height}.png"
+    """Etiqueta semitransparente '▲ TICKERPRESS' (▲ de franjas, como el logo) para la esquina."""
+    out = Path("data/brand") / f"badge_v2_{height}.png"
     if out.exists():
         return out
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -483,7 +494,7 @@ def brand_badge(height: int = 40) -> Path:
     d = ImageDraw.Draw(img)
     d.rounded_rectangle([0, 0, w - 1, height - 1], radius=height // 2, fill=(0, 0, 0, 125))
     cy = height // 2
-    d.polygon([(pad, cy + tri // 2), (pad + tri, cy + tri // 2), (pad + tri // 2, cy - tri // 2)], fill=UP + (235,))
+    press_triangle(d, pad + tri / 2, cy - tri / 2, cy + tri / 2, tri * 0.56, UP + (235,), n=3, gap_ratio=0.5)
     bb = d.textbbox((0, 0), CHANNEL_NAME, font=f)
     d.text((pad + tri + int(height * 0.25), cy - (bb[3] - bb[1]) // 2 - bb[1]), CHANNEL_NAME, font=f,
            fill=(255, 255, 255, 220))
