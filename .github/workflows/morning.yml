@@ -163,15 +163,6 @@ jobs:
           done
           echo "No se pudo guardar el historial" && exit 1
 
-      - name: Etapa 9 - Publicar Shorts en TikTok/IG via Webhook
-        if: env.DRY_RUN != 'true'
-        run: |
-          if [ -f publisher_webhook.py ]; then
-            python publisher_webhook.py
-          else
-            echo "publisher_webhook.py no existe en el repo, salto la etapa 9"
-          fi
-
       - name: Guardar artefacto (metadata + thumbnail)
         if: always()
         uses: actions/upload-artifact@v4
