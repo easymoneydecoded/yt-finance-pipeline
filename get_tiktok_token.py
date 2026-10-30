@@ -3,7 +3,8 @@
  get_tiktok_token.py - Obtiene el TIKTOK_REFRESH_TOKEN (una sola vez)
 ================================================================================
 
- 1. Pon TIKTOK_CLIENT_KEY y TIKTOK_CLIENT_SECRET en tu .env (de developers.tiktok.com)
+ 1. Pon TIKTOK_CLIENT_KEY y TIKTOK_CLIENT_SECRET en tu .env (de developers.tiktok.com;
+    mientras la app no este aprobada, los del entorno Sandbox)
  2. python get_tiktok_token.py
  3. Abre el enlace, autoriza con la cuenta de TikTok del canal
  4. TikTok te redirige a la URL de redireccion registrada en la app (puede
@@ -22,7 +23,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SCOPES = "user.info.basic,video.upload,video.publish"
+# Los permisos deben coincidir con los de la app en developers.tiktok.com.
+# Borradores: user.info.basic,video.upload. Si activas Direct Post, anade ",video.publish".
+SCOPES = os.getenv("TIKTOK_SCOPES", "user.info.basic,video.upload")
 
 
 def main() -> None:
