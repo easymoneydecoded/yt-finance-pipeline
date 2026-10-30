@@ -2,13 +2,13 @@ name: Morning Pipeline
 
 on:
   schedule:
-    # Lunes, miercoles, viernes y domingo. El video se programa para las 14:00 UTC
-    # (10:00 Nueva York) y los Shorts cubren los dias intermedios.
+    # Un video al dia. Se programa para las 14:00 UTC (10:00 Nueva York); sus 3
+    # Shorts los publica social.yml a las 15/19/23 UTC en YouTube, Instagram y TikTok.
     # GitHub retrasa (o a veces salta) los crons cuando esta saturado, sobre todo
     # en punto: por eso un minuto "raro", con margen, y una ejecucion de respaldo
     # que se salta sola si la primera ya publico.
-    - cron: '17 5 * * 1,3,5,0'
-    - cron: '47 8 * * 1,3,5,0'
+    - cron: '17 5 * * *'
+    - cron: '47 8 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -134,10 +134,11 @@ jobs:
           FRED_API_KEY:   ${{ secrets.FRED_API_KEY }}
         run: python thumbnail_maker.py
 
-      - name: Etapa 8 - Subir y programar en YouTube
+      - name: Etapa 8 - Subir y programar en YouTube (+ encolar Shorts)
         timeout-minutes: 30
         if: env.DRY_RUN != 'true'
         env:
+          GITHUB_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
           YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}

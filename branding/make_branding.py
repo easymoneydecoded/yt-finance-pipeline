@@ -180,7 +180,7 @@ def make_banner():
 
     # Pildoras de calendario
     pill_f = inter(30 * ss, "Bold")
-    pills = ["NEW VIDEOS  MON · WED · FRI · SUN", "SHORTS EVERY DAY", "NOT FINANCIAL ADVICE"]
+    pills = ["NEW VIDEO EVERY DAY", "3 SHORTS DAILY", "NOT FINANCIAL ADVICE"]
     pad_x, pill_h, sep = 34 * ss, 62 * ss, 24 * ss
     widths = [d.textlength(p, font=pill_f) + 2 * pad_x for p in pills]
     px = cx - (sum(widths) + sep * (len(pills) - 1)) / 2

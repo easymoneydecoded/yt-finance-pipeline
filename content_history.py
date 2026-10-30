@@ -58,8 +58,28 @@ def load_history() -> list[dict]:
         print(f"   ! history corrupto ({e}), lo ignoro")
         return []
     videos = data.get("videos", []) if isinstance(data, dict) else data
+    _merge_queue_shorts(videos)
     # Mas reciente primero
     return sorted(videos, key=lambda v: v.get("date", ""), reverse=True)
+
+
+def _merge_queue_shorts(videos: list[dict]) -> None:
+    """Los Shorts de YouTube publicados desde la cola (social_publisher) se anaden a su video."""
+    queue_file = HISTORY_DIR / "shorts_queue.json"
+    if not queue_file.exists():
+        return
+    try:
+        items = json.loads(queue_file.read_text(encoding="utf-8")).get("items", [])
+    except (json.JSONDecodeError, OSError):
+        return
+    by_id = {v.get("video_id"): v for v in videos if v.get("video_id")}
+    for it in items:
+        yt = it.get("platforms", {}).get("youtube", {})
+        parent = by_id.get(it.get("parent_video_id"))
+        if yt.get("status") != "done" or not parent or yt.get("id") in parent.get("shorts_ids", []):
+            continue
+        parent.setdefault("shorts_ids", []).append(yt["id"])
+        parent.setdefault("shorts_titles", []).append(it.get("youtube_title") or it.get("title", ""))
 
 
 def save_history(videos: list[dict]) -> None:

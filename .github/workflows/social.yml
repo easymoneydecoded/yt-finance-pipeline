@@ -1,0 +1,67 @@
+name: Social (Shorts a YouTube, Instagram y TikTok)
+
+# Publica el siguiente Short de la cola en YouTube Shorts, Instagram Reels y
+# TikTok (borrador o directo). 3 veces al dia, despues del video de las 14:00:
+# 15:07, 19:07 y 23:07 UTC = 11:07, 15:07 y 19:07 en Nueva York.
+# Tambien publica los comentarios pendientes de los videos largos.
+on:
+  schedule:
+    - cron: '7 15,19,23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: social
+  cancel-in-progress: false
+
+# contents: write -> leer/borrar los MP4 del release "shorts-queue" y guardar la cola
+permissions:
+  contents: write
+
+env:
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Instalar dependencias minimas
+        run: pip install google-api-python-client google-auth python-dotenv requests cryptography
+
+      - name: Publicar el siguiente Short
+        env:
+          GITHUB_TOKEN:          ${{ secrets.GITHUB_TOKEN }}
+          YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          INSTAGRAM_TOKEN:       ${{ secrets.INSTAGRAM_TOKEN }}
+          INSTAGRAM_USER_ID:     ${{ secrets.INSTAGRAM_USER_ID }}
+          TIKTOK_CLIENT_KEY:     ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET:  ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN:  ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          TIKTOK_MODE:           ${{ vars.TIKTOK_MODE || 'draft' }}
+        run: python social_publisher.py
+
+      - name: Guardar cola e historial
+        if: always()
+        run: |
+          if git diff --quiet -- history/; then
+            echo "Sin cambios"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add history/
+          git commit -m "Social: Shorts publicados $(date -u +%F' '%H:%M)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
+          exit 1

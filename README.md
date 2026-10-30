@@ -1,7 +1,7 @@
 # Canal de YouTube automatico (finanzas) — pipeline v3
 
 Pipeline 100% gratis que investiga, escribe, narra, monta y programa un video
-largo + 3 Shorts, 4 veces por semana, en GitHub Actions.
+largo al dia + 3 Shorts al dia en YouTube, Instagram Reels y TikTok, en GitHub Actions.
 
 ## Etapas
 
@@ -15,8 +15,8 @@ largo + 3 Shorts, 4 veces por semana, en GitHub Actions.
 | 5 | `editor.py` | Video 16:9: graficos/cifras/comparativas sincronizados con la voz + b-roll + subtitulos |
 | 6 | `shorts_maker.py` | 3 Shorts verticales propios con captions palabra a palabra |
 | 7 | `thumbnail_maker.py` | Miniatura con datos (grafico real / cifra gigante + flecha) o clasica; aprende que layout rinde mas |
-| 8 | `uploader.py` | Programa el video a las 14:00 UTC, Shorts en franjas de EE. UU., capitulos y lista de reproduccion por tema |
-| - | `engagement.py` | Workflow aparte (14/18/22 UTC): comentario-pregunta del canal y enlace al video completo en cada Short |
+| 8 | `uploader.py` | Programa el video a las 14:00 UTC, capitulos, lista por tema; encola los 3 Shorts |
+| - | `social_publisher.py` | Workflow `social.yml` (15/19/23 UTC): publica el siguiente Short en YouTube, Instagram (`instagram.py`) y TikTok (`tiktok.py`) + comentarios del canal (`engagement.py`) |
 
 Montaje: efectos de sonido generados con ffmpeg (whoosh/ding) y marca del canal
 (`CHANNEL_NAME`, por defecto TICKERPRESS) en la esquina.
@@ -53,6 +53,22 @@ Modulos compartidos: `llm.py` (Gemini), `visuals.py` (motor de graficos),
 Sin el, el canal aprende solo de las visitas publicas. El mismo token activa los
 comentarios y las listas (permiso `youtube.force-ssl`). La API no permite
 *fijar* comentarios: si quieres anclarlo, es un clic en YouTube Studio.
+
+## Instagram y TikTok
+
+Los Shorts se guardan en una cola (release privado `shorts-queue` del repo +
+`history/shorts_queue.json`) porque la cuota diaria de YouTube no da para
+subir el video y los 3 Shorts el mismo dia. `social.yml` publica uno en cada
+franja; una red que falla se reintenta en la siguiente (max. 3 veces).
+
+- **Instagram** (automatico): secrets `INSTAGRAM_TOKEN` (token largo de la app
+  de Meta) e `INSTAGRAM_USER_ID` (opcional). El token se renueva solo.
+- **TikTok**: secrets `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` y
+  `TIKTOK_REFRESH_TOKEN` (se saca con `python get_tiktok_token.py`). Por
+  defecto manda **borradores** a la bandeja de TikTok (el texto a pegar sale en
+  el resumen de cada ejecucion de `social.yml`). Cuando TikTok apruebe la
+  auditoria de la app, crea la variable `TIKTOK_MODE=direct`.
+- Sin credenciales de una red, esa red se salta sin romper nada.
 
 ## Probar sin publicar
 

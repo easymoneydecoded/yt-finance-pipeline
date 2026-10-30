@@ -13,7 +13,8 @@
 
  Programacion (las primeras horas deciden si YouTube empuja el video):
    - Video largo: PUBLISH_HOUR_UTC (14:00 UTC = 10:00 Nueva York)
-   - Shorts en franjas buenas de EE. UU. (14/18/22 UTC), separados >= 8h
+   - Shorts: se encolan y los publica social_publisher.py a las 15/19/23 UTC
+     en YouTube, Instagram y TikTok (la cuota de YouTube no da para todo el mismo dia)
    - Capitulos automaticos en la descripcion (timeline del editor)
    - Lista de reproduccion por tema + comentario del canal (engagement.py)
 
@@ -41,6 +42,7 @@ from googleapiclient.errors import HttpError
 
 import content_history as ch
 import engagement
+import shorts_queue
 
 # ---------------------------------------------------------------------------
 # Config
@@ -63,8 +65,6 @@ MADE_FOR_KIDS    = False
 
 PUBLISH_HOUR_UTC = int(os.getenv("PUBLISH_HOUR_UTC", "14"))
 LATE_CUTOFF_UTC  = 20                   # despues de esta hora, mejor esperar a manana
-SHORT_HOURS_UTC  = [14, 18, 22]         # 10:00, 14:00 y 18:00 en Nueva York
-SHORT_MIN_GAP_H  = 8                    # separacion minima entre Shorts
 MIN_LEAD_MIN     = 20                   # YouTube necesita margen para procesar
 
 HASHTAGS = "#finance #investing #money"
@@ -88,20 +88,6 @@ def long_publish_time(now: datetime | None = None) -> datetime | None:
     if now.hour < LATE_CUTOFF_UTC:
         return None
     return slot + timedelta(days=1)
-
-
-def short_slots(base: datetime, n: int) -> list[datetime]:
-    """n huecos en horas buenas de EE. UU., el primero >= 4h tras el video largo."""
-    slots, t = [], base + timedelta(hours=4)
-    day = t.replace(minute=0, second=0, microsecond=0)
-    for d in range(0, 7):
-        for hour in SHORT_HOURS_UTC:
-            cand = (day + timedelta(days=d)).replace(hour=hour)
-            if cand >= t and (not slots or cand - slots[-1] >= timedelta(hours=SHORT_MIN_GAP_H)):
-                slots.append(cand)
-                if len(slots) == n:
-                    return slots
-    return slots
 
 
 def status_block(publish_at: datetime | None) -> dict:
@@ -499,51 +485,16 @@ def main() -> None:
     # -----------------------------------------------------------------------
     # Shorts
     # -----------------------------------------------------------------------
-    print(f"\n5/5  Subiendo Shorts...")
+    print(f"\n5/5  Encolando Shorts (los publica social_publisher.py 3 veces al dia)...")
     if not shorts_manifest or not shorts_manifest.get("shorts"):
-        print("      ! no hay Shorts para subir")
+        print("      ! no hay Shorts para encolar")
     else:
-        slots = short_slots(publish_at or datetime.now(timezone.utc), len(shorts_manifest["shorts"]))
-        taken_titles = [{"title": t, "date": v.get("date", "")}
-                        for v in history for t in [v.get("title", "")] + v.get("shorts_titles", [])]
-        for i, short_info in enumerate(shorts_manifest["shorts"], 1):
-            short_filename = short_info.get("filename")
-            short_path = OUTPUT_DIR / short_filename
-            if not short_path.exists():
-                print(f"      ! Short {i} no existe: {short_path}")
-                uploaded["errors"].append(f"Short {i} no encontrado: {short_filename}")
-                continue
-
-            short_at = slots[i - 1]
-            metadata = build_short_metadata(short_info, script_data, i, taken_titles, short_at)
-            print(f"      programado: {short_at.strftime('%Y-%m-%d %H:%M')} UTC")
-            metadata["snippet"]["description"] = (
-                metadata["snippet"]["description"] +
-                f"\n\nFull video: {uploaded['long_video']['url']}"
-            )
-
-            print(f"\n   Short {i}/{len(shorts_manifest['shorts'])}: {metadata['snippet']['title'][:60]}")
-            try:
-                short_id = upload_video(youtube, short_path, metadata, label=f"SHORT{i}")
-                short_url = f"https://youtu.be/{short_id}"
-                print(f"      -> {short_url}")
-
-                uploaded["shorts"].append({
-                    "video_id":  short_id,
-                    "url":       short_url,
-                    "title":     metadata["snippet"]["title"],
-                    "filename":  short_filename,
-                    "publish_at": short_at.isoformat(timespec="minutes"),
-                })
-
-                if i < len(shorts_manifest["shorts"]):
-                    print(f"      pausa 10s antes del siguiente...")
-                    time.sleep(10)
-
-            except Exception as e:
-                error_msg = f"Fallo subiendo Short {i}: {e}"
-                print(f"      ! {error_msg}")
-                uploaded["errors"].append(error_msg)
+        try:
+            shorts_queue.enqueue(shorts_manifest["shorts"], OUTPUT_DIR,
+                                 {**script_data, "date": TODAY}, uploaded["long_video"])
+        except Exception as e:
+            uploaded["errors"].append(f"Fallo encolando Shorts: {e}")
+            print(f"      ! fallo encolando Shorts: {e}")
 
     ch.append_video(build_history_entry(script_data, uploaded["long_video"], uploaded["shorts"]))
     print(f"\n  Historial actualizado: {ch.HISTORY_FILE}")
