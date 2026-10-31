@@ -105,3 +105,25 @@ Puesta en marcha (una vez):
 
 Probar en local sin enviar nada: `DRY_RUN=true python insider_alerts.py scan`.
 Gasta unos 350 min/mes de Actions (repo privado: 2.000 gratis).
+
+## Web tickerpress.net y redes (Insider Alerts)
+
+`insider_site.py` genera una web estatica en Cloudflare Pages con todas las
+compras de directivos: una pagina por accion (`/stock/<ticker>/`), por dia,
+cluster buys y directorio A-Z, con enlace al canal gratis de Telegram. Solo
+datos de la SEC (sin IA); las acciones con una sola compra pequena llevan
+`noindex`. Los Form 4 con precios imposibles se descartan comparando con el
+precio de mercado (`insider_alerts.plausible`, cache en `site_data/price_checks.json`).
+
+- Historico en `site_data/insider_buys.json` (en el repo). Se creo con
+  `python insider_site.py backfill 4` (datasets trimestrales de la SEC + indice
+  diario de EDGAR para los dias sin dataset).
+- Cada noche `alerts.yml` (modo `recap`): `update` + `build` + `wrangler pages
+  deploy` + commit de `site_data/` y post en redes (`insider_social.py`).
+- Secrets: `CLOUDFLARE_API_TOKEN` (Pages:Edit + DNS:Edit), `CLOUDFLARE_ACCOUNT_ID`.
+- Redes (opcionales): Bluesky (`BLUESKY_HANDLE` variable + `BLUESKY_APP_PASSWORD`),
+  X (`X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_SECRET`; de pago
+  por uso, sin enlace en el post), Threads (`THREADS_TOKEN` + variable `THREADS_USER_ID`).
+
+En Espana la web puede no cargar durante los partidos de futbol (bloqueo de
+LaLiga a IPs de Cloudflare); fuera de Espana y para Google funciona normal.

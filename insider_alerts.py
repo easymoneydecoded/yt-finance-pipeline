@@ -27,7 +27,8 @@
    TELEGRAM_ALERTS_BOT_TOKEN (o TELEGRAM_BOT_TOKEN), ALERTS_PREMIUM_CHAT
    (-100...), ALERTS_FREE_CHAT (@canal), ALERTS_PREMIUM_LINK (enlace t.me/+...),
    SEC_CONTACT (email de contacto: la SEC lo exige en el User-Agent)
-   Opcionales: MIN_BUY_USD (50000), MIN_SELL_USD (10000000), STARS_PRICE (500)
+   Opcionales: MIN_BUY_USD (50000), MIN_SELL_USD (10000000), STARS_PRICE (500),
+   SITE_MIN_BUY_USD (10000: compras que se guardan para tickerpress.net sin avisar)
 
  Estado: history/insider_state.json (el workflow lo guarda en la cache de
  Actions, no en el repo, para no hacer un commit cada hora).
@@ -39,6 +40,7 @@ import json
 import os
 import re
 import sys
+import threading
 import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
@@ -55,6 +57,7 @@ FREE_CHAT    = os.getenv("ALERTS_FREE_CHAT")
 PREMIUM_LINK = os.getenv("ALERTS_PREMIUM_LINK", "")
 MIN_BUY_USD  = float(os.getenv("MIN_BUY_USD") or 50_000)
 MIN_SELL_USD = float(os.getenv("MIN_SELL_USD") or 10_000_000)
+SITE_MIN_BUY = float(os.getenv("SITE_MIN_BUY_USD") or 10_000)   # compras mas pequenas: solo para la web
 STARS_PRICE  = int(os.getenv("STARS_PRICE") or 500)
 DRY_RUN      = os.getenv("DRY_RUN", "false") == "true"
 BRAND        = "Ticker Press"
@@ -104,9 +107,21 @@ def save_state(state: dict) -> None:
 # ---------------------------------------------------------------------------
 # SEC
 # ---------------------------------------------------------------------------
+_sec_lock, _sec_last = threading.Lock(), [0.0]
+
+
+def _sec_throttle() -> None:
+    """Como mucho una peticion cada SEC_PAUSE segundos, tambien con varios hilos."""
+    with _sec_lock:
+        wait = _sec_last[0] + SEC_PAUSE - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+        _sec_last[0] = time.monotonic()
+
+
 def sec_get(url: str) -> requests.Response:
     for attempt in range(1, 4):
-        time.sleep(SEC_PAUSE)
+        _sec_throttle()
         try:
             r = requests.get(url, headers=SEC_UA, timeout=30)
         except requests.RequestException as e:
@@ -201,7 +216,45 @@ def role_of(rel) -> str:
     return ", ".join(parts) or "Insider"
 
 
-def parse_filing(filing: dict) -> list[dict]:
+# Errores de los propios Form 4 (precio en centimos, acciones con ceros de mas...): una
+# compra con precio > 1.000 $ o valor > 50 M$ se contrasta con el mercado antes de usarla.
+CHECK_PRICE, CHECK_VALUE = 1_000, 50_000_000
+PRICE_CHECKS: dict[str, bool] = {}
+
+
+def _market_ok(e: dict) -> bool:
+    try:
+        import yfinance as yf
+        t = yf.Ticker(e["ticker"].replace(".", "-"))
+        day = datetime.fromisoformat(e["trade_date"] or e["filed"])
+        closes = t.history(start=day - timedelta(days=7), end=day + timedelta(days=4))["Close"]
+        if closes.empty:
+            return False                         # sin precio no se puede verificar
+        ratio = e["price"] / float(closes.median())
+        if not 0.33 < ratio < 3:
+            return False
+        cap = getattr(t.fast_info, "market_cap", None)
+        return not cap or e["value"] <= cap
+    except Exception as ex:
+        print(f"   . no pude verificar {e['ticker']} ({type(ex).__name__})")
+        return False
+
+
+def plausible(e: dict) -> bool:
+    if e["price"] <= CHECK_PRICE and e["value"] <= CHECK_VALUE:
+        return True
+    if e["acc"] not in PRICE_CHECKS:
+        PRICE_CHECKS[e["acc"]] = _market_ok(e)
+        if not PRICE_CHECKS[e["acc"]]:
+            print(f"   . descarto {e['ticker']} {money(e['value'])} a ${e['price']:,.2f}: no cuadra con el mercado")
+    return PRICE_CHECKS[e["acc"]]
+
+
+def alertable(e: dict) -> bool:
+    return e["value"] >= (MIN_BUY_USD if e["kind"] == "buy" else MIN_SELL_USD)
+
+
+def parse_filing(filing: dict, min_buy: float = SITE_MIN_BUY) -> list[dict]:
     """Descarga el Form 4 y devuelve 0-2 eventos (compra y/o venta agregadas)."""
     txt_url = filing["index_url"].replace("-index.htm", ".txt")
     r = sec_get(txt_url)
@@ -242,7 +295,8 @@ def parse_filing(filing: dict) -> list[dict]:
     events = []
     for code, t in totals.items():
         kind = "buy" if code == "P" else "sell"
-        if t["value"] < (MIN_BUY_USD if kind == "buy" else MIN_SELL_USD):
+        price = t["value"] / t["shares"]
+        if t["value"] < (min_buy if kind == "buy" else MIN_SELL_USD):
             continue
         before = t["after"] - t["shares"] if kind == "buy" else t["after"] + t["shares"]
         events.append({
@@ -254,13 +308,13 @@ def parse_filing(filing: dict) -> list[dict]:
             "joint": max(0, len(owners) - 1),
             "role": role_of(owner.find("reportingOwnerRelationship")) if owner is not None else "Insider",
             "shares": t["shares"], "value": round(t["value"], 2),
-            "price": t["value"] / t["shares"], "after": t["after"],
+            "price": price, "after": t["after"],
             "stake_change": (t["shares"] / before * 100) if before > 0 else None,
             "trade_date": min(t["dates"]) if t["dates"] else "",
             "filed": filing["filed"], "plan": plan, "url": filing["index_url"],
             "found_at": datetime.now(timezone.utc).isoformat(), "posted": False,
         })
-    return events
+    return [e for e in events if plausible(e)]
 
 
 # ---------------------------------------------------------------------------
@@ -401,11 +455,12 @@ def scan() -> None:
             events = []
         state["seen"].append(f["acc"])
         state["events"].extend(events)
-        found += len(events)
+        found += sum(alertable(e) for e in events)
     print(f"Avisos nuevos: {found}")
 
     retry_since = (datetime.now(timezone.utc) - timedelta(hours=RETRY_HOURS)).isoformat()
-    pending = [e for e in state["events"] if not e["posted"] and e["found_at"] >= retry_since]
+    pending = [e for e in state["events"]
+               if not e["posted"] and alertable(e) and e["found_at"] >= retry_since]
     for e in pending:
         if send(PREMIUM_CHAT, alert_text(e, state["events"])):
             e["posted"] = True
@@ -420,7 +475,7 @@ def recap() -> None:
     if day in state["recaps"] and not DRY_RUN:
         print(f"El resumen de {day} ya se publico")
         return
-    events = [e for e in state["events"] if e["filed"] == day]
+    events = [e for e in state["events"] if e["filed"] == day and alertable(e)]
     if not [e for e in events if e["kind"] == "buy"] and datetime.fromisoformat(day).weekday() >= 5:
         print("Fin de semana sin compras: no hay resumen")
         return

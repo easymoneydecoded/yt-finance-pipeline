@@ -2,8 +2,9 @@ name: Insider Alerts (Telegram)
 
 # Compras de directivos (SEC Form 4) -> canal premium de Telegram, cada hora en
 # dias laborables mientras la SEC acepta filings (8:00-22:00 Nueva York).
-# El resumen diario (canal gratis + premium) sale a las 03:40 UTC, cuando la
-# SEC ya ha cerrado el dia.
+# Cada noche a las 03:40 UTC, cuando la SEC ya ha cerrado el dia: resumen en
+# Telegram (gratis + premium), web tickerpress.net (Cloudflare Pages) y post en
+# Bluesky / X / Threads (insider_social.py).
 on:
   schedule:
     - cron: '23 12-23 * * 1-5'
@@ -12,9 +13,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'scan = avisos nuevos · recap = scan + resumen del dia · check = comprobar bot y canales'
+        description: 'scan = avisos nuevos · recap = scan + resumen + web + redes · site = solo web · check = comprobar bot y canales'
         type: choice
-        options: [scan, recap, check]
+        options: [scan, recap, site, check]
         default: scan
       dry_run:
         description: 'Modo prueba: escribe los mensajes en el log en vez de enviarlos'
@@ -25,8 +26,9 @@ concurrency:
   group: insider-alerts
   cancel-in-progress: false
 
+# contents: write -> guardar site_data/ (historico de compras de la web)
 permissions:
-  contents: read
+  contents: write
 
 env:
   PYTHONUNBUFFERED: '1'
@@ -44,7 +46,7 @@ jobs:
           python-version: '3.12'
 
       - name: Instalar dependencias minimas
-        run: pip install requests python-dotenv
+        run: pip install requests python-dotenv yfinance requests-oauthlib
 
       # El estado (Form 4 ya vistos, avisos del dia) vive en la cache de Actions
       # y no en el repo: asi no hay un commit cada hora. Si se pierde, el script
@@ -57,6 +59,7 @@ jobs:
           restore-keys: insider-state-
 
       - name: Avisos
+        id: mode
         env:
           TELEGRAM_ALERTS_BOT_TOKEN: ${{ secrets.TELEGRAM_ALERTS_BOT_TOKEN || secrets.TELEGRAM_BOT_TOKEN }}
           ALERTS_PREMIUM_CHAT: ${{ vars.ALERTS_PREMIUM_CHAT }}
@@ -70,11 +73,55 @@ jobs:
           if [ -z "$MODE" ]; then
             [ "${{ github.event.schedule }}" = "40 3 * * 2-6" ] && MODE=recap || MODE=scan
           fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           case "$MODE" in
             check) python insider_alerts.py check ;;
             recap) python insider_alerts.py scan && python insider_alerts.py recap ;;
+            site)  ;;
             *)     python insider_alerts.py scan ;;
           esac
+
+      - name: Web (tickerpress.net)
+        if: (steps.mode.outputs.mode == 'recap' || steps.mode.outputs.mode == 'site') && inputs.dry_run != true
+        env:
+          CLOUDFLARE_API_TOKEN:  ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          python insider_site.py update
+          python insider_site.py build
+          npx --yes wrangler@3 pages deploy site_dist --project-name=tickerpress --branch=main --commit-dirty=true
+
+      - name: Redes (Bluesky, X, Threads)
+        if: steps.mode.outputs.mode == 'recap' && inputs.dry_run != true
+        continue-on-error: true
+        env:
+          BLUESKY_HANDLE:       ${{ vars.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          X_API_KEY:            ${{ secrets.X_API_KEY }}
+          X_API_SECRET:         ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN:       ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET:      ${{ secrets.X_ACCESS_SECRET }}
+          THREADS_TOKEN:        ${{ secrets.THREADS_TOKEN }}
+          THREADS_USER_ID:      ${{ vars.THREADS_USER_ID }}
+          MIN_BUY_USD:          ${{ vars.MIN_BUY_USD }}
+        run: python insider_social.py
+
+      - name: Guardar historico de la web
+        if: (steps.mode.outputs.mode == 'recap' || steps.mode.outputs.mode == 'site') && inputs.dry_run != true
+        run: |
+          if git diff --quiet -- site_data/; then
+            echo "Sin cambios"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add site_data/
+          git commit -m "Web: compras de directivos $(date -u +%F)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
+          exit 1
 
       - name: Guardar estado
         if: always() && hashFiles('history/insider_state.json') != '' && inputs.dry_run != true
