@@ -74,13 +74,13 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
 
     title = (f"Insider buying this week ({span}): {len(clusters)} stocks where several insiders bought"
              if clusters else f"Insider buying this week ({span}): the biggest purchases by CEOs and directors")
-    lines = [f"Every week I go through all SEC Form 4 filings and pull out the **open-market purchases** "
+    lines = [f"Every week I go through all SEC Form 4 filings and pull out the open-market purchases "
              f"(transaction code P: insiders paying cash at market price, no option exercises or grants).",
              "",
-             f"This week: **{len(week)} insider buys** worth **{ia.money(sum(b['value'] for b in week))}** "
+             f"This week: {len(week)} insider buys worth {ia.money(sum(b['value'] for b in week))} "
              f"across {len(by)} stocks.", ""]
     if clusters:
-        lines += ["**Cluster buys** (2+ different insiders buying the same stock):", "",
+        lines += ["Cluster buys (2+ different insiders buying the same stock):", "",
                   "| Ticker | Company | Insiders | Total bought | Who |", "|---|---|---|---|---|"]
         for t, bs in clusters:
             roles = sorted({b["role"].split(",")[0].strip() for b in bs})
@@ -88,7 +88,7 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
                          f"{ia.money(sum(b['value'] for b in bs))} | {', '.join(roles)[:60]} |")
         lines.append("")
     if people:
-        lines += ["**Biggest buys by officers and directors** (excluding funds with 10%+ stakes):", "",
+        lines += ["Biggest buys by officers and directors (excluding funds with 10%+ stakes):", "",
                   "| Ticker | Insider | Role | Amount | Price | Stake change |", "|---|---|---|---|---|---|"]
         for b in people:
             stake = "new position" if b["stake_change"] is None else (
@@ -101,7 +101,7 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
         lines += [f"{plans} of this week's buys were pre-scheduled under 10b5-1 plans, which are usually a weaker signal.", ""]
     lines += ["Insiders sell for many reasons, but they usually buy for one. Curious which of these you'd look into "
               "and which look like noise.", "",
-              "*Data straight from SEC EDGAR. I keep the full list by stock at tickerpress.net. Not financial advice.*"]
+              "Data straight from SEC EDGAR. I keep the full list by stock at tickerpress.net. Not financial advice."]
     return title, "\n".join(lines)
 
 
