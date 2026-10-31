@@ -69,6 +69,23 @@ def send(text: str, photo: Path | None = None) -> bool:
         return False
 
 
+def send_video(video: Path, caption: str) -> bool:
+    """Envia el MP4 (para publicarlo a mano desde el movil, p. ej. en TikTok). Nunca lanza excepcion."""
+    if not enabled() or not video.exists():
+        return False
+    try:
+        with open(video, "rb") as fh:
+            r = requests.post(f"{API}/sendVideo", timeout=300, files={"video": fh}, data={
+                "chat_id": CHAT_ID, "caption": caption[:1024], "parse_mode": "HTML",
+                "supports_streaming": "true"})
+        if not r.ok:
+            print(f"   ! Telegram (video) respondio {r.status_code}: {r.text[:200]}")
+        return r.ok
+    except requests.RequestException as e:
+        print(f"   ! no pude enviar el video por Telegram: {e}")
+        return False
+
+
 def _load(path: Path) -> dict:
     try:
         return json.loads(path.read_text(encoding="utf-8"))

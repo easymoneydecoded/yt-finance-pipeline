@@ -113,8 +113,12 @@ def post_tiktok(item: dict, video: Path) -> None:
         _summary("- TikTok: publicado")
         TELEGRAM.append("🎵 TikTok: publicado")
     else:
-        TELEGRAM.append("🎵 TikTok: <b>borrador en tu bandeja</b>. Texto para pegar:\n"
-                        f"<code>{notify.esc(caption)}</code>")
+        # La app de TikTok del movil no siempre ensena el aviso del borrador: el video llega
+        # tambien por Telegram para compartirlo a TikTok desde el movil en un toque
+        notify.send_video(video, "🎵 <b>Para TikTok</b>: Compartir → TikTok y pega este texto "
+                                 f"(toca para copiar):\n\n<code>{notify.esc(caption)}</code>")
+        TELEGRAM.append("🎵 TikTok: borrador en tu bandeja y <b>vídeo enviado arriba</b> para subirlo "
+                        "desde el móvil")
         _summary("- TikTok: **borrador enviado a tu bandeja**. Abre TikTok > notificaciones/borradores, "
                  "pega este texto y publica:")
         _summary(f"\n  ```\n  {caption}\n  ```\n")
