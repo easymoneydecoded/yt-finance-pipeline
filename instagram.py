@@ -174,10 +174,13 @@ def debug_upload(video: Path) -> None:
     size = video.stat().st_size
     print(f"Token {'Facebook' if _is_facebook_token(token) else 'Instagram'} · host {GRAPH} · video {size / 1e6:.1f} MB")
     import subprocess
-    probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
-                            "stream=codec_name,width,height,r_frame_rate,bit_rate,sample_rate,channels:format=duration,bit_rate",
-                            "-of", "compact", str(video)], capture_output=True, text=True)
-    print(f"ffprobe: {probe.stdout.strip() or probe.stderr.strip()}")
+    try:
+        probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                                "stream=codec_name,width,height,r_frame_rate,bit_rate,sample_rate,channels:format=duration,bit_rate",
+                                "-of", "compact", str(video)], capture_output=True, text=True)
+        print(f"ffprobe: {probe.stdout.strip() or probe.stderr.strip()}")
+    except FileNotFoundError:
+        print(f"ffprobe no disponible; primeros bytes: {video.read_bytes()[:64].hex()}")
     variants = {
         "C (rupload con la version del contenedor)": {"fixed_version": True},
         "E (todo con v26)": {"graph": "https://graph.facebook.com/v26.0"},
