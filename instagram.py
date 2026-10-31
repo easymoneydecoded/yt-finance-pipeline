@@ -110,8 +110,8 @@ def _find_user_id(token: str) -> str:
 def publish_reel(video: Path, caption: str, video_url=None) -> str:
     """Publica el Reel y devuelve su id de Instagram.
 
-    video_url: funcion que da una URL publica temporal del MP4. Si la subida directa a
-    rupload falla (ProcessingFailedError, intermitente), Meta se descarga el video de ahi."""
+    video_url: funcion que da una URL publica temporal del MP4; Meta se descarga el video de
+    ahi (la subida directa a rupload falla a menudo con ProcessingFailedError)."""
     token = get_token()
     if not token:
         raise InstagramError("falta INSTAGRAM_TOKEN")
@@ -129,7 +129,9 @@ def publish_reel(video: Path, caption: str, video_url=None) -> str:
         # rupload rechaza el video (ProcessingFailedError, 0 bytes)
         upload_uri = container.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
         time.sleep(5)                      # el contenedor recien creado a veces aun no "existe" en rupload
-        if attempt > 1 and video_url:      # plan B: que Meta se baje el video de una URL
+        # Metodo principal: que Meta se baje el video de una URL temporal (la subida directa a
+        # rupload falla mucho con ProcessingFailedError); la directa queda de reserva (intento 2)
+        if video_url and attempt != 2:
             r = requests.post(upload_uri, timeout=300, headers={
                 "Authorization": f"OAuth {token}", "file_url": video_url()})
             how = "por URL"
