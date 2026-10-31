@@ -10,12 +10,13 @@ on:
     - cron: '23 12-23 * * 1-5'
     - cron: '23 0-2 * * 2-6'
     - cron: '40 3 * * 2-6'
+    - cron: '7 16 * * 0'          # domingo: post de Reddit listo para publicar (insider_reddit.py)
   workflow_dispatch:
     inputs:
       mode:
         description: 'scan = avisos nuevos · recap = scan + resumen + web + redes · site = solo web · check = comprobar bot y canales'
         type: choice
-        options: [scan, recap, site, check]
+        options: [scan, recap, site, reddit, check]
         default: scan
       dry_run:
         description: 'Modo prueba: escribe los mensajes en el log en vez de enviarlos'
@@ -65,19 +66,26 @@ jobs:
           ALERTS_PREMIUM_CHAT: ${{ vars.ALERTS_PREMIUM_CHAT }}
           ALERTS_FREE_CHAT:    ${{ vars.ALERTS_FREE_CHAT }}
           ALERTS_PREMIUM_LINK: ${{ vars.ALERTS_PREMIUM_LINK }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}      # Telegram personal (post de Reddit)
+          TELEGRAM_CHAT_ID:    ${{ secrets.TELEGRAM_CHAT_ID }}
           SEC_CONTACT:         ${{ secrets.SEC_CONTACT }}
           MIN_BUY_USD:         ${{ vars.MIN_BUY_USD }}
           MIN_SELL_USD:        ${{ vars.MIN_SELL_USD }}
         run: |
           MODE="${{ inputs.mode }}"
           if [ -z "$MODE" ]; then
-            [ "${{ github.event.schedule }}" = "40 3 * * 2-6" ] && MODE=recap || MODE=scan
+            case "${{ github.event.schedule }}" in
+              "40 3 * * 2-6") MODE=recap ;;
+              "7 16 * * 0")   MODE=reddit ;;
+              *)              MODE=scan ;;
+            esac
           fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           case "$MODE" in
             check) python insider_alerts.py check ;;
             recap) python insider_alerts.py scan && python insider_alerts.py recap ;;
             site)  ;;
+            reddit) python insider_reddit.py ;;
             *)     python insider_alerts.py scan ;;
           esac
 
