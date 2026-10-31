@@ -165,6 +165,15 @@ def normalize_entities(entities) -> set[str]:
     return out
 
 
+def money_figures(text: str) -> set[str]:
+    """Cifras distintivas: "$52B", "$4.2 billion" -> {"$52b", "$4.2b"}."""
+    t = (text or "").lower()
+    t = re.sub(r"\s*(billion|bn)\b", "b", t)
+    t = re.sub(r"\s*(million|mn)\b", "m", t)
+    t = re.sub(r"\s*(trillion)\b", "t", t)
+    return {m.replace(",", "") for m in re.findall(r"\$\d[\d,]*(?:\.\d+)?[kmbt]?", t)}
+
+
 def shared_entities(a: set[str], b: set[str]) -> set[str]:
     """Entidades comunes; "harvard" coincide con "harvard university"."""
     out = set()
@@ -215,6 +224,10 @@ def find_duplicate(candidate: dict, history: list[dict], today: str) -> tuple[di
 
         if len(shared) >= 2:
             return old, f"mismas entidades {sorted(shared)}"
+        # Misma cifra llamativa + otra palabra en comun = misma historia contada otra vez
+        figs = money_figures(c_title + " " + c_topic) & money_figures(old.get("title", "") + " " + o_topic)
+        if figs and len((tokens(c_title) & tokens(old.get("title", ""))) - {f for f in figs}) >= 1:
+            return old, f"misma cifra {sorted(figs)} y mismo tema que '{old.get('title')}'"
         if shared and topic_sim >= 0.3:
             return old, f"mismo tema ({sorted(shared)}, sim {topic_sim:.2f})"
         if topic_sim >= TOPIC_SIM_THRESHOLD:
