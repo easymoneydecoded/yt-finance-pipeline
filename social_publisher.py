@@ -21,9 +21,10 @@
 ================================================================================
 """
 
+import json
 import os
 import tempfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -38,6 +39,11 @@ import tiktok
 load_dotenv()
 
 BACKLOG_EXTRA = 6   # si hay mas pendientes que esto, se publica uno extra en esta ejecucion
+
+# GitHub retrasa o se salta crons cuando va cargado: social.yml tiene ejecuciones de
+# respaldo y aqui se recuerda que franja ya se cubrio, para no publicar dos veces.
+SLOTS_UTC  = (15, 19, 23)
+SLOTS_FILE = ch.HISTORY_DIR / "social_slots.json"
 SUMMARY = os.getenv("GITHUB_STEP_SUMMARY")
 TELEGRAM: list[str] = []   # lineas del aviso de Telegram de esta ejecucion
 
@@ -165,16 +171,36 @@ def publish_item(item: dict, all_items: list[dict]) -> None:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+def current_slot(now: datetime) -> str:
+    """Franja a la que pertenece esta ejecucion: la ultima hora de SLOTS_UTC ya pasada."""
+    hours = [h for h in SLOTS_UTC if h <= now.hour]
+    day, hour = (now, max(hours)) if hours else (now - timedelta(days=1), max(SLOTS_UTC))
+    return f"{day:%Y-%m-%d}T{hour:02d}"
+
+
 def main() -> None:
-    print(f"\n=== SOCIAL PUBLISHER . {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC ===\n")
+    now = datetime.now(timezone.utc)
+    print(f"\n=== SOCIAL PUBLISHER . {now:%Y-%m-%d %H:%M} UTC ===\n")
     items = sq.load_queue()
     pending = sq.pending_items(items)
     _summary(f"## Shorts en cola: {len(pending)}")
 
+    slot = current_slot(now)
+    try:
+        last_slot = json.loads(SLOTS_FILE.read_text(encoding="utf-8")).get("last_slot")
+    except (OSError, json.JSONDecodeError):
+        last_slot = None
+    manual = os.getenv("GITHUB_EVENT_NAME") == "workflow_dispatch"
+    slot_done = last_slot == slot and not manual
+    if slot_done:
+        _summary(f"Franja {slot} ya cubierta (ejecucion de respaldo): solo reintentos y comentarios")
+
     # Reintentos (Shorts ya publicados en alguna red) aparte: no deben gastar la franja del Short nuevo
     retries = [i for i in pending if any(i["platforms"][p]["status"] == "done" for p in sq.PLATFORMS)]
-    fresh = [i for i in pending if i not in retries]
+    fresh = [] if slot_done else [i for i in pending if i not in retries]
     batch = retries + (fresh[:2] if len(fresh) > BACKLOG_EXTRA else fresh[:1])
+    if fresh:
+        SLOTS_FILE.write_text(json.dumps({"last_slot": slot}), encoding="utf-8")
     for item in batch:
         TELEGRAM.clear()
         publish_item(item, items)
@@ -184,7 +210,7 @@ def main() -> None:
             head = "🔁 <b>Reintento</b>" if item in retries else "📱 <b>Short publicado</b>"
             notify.send(f"{head}: {notify.esc(item.get('youtube_title') or item['title'])}\n"
                         + "\n".join(TELEGRAM) + f"\n\n🗂 Quedan {left} en cola")
-    if not batch and notify.enabled() and datetime.now(timezone.utc).hour == 23:
+    if not batch and not slot_done and notify.enabled() and now.hour == 23:
         notify.send("⚠️ <b>La cola de Shorts esta vacia</b>: hoy no ha llegado ningun Short nuevo. "
                     "Revisa si el pipeline diario fallo.")
 

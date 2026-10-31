@@ -155,6 +155,37 @@ def permalink(media_id: str) -> str:
         return ""
 
 
+def debug_upload(video: Path) -> None:
+    """Diagnostico de la subida: crea contenedores y sube el video SIN publicar nada."""
+    token = get_token()
+    GRAPH = _graph(token)
+    user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
+    size = video.stat().st_size
+    print(f"Token {'Facebook' if _is_facebook_token(token) else 'Instagram'} · host {GRAPH} · video {size / 1e6:.1f} MB")
+    variants = {
+        "A (actual)": {},
+        "B (octet-stream)": {"Content-Type": "application/octet-stream", "Content-Length": str(size)},
+    }
+    for name, extra in variants.items():
+        c = requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
+            "media_type": "REELS", "upload_type": "resumable", "caption": "debug", "access_token": token}).json()
+        print(f"\n--- {name} · contenedor: {c}")
+        if "id" not in c:
+            continue
+        uri = c.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{c['id']}"
+        with open(video, "rb") as fh:
+            r = requests.post(uri, data=fh.read(), timeout=600, headers={
+                "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size), **extra})
+        print(f"subida {uri}: HTTP {r.status_code} {r.text[:400]}")
+        for _ in range(8):
+            st = requests.get(f"{GRAPH}/{c['id']}", timeout=30, params={
+                "fields": "status_code,status,video_status", "access_token": token}).json()
+            print(f"estado: {st}")
+            if st.get("status_code") in ("FINISHED", "ERROR", "EXPIRED"):
+                break
+            time.sleep(15)
+
+
 def check() -> None:
     """Comprueba token y permisos sin publicar nada (python instagram.py check)."""
     token = get_token()
@@ -179,3 +210,9 @@ if __name__ == "__main__":
     import sys
     if sys.argv[1:] == ["check"]:
         check()
+    elif sys.argv[1:] == ["debug"]:
+        import tempfile
+        import shorts_queue as sq
+        item = sq.pending_items(sq.load_queue())[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            debug_upload(sq.download_asset(item["asset_id"], Path(tmp) / "debug.mp4"))

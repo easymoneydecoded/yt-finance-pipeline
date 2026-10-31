@@ -7,10 +7,18 @@ name: Social (Shorts a YouTube, Instagram y TikTok)
 on:
   schedule:
     - cron: '7 15,19,23 * * *'
+    # Respaldo: GitHub a veces retrasa o se salta un cron. social_publisher.py
+    # recuerda la franja ya cubierta (history/social_slots.json) y no repite.
+    - cron: '37 15,19,23 * * *'
+    - cron: '7 16,20,0 * * *'
   workflow_dispatch:
     inputs:
       check_only:
         description: 'Solo comprobar credenciales de Instagram, TikTok y Telegram (no publica nada)'
+        type: boolean
+        default: false
+      ig_debug:
+        description: 'Diagnostico de la subida a Instagram (sube el siguiente Short SIN publicarlo)'
         type: boolean
         default: false
 
@@ -55,7 +63,9 @@ jobs:
           TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:      ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ "${{ inputs.check_only }}" = "true" ]; then
+          if [ "${{ inputs.ig_debug }}" = "true" ]; then
+            python instagram.py debug
+          elif [ "${{ inputs.check_only }}" = "true" ]; then
             python instagram.py check || echo '!! Instagram: fallo la comprobacion'
             python tiktok.py check || echo '!! TikTok: fallo la comprobacion'
             python notify.py test || echo '!! Telegram: fallo la comprobacion'
