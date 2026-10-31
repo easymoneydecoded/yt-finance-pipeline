@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30T15:03:07+00:00",
+  "updated": "2026-10-31T02:17:04+00:00",
   "n_videos": 31,
   "videos": [
     {
@@ -84,7 +84,10 @@
       "pinned_comment": "",
       "playlist": "Stock Market Explained",
       "quality": 8.0,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "shorts_commented": [
+        "GJ8p3zg6Oac"
+      ]
     },
     {
       "date": "2026-10-29",
