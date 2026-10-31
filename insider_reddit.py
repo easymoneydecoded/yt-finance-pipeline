@@ -25,7 +25,9 @@ import notify
 import insider_alerts as ia
 import insider_site as site
 
-SUBREDDITS = ["StockMarket", "ValueInvesting", "stocks"]
+# r/insiderData una semana si y otra no; los grandes piden karma (r/stocks borra al instante
+# los posts de cuentas nuevas, por eso no esta)
+SUBREDDITS = ["insiderData", "StockMarket", "insiderData", "ValueInvesting"]
 MAX_URL    = 7000     # por encima, el boton solo rellena el titulo (el texto va en el mensaje)
 
 
