@@ -33,7 +33,7 @@ import secret_store
 
 load_dotenv()
 
-API_VERSION   = os.getenv("INSTAGRAM_API_VERSION", "v23.0")
+API_VERSION   = os.getenv("INSTAGRAM_API_VERSION", "v26.0")   # con v23 la subida a rupload fallaba a ratos
 
 
 def _is_facebook_token(token: str) -> bool:
@@ -122,9 +122,9 @@ def publish_reel(video: Path, caption: str) -> str:
             "share_to_feed": "true", "access_token": token,
         }))
         cid = container["id"]
-        # No usar container["uri"]: Meta devuelve la URL de su version mas nueva (v26) y rupload
-        # rechaza el video (ProcessingFailedError, 0 bytes) si no coincide con la del contenedor.
-        upload_uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
+        # La URL que devuelve Meta (misma version que el contenedor); si la version no coincide,
+        # rupload rechaza el video (ProcessingFailedError, 0 bytes)
+        upload_uri = container.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
         time.sleep(5)                      # el contenedor recien creado a veces aun no "existe" en rupload
         with open(video, "rb") as fh:
             r = requests.post(upload_uri, data=fh.read(), timeout=600, headers={
