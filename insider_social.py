@@ -22,7 +22,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import requests
 
@@ -69,7 +69,7 @@ def bluesky(text: str) -> str | None:
                        "features": [{"$type": "app.bsky.richtext.facet#link",
                                      "uri": uri if uri.startswith("http") else f"https://{uri}"}]})
     record = {"$type": "app.bsky.feed.post", "text": text, "facets": facets,
-              "createdAt": datetime.utcnow().isoformat(timespec="seconds") + "Z", "langs": ["en"]}
+              "createdAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "langs": ["en"]}
     r = requests.post(f"{api}/com.atproto.repo.createRecord", timeout=30,
                       headers={"Authorization": f"Bearer {s['accessJwt']}"},
                       json={"repo": s["did"], "collection": "app.bsky.feed.post", "record": record}).json()
@@ -96,8 +96,33 @@ def x_post(text: str) -> str | None:
 # ---------------------------------------------------------------------------
 # Threads
 # ---------------------------------------------------------------------------
+THREADS_REFRESH_DAYS = 20   # el token largo dura 60 dias; se renueva mucho antes
+
+
+def threads_token() -> str | None:
+    """Token de Threads; el renovado se guarda cifrado igual que el de Instagram (secret_store)."""
+    import secret_store
+    stored = secret_store.get("threads")
+    token = stored.get("token") or os.getenv("THREADS_TOKEN")
+    if not token:
+        return None
+    refreshed = stored.get("refreshed_at")
+    age = (datetime.now(timezone.utc) - datetime.fromisoformat(refreshed)).days if refreshed else 99
+    if age >= THREADS_REFRESH_DAYS:
+        r = requests.get("https://graph.threads.net/refresh_access_token", timeout=30,
+                         params={"grant_type": "th_refresh_token", "access_token": token}).json()
+        if "access_token" in r:
+            token = r["access_token"]
+            secret_store.put("threads", {"token": token,
+                                         "refreshed_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+            print(f"   . token de Threads renovado (valido {r.get('expires_in', 0) // 86400} dias)")
+        else:
+            print(f"   ! no pude renovar el token de Threads: {r.get('error', {}).get('message')}")
+    return token
+
+
 def threads(text: str) -> str | None:
-    token, user = os.getenv("THREADS_TOKEN"), os.getenv("THREADS_USER_ID", "me")
+    token, user = threads_token(), os.getenv("THREADS_USER_ID", "me")
     if not token:
         print("   . Threads no configurado")
         return None
