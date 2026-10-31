@@ -191,8 +191,8 @@ def debug_upload(video: Path) -> None:
     except FileNotFoundError:
         print(f"ffprobe no disponible; primeros bytes: {video.read_bytes()[:64].hex()}")
     variants = {
-        "C (rupload con la version del contenedor)": {"fixed_version": True},
-        "E (todo con v26)": {"graph": "https://graph.facebook.com/v26.0"},
+        "directa": {"graph": GRAPH},
+        "por URL temporal de GitHub (plan B)": {"url": True},
     }
     for name, opt in variants.items():
         c = requests.post(f"{opt.get('graph', GRAPH)}/{user_id}/media", timeout=60, data={
@@ -201,11 +201,11 @@ def debug_upload(video: Path) -> None:
         if "id" not in c:
             continue
         uri = c.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{c['id']}"
-        if opt.get("fixed_version"):
-            uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{c['id']}"
-            with open(video, "rb") as fh:
-                r = requests.post(uri, data=fh.read(), timeout=600, headers={
-                    "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size)})
+        if opt.get("url"):
+            import shorts_queue as sq
+            item = sq.pending_items(sq.load_queue())[0]
+            r = requests.post(uri, timeout=300, headers={"Authorization": f"OAuth {token}",
+                                                         "file_url": sq.signed_asset_url(item["asset_id"])})
         else:
             with open(video, "rb") as fh:
                 r = requests.post(uri, data=fh.read(), timeout=600, headers={
