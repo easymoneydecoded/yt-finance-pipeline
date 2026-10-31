@@ -63,7 +63,7 @@ def bluesky(text: str) -> str | None:
         raise RuntimeError(f"Bluesky login: {s.get('message')}")
     raw = text.encode("utf-8")
     facets = []
-    for m in re.finditer(rb"(https?://\S+|tickerpress\.net\S*)", raw):    # enlaces clicables
+    for m in re.finditer(rb"(https?://\S+|(?:tickerpress\.net|t\.me/)\S*)", raw):    # enlaces clicables
         uri = m.group(0).decode()
         facets.append({"index": {"byteStart": m.start(), "byteEnd": m.end()},
                        "features": [{"$type": "app.bsky.richtext.facet#link",
