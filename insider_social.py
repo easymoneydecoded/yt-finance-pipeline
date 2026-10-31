@@ -29,6 +29,8 @@ import requests
 import insider_alerts as ia
 
 SITE = "tickerpress.net"
+BSKY_TAGS     = ["#stocks", "#investing", "#insidertrading"]
+THREADS_TOPIC = "#Stocks"
 
 
 def day_and_buys() -> tuple[str, list[dict]]:
@@ -68,6 +70,9 @@ def bluesky(text: str) -> str | None:
         facets.append({"index": {"byteStart": m.start(), "byteEnd": m.end()},
                        "features": [{"$type": "app.bsky.richtext.facet#link",
                                      "uri": uri if uri.startswith("http") else f"https://{uri}"}]})
+    for m in re.finditer(rb"(?<![\w&])#([A-Za-z]\w{1,63})", raw):      # hashtags -> feeds por tema
+        facets.append({"index": {"byteStart": m.start(), "byteEnd": m.end()},
+                       "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": m.group(1).decode()}]})
     record = {"$type": "app.bsky.feed.post", "text": text, "facets": facets,
               "createdAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "langs": ["en"]}
     r = requests.post(f"{api}/com.atproto.repo.createRecord", timeout=30,
@@ -150,9 +155,16 @@ def main() -> None:
         print(f"Sin compras de {ia.money(ia.MIN_BUY_USD)}+ el {day}: no hay post")
         return
     day_url = f"{SITE}/day/{day}/"
-    posts = {"Bluesky": (bluesky, recap_post(day, buys, f"All buys: {day_url}")),
+    # Etiquetas de tema: en Bluesky llevan el post a los feeds de #stocks/#investing; en Threads
+    # el primer hashtag es la "etiqueta de tema" (solo una). En X ya estan los cashtags ($NVDA).
+    bsky_text = recap_post(day, buys, f"All buys: {day_url}")
+    for tags in (BSKY_TAGS, BSKY_TAGS[:2], BSKY_TAGS[:1]):        # limite de Bluesky: 300 caracteres
+        if len(bsky_text) + len(" ".join(tags)) + 1 <= 300:
+            bsky_text += "\n" + " ".join(tags)
+            break
+    posts = {"Bluesky": (bluesky, bsky_text),
              "X": (x_post, recap_post(day, buys, "Full list + free alerts: link in bio")),
-             "Threads": (threads, recap_post(day, buys, f"All buys: https://{day_url}"))}
+             "Threads": (threads, recap_post(day, buys, f"All buys: https://{day_url}") + f"\n{THREADS_TOPIC}")}
     ok = False
     for name, (fn, text) in posts.items():
         if ia.DRY_RUN:
