@@ -173,13 +173,17 @@ def debug_upload(video: Path) -> None:
     user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
     size = video.stat().st_size
     print(f"Token {'Facebook' if _is_facebook_token(token) else 'Instagram'} · host {GRAPH} · video {size / 1e6:.1f} MB")
-    sample = "https://download.samplelib.com/mp4/sample-5s.mp4"   # video publico de prueba
+    import subprocess
+    probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
+                            "stream=codec_name,width,height,r_frame_rate,bit_rate,sample_rate,channels:format=duration,bit_rate",
+                            "-of", "compact", str(video)], capture_output=True, text=True)
+    print(f"ffprobe: {probe.stdout.strip() or probe.stderr.strip()}")
     variants = {
         "C (rupload con la version del contenedor)": {"fixed_version": True},
-        "D (file_url: Meta descarga un video publico)": {"file_url": sample},
+        "E (todo con v26)": {"graph": "https://graph.facebook.com/v26.0"},
     }
     for name, opt in variants.items():
-        c = requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
+        c = requests.post(f"{opt.get('graph', GRAPH)}/{user_id}/media", timeout=60, data={
             "media_type": "REELS", "upload_type": "resumable", "caption": "debug", "access_token": token}).json()
         print(f"\n--- {name} · contenedor: {c}")
         if "id" not in c:
@@ -191,8 +195,9 @@ def debug_upload(video: Path) -> None:
                 r = requests.post(uri, data=fh.read(), timeout=600, headers={
                     "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size)})
         else:
-            r = requests.post(uri, timeout=120, headers={"Authorization": f"OAuth {token}",
-                                                         "file_url": opt["file_url"]})
+            with open(video, "rb") as fh:
+                r = requests.post(uri, data=fh.read(), timeout=600, headers={
+                    "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size)})
         print(f"subida {uri}: HTTP {r.status_code} {r.text[:400]}")
         for _ in range(8):
             st = requests.get(f"{GRAPH}/{c['id']}", timeout=30, params={
