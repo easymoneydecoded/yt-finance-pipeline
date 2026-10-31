@@ -31,6 +31,7 @@ from dotenv import load_dotenv
 import content_history as ch
 import engagement
 import instagram
+import notify
 import shorts_queue as sq
 import tiktok
 
@@ -38,6 +39,7 @@ load_dotenv()
 
 BACKLOG_EXTRA = 6   # si hay mas pendientes que esto, se publica uno extra en esta ejecucion
 SUMMARY = os.getenv("GITHUB_STEP_SUMMARY")
+TELEGRAM: list[str] = []   # lineas del aviso de Telegram de esta ejecucion
 
 
 def _summary(line: str) -> None:
@@ -77,6 +79,7 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
     item["youtube_title"] = meta["snippet"]["title"].replace(" #Shorts", "")
     _mark(item, "youtube", True, vid)
     _summary(f"- YouTube: https://youtube.com/shorts/{vid}")
+    TELEGRAM.append(f"▶️ YouTube: https://youtube.com/shorts/{vid}")
 
     yt_manage = engagement.client()
     if yt_manage:
@@ -89,7 +92,9 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
 def post_instagram(item: dict, video: Path) -> None:
     media_id = instagram.publish_reel(video, sq.caption_instagram(item))
     _mark(item, "instagram", True, media_id)
-    _summary(f"- Instagram: Reel publicado (id {media_id})")
+    link = instagram.permalink(media_id)
+    _summary(f"- Instagram: Reel publicado {link or '(id ' + media_id + ')'}")
+    TELEGRAM.append(f"📸 Instagram: {link or 'Reel publicado'}")
 
 
 def post_tiktok(item: dict, video: Path) -> None:
@@ -98,7 +103,10 @@ def post_tiktok(item: dict, video: Path) -> None:
     _mark(item, "tiktok", True, publish_id)
     if tiktok.MODE == "direct":
         _summary("- TikTok: publicado")
+        TELEGRAM.append("🎵 TikTok: publicado")
     else:
+        TELEGRAM.append("🎵 TikTok: <b>borrador en tu bandeja</b>. Texto para pegar:\n"
+                        f"<code>{notify.esc(caption)}</code>")
         _summary("- TikTok: **borrador enviado a tu bandeja**. Abre TikTok > notificaciones/borradores, "
                  "pega este texto y publica:")
         _summary(f"\n  ```\n  {caption}\n  ```\n")
@@ -142,6 +150,9 @@ def publish_item(item: dict, all_items: list[dict]) -> None:
             except Exception as e:
                 _mark(item, p, False, str(e))
                 _summary(f"- {p}: **fallo** ({str(e)[:150]}), se reintenta en la siguiente ejecucion")
+                final = item["platforms"][p]["status"] == "failed"
+                TELEGRAM.append(f"⚠️ {p}: fallo ({notify.esc(str(e)[:120])}). "
+                                + ("Agotados los reintentos." if final else "Se reintenta en la siguiente franja."))
 
     if sq.is_finished(item):
         try:
@@ -164,8 +175,17 @@ def main() -> None:
     fresh = [i for i in pending if i not in retries]
     batch = retries + (fresh[:2] if len(fresh) > BACKLOG_EXTRA else fresh[:1])
     for item in batch:
+        TELEGRAM.clear()
         publish_item(item, items)
         sq.save_queue(items)   # guardar tras cada Short: si algo falla despues, no se repite
+        if TELEGRAM:
+            left = len(sq.pending_items(items))
+            head = "🔁 <b>Reintento</b>" if item in retries else "📱 <b>Short publicado</b>"
+            notify.send(f"{head}: {notify.esc(item.get('youtube_title') or item['title'])}\n"
+                        + "\n".join(TELEGRAM) + f"\n\n🗂 Quedan {left} en cola")
+    if not batch and notify.enabled() and datetime.now(timezone.utc).hour == 23:
+        notify.send("⚠️ <b>La cola de Shorts esta vacia</b>: hoy no ha llegado ningun Short nuevo. "
+                    "Revisa si el pipeline diario fallo.")
 
     # Comentarios pendientes de los videos largos ya publicados
     yt_manage = engagement.client()

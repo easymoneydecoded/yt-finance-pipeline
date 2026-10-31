@@ -145,6 +145,16 @@ def publish_reel(video: Path, caption: str) -> str:
     return published["id"]
 
 
+def permalink(media_id: str) -> str:
+    """URL publica del Reel (o '' si no se puede obtener)."""
+    try:
+        token = get_token()
+        return _check(requests.get(f"{_graph(token)}/{media_id}", timeout=30,
+                                   params={"fields": "permalink", "access_token": token})).get("permalink", "")
+    except Exception:
+        return ""
+
+
 def check() -> None:
     """Comprueba token y permisos sin publicar nada (python instagram.py check)."""
     token = get_token()

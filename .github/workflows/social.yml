@@ -52,6 +52,8 @@ jobs:
           TIKTOK_CLIENT_SECRET:  ${{ secrets.TIKTOK_CLIENT_SECRET }}
           TIKTOK_REFRESH_TOKEN:  ${{ secrets.TIKTOK_REFRESH_TOKEN }}
           TIKTOK_MODE:           ${{ vars.TIKTOK_MODE || 'draft' }}
+          TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:      ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           if [ "${{ inputs.check_only }}" = "true" ]; then
             python instagram.py check || echo '!! Instagram: fallo la comprobacion'
@@ -59,6 +61,13 @@ jobs:
           else
             python social_publisher.py
           fi
+
+      - name: Aviso de fallo por Telegram
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python notify.py social_failed || true
 
       - name: Guardar cola e historial
         if: always()

@@ -163,6 +163,14 @@ jobs:
           done
           echo "No se pudo guardar el historial" && exit 1
 
+      - name: Aviso por Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+          JOB_STATUS:         ${{ job.status }}
+        run: python notify.py pipeline || true
+
       - name: Guardar artefacto (metadata + thumbnail)
         if: always()
         uses: actions/upload-artifact@v4
