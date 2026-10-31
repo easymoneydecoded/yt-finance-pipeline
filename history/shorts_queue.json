@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-31T17:47:11+00:00",
-  "pending": 1,
+  "updated": "2026-10-31T17:50:23+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -84,7 +84,8 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "descarga: 404 Client Error: Not Found for url: https://api.github.com/repos/easymoneydecoded/yt-finance-pipeline/releases/assets/695200089"
         },
         "tiktok": {
           "status": "done",
