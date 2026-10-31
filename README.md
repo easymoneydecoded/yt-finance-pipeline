@@ -77,3 +77,31 @@ deja los MP4 en el artefacto `videos-<id>` para revisarlos; no sube nada.
 
 Para que un tema vuelva a estar permitido, borra su entrada de
 `history/videos.json`.
+
+## Bot de Telegram: Insider Alerts (de pago, en ingles)
+
+`insider_alerts.py` + workflow `alerts.yml`. Lee cada hora los Form 4 de la SEC
+y avisa de las **compras en mercado abierto** de directivos (>= `MIN_BUY_USD`,
+50.000 $ por defecto) y de las ventas grandes (>= `MIN_SELL_USD`, 10 M$), con
+"cluster buys" marcadas. Sin IA: las cifras salen tal cual del Form 4.
+
+- **Canal premium** (privado): todos los avisos casi en directo. Se cobra con
+  una suscripcion de **Telegram Stars** (Telegram cobra y gestiona altas y bajas).
+- **Canal gratis** (publico): resumen diario a las 03:40 UTC con el top 3 y el
+  enlace al premium.
+
+Puesta en marcha (una vez):
+
+1. Crea dos canales en Telegram: uno publico (p. ej. `@tickerpress_insiders`) y
+   uno privado (premium). Anade el bot (`TELEGRAM_BOT_TOKEN` o uno nuevo en
+   `TELEGRAM_ALERTS_BOT_TOKEN`) como **administrador** de los dos, con permiso
+   para publicar y, en el premium, para invitar usuarios.
+2. `python insider_alerts.py setup` -> muestra el id del canal premium
+   (`-100...`). Ponlo en `.env` como `ALERTS_PREMIUM_CHAT`, vuelve a ejecutar
+   `setup` y te da el enlace de pago (`STARS_PRICE`, 500 Stars/mes por defecto).
+3. En GitHub: secret `SEC_CONTACT` (tu email; la SEC lo exige) y variables
+   `ALERTS_PREMIUM_CHAT`, `ALERTS_FREE_CHAT` (`@canal`) y `ALERTS_PREMIUM_LINK`.
+4. Actions > Insider Alerts > Run workflow > `check`.
+
+Probar en local sin enviar nada: `DRY_RUN=true python insider_alerts.py scan`.
+Gasta unos 350 min/mes de Actions (repo privado: 2.000 gratis).
