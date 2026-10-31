@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T11:27:46+00:00",
+  "updated": "2026-10-31T17:05:47+00:00",
   "n_videos": 32,
   "videos": [
     {
@@ -69,14 +69,24 @@
         5849613,
         6573544
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "How Wall Street Took 80% Of Tech Profits"
+      ],
+      "shorts_ids": [
+        "4SQwFbLV4Ao"
+      ],
       "publish_at": "2026-10-31T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Did market pullbacks make you trim your tech holdings, or are you keeping cash ready on the sidelines?",
       "playlist": "Stock Market Explained",
       "quality": 7.5,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgwV6U7TzK67T03d1EJ4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "4SQwFbLV4Ao",
+        "m19JKJKJsfs"
+      ]
     },
     {
       "date": "2026-10-30",
@@ -162,7 +172,8 @@
       "quality": 8.0,
       "voice": "af_heart",
       "shorts_commented": [
-        "GJ8p3zg6Oac"
+        "GJ8p3zg6Oac",
+        "nUu7_Mn4twI"
       ],
       "stats": {
         "views": 2,
@@ -171,7 +182,13 @@
         "updated": "2026-10-31T10:57:47+00:00",
         "source": "api",
         "shorts_views": 11
-      }
+      },
+      "cta_done": [
+        "6d1nnM85LAw",
+        "GJ8p3zg6Oac",
+        "nUu7_Mn4twI",
+        "uHSjshPOtpY"
+      ]
     },
     {
       "date": "2026-10-29",

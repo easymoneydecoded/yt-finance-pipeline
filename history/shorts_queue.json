@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T11:27:46+00:00",
+  "updated": "2026-10-31T17:05:43+00:00",
   "pending": 3,
   "items": [
     {
@@ -29,18 +29,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "4SQwFbLV4Ao",
+          "at": "2026-10-31T17:03+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7702878702857865238",
+          "at": "2026-10-31T17:05+00:00"
         }
-      }
+      },
+      "youtube_title": "How Wall Street Took 80% Of Tech Profits"
     },
     {
       "id": "2026-10-31_s2",
