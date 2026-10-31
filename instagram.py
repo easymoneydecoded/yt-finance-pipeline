@@ -119,7 +119,9 @@ def publish_reel(video: Path, caption: str) -> str:
         "share_to_feed": "true", "access_token": token,
     }))
     cid = container["id"]
-    upload_uri = container.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
+    # No usar container["uri"]: Meta devuelve la URL de su version mas nueva (v26) y rupload
+    # rechaza el video (ProcessingFailedError, 0 bytes) si no coincide con la del contenedor.
+    upload_uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
 
     size = video.stat().st_size
     with open(video, "rb") as fh:
