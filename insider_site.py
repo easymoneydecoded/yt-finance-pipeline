@@ -361,7 +361,7 @@ def buys_table(rows: list[dict], *, ticker_col: bool = True) -> str:
             "<th class='num'>Stake</th><th>Trade</th><th></th>")
     out = []
     for b in rows:
-        stake = ("new" if b["stake_change"] is None else
+        stake = (("new" if ia.is_new_position(b) else "—") if b["stake_change"] is None else
                  ">+999%" if b["stake_change"] > 999 else f"+{b['stake_change']:.0f}%")
         plan = '<span class="tag" title="Pre-scheduled trade (Rule 10b5-1 plan)">10b5-1</span>' if b["plan"] else ""
         tk = (f"<td><a class='tk' href='/stock/{slug(b['ticker'])}/'>{esc(b['ticker'])}</a>"

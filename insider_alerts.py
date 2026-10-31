@@ -18,6 +18,7 @@
  Uso:
    python insider_alerts.py scan     -> lee los Form 4 nuevos y avisa en premium
    python insider_alerts.py recap    -> resumen del dia (gratis + premium)
+   python insider_alerts.py teaser   -> un aviso premium, con retraso, en el canal gratis
    python insider_alerts.py check    -> comprueba que el bot puede publicar
    python insider_alerts.py setup    -> lista los canales del bot y crea el
                                         enlace de suscripcion con Stars
@@ -345,6 +346,12 @@ def owner_name(e: dict) -> str:
     return name + (f" (+{e['joint']} joint filers)" if e["joint"] else "")
 
 
+def is_new_position(e: dict) -> bool:
+    """Sin acciones antes de la compra. Si el saldo final es menor que lo comprado, el Form 4
+    reparte la compra entre varias cuentas (directa/indirecta) y no se sabe: no se dice nada."""
+    return e["stake_change"] is None and e["after"] >= e["shares"] * 0.99
+
+
 def cluster_size(e: dict, events: list[dict]) -> int:
     since = (datetime.fromisoformat(e["found_at"]) - timedelta(days=CLUSTER_DAYS)).isoformat()
     owners = {x["owner_cik"] for x in events
@@ -364,7 +371,7 @@ def alert_text(e: dict, events: list[dict]) -> str:
              f"💵 {verb} {e['shares']:,.0f} shares @ ${e['price']:,.2f} = <b>{money(e['value'])}</b>"]
     if e["kind"] == "buy" and e["stake_change"] is not None:
         lines.append(f"📈 Stake +{e['stake_change']:.0f}% → {e['after']:,.0f} shares")
-    elif e["kind"] == "buy":
+    elif e["kind"] == "buy" and is_new_position(e):
         lines.append(f"📈 New position: {e['after']:,.0f} shares")
     lines.append(f"📅 Trade: {nice_date(e['trade_date'])} · Filed: {nice_date(e['filed'])}")
     if e["kind"] == "buy":
@@ -486,6 +493,35 @@ def recap() -> None:
     save_state(state)
 
 
+TEASER_MIN_HOURS = 6     # el aviso gratis siempre llega con retraso respecto al premium
+TEASER_MAX_HOURS = 72    # el lunes aun vale una compra del viernes
+
+
+def teaser() -> None:
+    """Un aviso premium al dia, con retraso, en el canal gratis: ensena lo que se pierden."""
+    state = load_state()
+    now = datetime.now(timezone.utc)
+    done = set(state.setdefault("teasers", []))
+    candidates = [e for e in state["events"]
+                  if e["kind"] == "buy" and e["posted"] and alertable(e) and e["acc"] not in done
+                  and TEASER_MIN_HOURS <= (now - datetime.fromisoformat(e["found_at"])).total_seconds() / 3600
+                  <= TEASER_MAX_HOURS]
+    if not candidates:
+        print("No hay avisos para el canal gratis")
+        return
+    # Directivos antes que fondos, luego cluster buys, luego importe
+    e = min(candidates, key=lambda x: (rank_key(x)[0], -cluster_size(x, state["events"]), -x["value"]))
+    hours = int((now - datetime.fromisoformat(e["found_at"])).total_seconds() // 3600)
+    text = (f"⏱ <b>Premium members got this alert {hours} hours ago</b>\n\n{alert_text(e, state['events'])}")
+    if PREMIUM_LINK:
+        text += (f"\n\n🔒 Get every insider buy the moment it's filed:\n"
+                 f'👉 <a href="{esc(PREMIUM_LINK)}">Join Premium</a>')
+    if send(FREE_CHAT, text):
+        state["teasers"] = (state["teasers"] + [e["acc"]])[-200:]
+        print(f"   ✓ aviso gratis: {e['ticker']} {money(e['value'])} ({hours} h de retraso)")
+    save_state(state)
+
+
 def check() -> None:
     me = tg("getMe")
     if not me.get("ok"):
@@ -539,8 +575,8 @@ def setup() -> None:
 
 
 if __name__ == "__main__":
-    modes = {"scan": scan, "recap": recap, "check": check, "setup": setup}
+    modes = {"scan": scan, "recap": recap, "teaser": teaser, "check": check, "setup": setup}
     if sys.argv[1:2] and sys.argv[1] in modes:
         modes[sys.argv[1]]()
     else:
-        print("Uso: python insider_alerts.py scan | recap | check | setup")
+        print("Uso: python insider_alerts.py scan | recap | teaser | check | setup")

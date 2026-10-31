@@ -64,7 +64,8 @@ def is_person(b: dict) -> bool:
     return not ia.rank_key(b)[0]       # directivo o consejero, no un fondo con >10%
 
 
-def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
+def week_summary(start: date, end: date, week: list[dict]):
+    """(compras por accion, cluster buys, mayores compras de directivos, "Oct 24–30")."""
     by = defaultdict(list)
     for b in week:
         by[b["ticker"]].append(b)
@@ -73,6 +74,11 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
         key=lambda x: (-len({b["owner_cik"] for b in x[1]}), -sum(b["value"] for b in x[1])))[:8]
     people = sorted((b for b in merge_by_person(week) if is_person(b)), key=lambda b: -b["value"])[:8]
     span = f"{start:%b} {start.day}–{end:%b} {end.day}" if start.month != end.month else f"{start:%b} {start.day}–{end.day}"
+    return by, clusters, people, span
+
+
+def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
+    by, clusters, people, span = week_summary(start, end, week)
 
     title = (f"Insider buying this week ({span}): {len(clusters)} stocks where several insiders bought"
              if clusters else f"Insider buying this week ({span}): the biggest purchases by CEOs and directors")
@@ -93,7 +99,7 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
         lines += ["Biggest buys by officers and directors (excluding funds with 10%+ stakes):", "",
                   "| Ticker | Insider | Role | Amount | Price | Stake change |", "|---|---|---|---|---|---|"]
         for b in people:
-            stake = "new position" if b["stake_change"] is None else (
+            stake = ("new position" if ia.is_new_position(b) else "n/a") if b["stake_change"] is None else (
                 ">+999%" if b["stake_change"] > 999 else f"+{b['stake_change']:.0f}%")
             lines.append(f"| ${b['ticker']} | {site.person(b)} | {site.short(b['role'], 30)} | "
                          f"{ia.money(b['value'])} | ${b['price']:,.2f} | {stake} |")
@@ -135,5 +141,41 @@ def main(preview: bool = False) -> None:
         sys.exit(1)
 
 
+def telegram_weekly(preview: bool = False) -> None:
+    """Resumen de la semana en los canales de Telegram (gratis con enlace al premium)."""
+    start, end, week = week_data()
+    if not week:
+        return
+    by, clusters, people, span = week_summary(start, end, week)
+    esc = ia.esc
+    lines = [f"📅 <b>Insider buying · week of {span}</b>",
+             f"{len(week)} open-market buys · {ia.money(sum(b['value'] for b in week))} across {len(by)} stocks", ""]
+    if clusters:
+        lines.append("🔥 <b>Cluster buys</b> (2+ insiders buying the same stock)")
+        for t, bs in clusters[:5]:
+            lines.append(f"• <b>${esc(t)}</b> {esc(site.short(bs[0]['issuer'], 28))}: "
+                         f"{len({b['owner_cik'] for b in bs})} insiders, {ia.money(sum(b['value'] for b in bs))}")
+        lines.append("")
+    if people:
+        lines.append("💰 <b>Biggest buys by officers and directors</b>")
+        for b in people[:5]:
+            lines.append(f"• <b>${esc(b['ticker'])}</b> {ia.money(b['value'])}: {esc(site.person(b))} "
+                         f"({esc(b['role'].split(',')[0].strip())})")
+        lines.append("")
+    lines.append(f'📊 Every buy by stock: <a href="https://tickerpress.net">tickerpress.net</a>')
+    premium_text = "\n".join(lines + ["", "<i>Data: SEC Form 4 filings. Not financial advice.</i>"])
+    free_lines = list(lines)
+    if ia.PREMIUM_LINK:
+        free_lines.append(f'🔒 Real-time alerts the moment insiders file: <a href="{esc(ia.PREMIUM_LINK)}">Join Premium</a>')
+    free_text = "\n".join(free_lines + ["", "<i>Data: SEC Form 4 filings. Not financial advice.</i>"])
+    if preview:
+        ia.DRY_RUN = True
+    ia.send(ia.FREE_CHAT, free_text)
+    ia.send(ia.PREMIUM_CHAT, premium_text)
+
+
 if __name__ == "__main__":
-    main(preview=sys.argv[1:2] == ["preview"])
+    if sys.argv[1:2] == ["weekly"]:
+        telegram_weekly(preview=sys.argv[2:3] == ["preview"])
+    else:
+        main(preview=sys.argv[1:2] == ["preview"])
