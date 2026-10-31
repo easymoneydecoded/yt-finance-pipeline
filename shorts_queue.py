@@ -83,6 +83,7 @@ def caption_instagram(item: dict) -> str:
         item["title"],
         first_sentence(item["text"]),
         "Full breakdown with all the data on YouTube: Ticker Press (link in bio).",
+        "📲 Free daily insider-buying alerts on Telegram: @tickerpress_insiders",
         "Education, not financial advice.",
         " ".join(_hashtags(item.get("tags", []), 12)),
     ])[:2200]

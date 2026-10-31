@@ -40,6 +40,11 @@ SCOPES           = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 PLAYLISTS_FILE   = ch.HISTORY_DIR / "playlists.json"
 COMMENT_WINDOW_D = 14   # solo se buscan comentarios pendientes de videos recientes
 
+# Canal gratis del bot Insider Alerts (insider_alerts.py): va en descripciones y comentarios
+TELEGRAM_URL     = os.getenv("TELEGRAM_CHANNEL_URL", "https://t.me/tickerpress_insiders")
+TELEGRAM_CTA     = f"📲 Free daily insider-buying alerts (SEC Form 4) on Telegram: {TELEGRAM_URL}"
+CTA_PER_RUN      = 6    # descripciones antiguas actualizadas por ejecucion (51 unidades de cuota cada una)
+
 PLAYLISTS = {
     "Housing & Mortgages":          "Mortgage rates, home prices and what the housing market means for your money.",
     "Stock Market Explained":       "What is moving the stock market and how it hits your portfolio, explained with real data.",
@@ -155,7 +160,7 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
 
         if v.get("pinned_comment") and not v.get("comment_id"):
             try:
-                v["comment_id"] = post_comment(youtube, v["video_id"], v["pinned_comment"])
+                v["comment_id"] = post_comment(youtube, v["video_id"], f"{v['pinned_comment']}\n\n{TELEGRAM_CTA}")
                 posted += 1
                 print(f"   . comentario en '{v['title'][:50]}'")
             except Exception as e:
@@ -166,7 +171,7 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
             if sid in done or not _due(at, now):
                 continue
             try:
-                post_comment(youtube, sid, f"Full breakdown with all the data: https://youtu.be/{v['video_id']}")
+                post_comment(youtube, sid, f"Full breakdown with all the data: https://youtu.be/{v['video_id']}\n\n{TELEGRAM_CTA}")
                 done.add(sid)
                 posted += 1
                 print(f"   . comentario en Short {sid}")
@@ -176,6 +181,31 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
     return posted
 
 
+def add_cta_to_descriptions(youtube, history: list[dict]) -> int:
+    """Anade el enlace de Telegram a la descripcion de los videos subidos antes de tenerlo."""
+    pending = [vid for v in history if not v.get("seed") and v.get("video_id")
+               for vid in [v["video_id"], *v.get("shorts_ids", [])]
+               if vid not in set(v.get("cta_done", []))]
+    updated = 0
+    for vid in pending[:CTA_PER_RUN]:
+        owner = next(v for v in history if vid in [v.get("video_id"), *v.get("shorts_ids", [])])
+        try:
+            items = youtube.videos().list(part="snippet", id=vid).execute().get("items", [])
+            if items:
+                snippet = items[0]["snippet"]
+                if TELEGRAM_URL not in snippet.get("description", ""):
+                    snippet["description"] = f"{snippet.get('description', '').rstrip()}\n\n{TELEGRAM_CTA}"[:5000]
+                    youtube.videos().update(part="snippet", body={"id": vid, "snippet": {
+                        k: snippet[k] for k in ("title", "description", "tags", "categoryId",
+                                                "defaultLanguage", "defaultAudioLanguage") if k in snippet}}).execute()
+                    updated += 1
+                    print(f"   . enlace de Telegram en la descripcion de {vid}")
+            owner["cta_done"] = sorted(set(owner.get("cta_done", [])) | {vid})
+        except Exception as e:
+            print(f"   ! no pude actualizar la descripcion de {vid}: {str(e)[:120]}")
+    return updated
+
+
 def main() -> None:
     print("\n=== ENGAGEMENT (comentarios pendientes) ===\n")
     youtube = client()
@@ -183,7 +213,9 @@ def main() -> None:
         return
     history = ch.load_history()
     n = post_pending_comments(youtube, history)
-    if n:
+    before = sum(len(v.get("cta_done", [])) for v in history)
+    add_cta_to_descriptions(youtube, history)
+    if n or sum(len(v.get("cta_done", [])) for v in history) != before:
         ch.save_history(history)
     print(f"   . {n} comentarios publicados")
 

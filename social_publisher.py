@@ -84,7 +84,8 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
     yt_manage = engagement.client()
     if yt_manage:
         try:
-            engagement.post_comment(yt_manage, vid, f"Full breakdown with all the data: {item['parent_url']}")
+            engagement.post_comment(yt_manage, vid, f"Full breakdown with all the data: {item['parent_url']}"
+                                                    f"\n\n{engagement.TELEGRAM_CTA}")
         except Exception as e:
             print(f"   ! comentario en el Short fallo: {e}")
 
@@ -191,7 +192,10 @@ def main() -> None:
     yt_manage = engagement.client()
     if yt_manage:
         history = ch.load_history()
-        if engagement.post_pending_comments(yt_manage, history):
+        before = sum(len(v.get("cta_done", [])) for v in history)
+        changed = engagement.post_pending_comments(yt_manage, history)
+        engagement.add_cta_to_descriptions(yt_manage, history)
+        if changed or sum(len(v.get("cta_done", [])) for v in history) != before:
             ch.save_history(history)
 
 
