@@ -162,20 +162,26 @@ def debug_upload(video: Path) -> None:
     user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
     size = video.stat().st_size
     print(f"Token {'Facebook' if _is_facebook_token(token) else 'Instagram'} · host {GRAPH} · video {size / 1e6:.1f} MB")
+    sample = "https://download.samplelib.com/mp4/sample-5s.mp4"   # video publico de prueba
     variants = {
-        "A (actual)": {},
-        "B (octet-stream)": {"Content-Type": "application/octet-stream", "Content-Length": str(size)},
+        "C (rupload con la version del contenedor)": {"fixed_version": True},
+        "D (file_url: Meta descarga un video publico)": {"file_url": sample},
     }
-    for name, extra in variants.items():
+    for name, opt in variants.items():
         c = requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
             "media_type": "REELS", "upload_type": "resumable", "caption": "debug", "access_token": token}).json()
         print(f"\n--- {name} · contenedor: {c}")
         if "id" not in c:
             continue
         uri = c.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{c['id']}"
-        with open(video, "rb") as fh:
-            r = requests.post(uri, data=fh.read(), timeout=600, headers={
-                "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size), **extra})
+        if opt.get("fixed_version"):
+            uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{c['id']}"
+            with open(video, "rb") as fh:
+                r = requests.post(uri, data=fh.read(), timeout=600, headers={
+                    "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size)})
+        else:
+            r = requests.post(uri, timeout=120, headers={"Authorization": f"OAuth {token}",
+                                                         "file_url": opt["file_url"]})
         print(f"subida {uri}: HTTP {r.status_code} {r.text[:400]}")
         for _ in range(8):
             st = requests.get(f"{GRAPH}/{c['id']}", timeout=30, params={
