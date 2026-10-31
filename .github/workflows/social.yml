@@ -21,6 +21,10 @@ on:
         description: 'Diagnostico de la subida a Instagram (sube el siguiente Short SIN publicarlo)'
         type: boolean
         default: false
+      only_retries:
+        description: 'Solo reintentar las redes que fallaron (no publica el siguiente Short)'
+        type: boolean
+        default: false
 
 concurrency:
   group: social
@@ -60,6 +64,7 @@ jobs:
           TIKTOK_CLIENT_SECRET:  ${{ secrets.TIKTOK_CLIENT_SECRET }}
           TIKTOK_REFRESH_TOKEN:  ${{ secrets.TIKTOK_REFRESH_TOKEN }}
           TIKTOK_MODE:           ${{ vars.TIKTOK_MODE || 'draft' }}
+          ONLY_RETRIES:          ${{ inputs.only_retries == true }}
           TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:      ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |

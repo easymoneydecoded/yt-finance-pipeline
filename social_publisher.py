@@ -197,7 +197,8 @@ def main() -> None:
 
     # Reintentos (Shorts ya publicados en alguna red) aparte: no deben gastar la franja del Short nuevo
     retries = [i for i in pending if any(i["platforms"][p]["status"] == "done" for p in sq.PLATFORMS)]
-    fresh = [] if slot_done else [i for i in pending if i not in retries]
+    only_retries = os.getenv("ONLY_RETRIES") == "true"      # workflow manual: no adelantar el siguiente Short
+    fresh = [] if slot_done or only_retries else [i for i in pending if i not in retries]
     batch = retries + (fresh[:2] if len(fresh) > BACKLOG_EXTRA else fresh[:1])
     if fresh:
         SLOTS_FILE.write_text(json.dumps({"last_slot": slot}), encoding="utf-8")

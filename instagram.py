@@ -45,6 +45,7 @@ def _graph(token: str) -> str:
     return f"https://{host}/{API_VERSION}"
 REFRESH_DAYS  = 20
 PROCESS_WAIT  = 10 * 60   # Instagram puede tardar varios minutos en procesar el video
+UPLOAD_ATTEMPTS = 3       # la subida a rupload falla a veces sin motivo; se reintenta con contenedor nuevo
 
 
 class InstagramError(RuntimeError):
@@ -114,20 +115,28 @@ def publish_reel(video: Path, caption: str) -> str:
     GRAPH = _graph(token)
     user_id = os.getenv("INSTAGRAM_USER_ID") or _find_user_id(token)
 
-    container = _check(requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
-        "media_type": "REELS", "upload_type": "resumable", "caption": caption,
-        "share_to_feed": "true", "access_token": token,
-    }))
-    cid = container["id"]
-    # No usar container["uri"]: Meta devuelve la URL de su version mas nueva (v26) y rupload
-    # rechaza el video (ProcessingFailedError, 0 bytes) si no coincide con la del contenedor.
-    upload_uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
-
     size = video.stat().st_size
-    with open(video, "rb") as fh:
-        _check(requests.post(upload_uri, data=fh, timeout=600, headers={
-            "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size),
+    for attempt in range(1, UPLOAD_ATTEMPTS + 1):
+        container = _check(requests.post(f"{GRAPH}/{user_id}/media", timeout=60, data={
+            "media_type": "REELS", "upload_type": "resumable", "caption": caption,
+            "share_to_feed": "true", "access_token": token,
         }))
+        cid = container["id"]
+        # No usar container["uri"]: Meta devuelve la URL de su version mas nueva (v26) y rupload
+        # rechaza el video (ProcessingFailedError, 0 bytes) si no coincide con la del contenedor.
+        upload_uri = f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
+        time.sleep(5)                      # el contenedor recien creado a veces aun no "existe" en rupload
+        with open(video, "rb") as fh:
+            r = requests.post(upload_uri, data=fh.read(), timeout=600, headers={
+                "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size),
+            })
+        if r.ok:
+            break
+        # ProcessingFailedError es intermitente (el mismo video sube bien al reintentar)
+        print(f"   . subida a Instagram fallo ({r.status_code}), intento {attempt}/{UPLOAD_ATTEMPTS}")
+        if attempt == UPLOAD_ATTEMPTS:
+            _check(r)
+        time.sleep(30 * attempt)
 
     deadline = time.time() + PROCESS_WAIT
     while True:
