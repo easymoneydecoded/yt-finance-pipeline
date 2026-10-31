@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-31T17:05:43+00:00",
-  "pending": 3,
+  "updated": "2026-10-31T17:31:21+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -35,9 +35,11 @@
           "at": "2026-10-31T17:03+00:00"
         },
         "instagram": {
-          "status": "pending",
+          "status": "done",
           "attempts": 1,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}",
+          "id": "18130771888886051",
+          "at": "2026-10-31T17:30+00:00"
         },
         "tiktok": {
           "status": "done",
@@ -75,18 +77,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "kCLfF4zRPBk",
+          "at": "2026-10-31T17:30+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7702885693710108694",
+          "at": "2026-10-31T17:31+00:00"
         }
-      }
+      },
+      "youtube_title": "The 7.24% Borrowing Trap Crushing Markets"
     },
     {
       "id": "2026-10-31_s3",

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T17:05:47+00:00",
+  "updated": "2026-10-31T17:31:22+00:00",
   "n_videos": 32,
   "videos": [
     {
@@ -70,10 +70,12 @@
         6573544
       ],
       "shorts_titles": [
-        "How Wall Street Took 80% Of Tech Profits"
+        "How Wall Street Took 80% Of Tech Profits",
+        "The 7.24% Borrowing Trap Crushing Markets"
       ],
       "shorts_ids": [
-        "4SQwFbLV4Ao"
+        "4SQwFbLV4Ao",
+        "kCLfF4zRPBk"
       ],
       "publish_at": "2026-10-31T14:00+00:00",
       "shorts_publish_at": [],
@@ -85,6 +87,7 @@
       "shorts_commented": [],
       "cta_done": [
         "4SQwFbLV4Ao",
+        "kCLfF4zRPBk",
         "m19JKJKJsfs"
       ]
     },
