@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       check_only:
-        description: 'Solo comprobar credenciales de Instagram y TikTok (no publica nada)'
+        description: 'Solo comprobar credenciales de Instagram, TikTok y Telegram (no publica nada)'
         type: boolean
         default: false
 
@@ -58,6 +58,7 @@ jobs:
           if [ "${{ inputs.check_only }}" = "true" ]; then
             python instagram.py check || echo '!! Instagram: fallo la comprobacion'
             python tiktok.py check || echo '!! TikTok: fallo la comprobacion'
+            python notify.py test || echo '!! Telegram: fallo la comprobacion'
           else
             python social_publisher.py
           fi
