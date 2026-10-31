@@ -107,8 +107,11 @@ def _find_user_id(token: str) -> str:
     raise InstagramError("ninguna pagina de Facebook del token tiene un Instagram vinculado")
 
 
-def publish_reel(video: Path, caption: str) -> str:
-    """Publica el Reel y devuelve su id de Instagram."""
+def publish_reel(video: Path, caption: str, video_url=None) -> str:
+    """Publica el Reel y devuelve su id de Instagram.
+
+    video_url: funcion que da una URL publica temporal del MP4. Si la subida directa a
+    rupload falla (ProcessingFailedError, intermitente), Meta se descarga el video de ahi."""
     token = get_token()
     if not token:
         raise InstagramError("falta INSTAGRAM_TOKEN")
@@ -126,14 +129,20 @@ def publish_reel(video: Path, caption: str) -> str:
         # rupload rechaza el video (ProcessingFailedError, 0 bytes)
         upload_uri = container.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{API_VERSION}/{cid}"
         time.sleep(5)                      # el contenedor recien creado a veces aun no "existe" en rupload
-        with open(video, "rb") as fh:
-            r = requests.post(upload_uri, data=fh.read(), timeout=600, headers={
-                "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size),
-            })
+        if attempt > 1 and video_url:      # plan B: que Meta se baje el video de una URL
+            r = requests.post(upload_uri, timeout=300, headers={
+                "Authorization": f"OAuth {token}", "file_url": video_url()})
+            how = "por URL"
+        else:
+            with open(video, "rb") as fh:
+                r = requests.post(upload_uri, data=fh.read(), timeout=600, headers={
+                    "Authorization": f"OAuth {token}", "offset": "0", "file_size": str(size),
+                })
+            how = "directa"
         if r.ok:
             break
         # ProcessingFailedError es intermitente (el mismo video sube bien al reintentar)
-        print(f"   . subida a Instagram fallo ({r.status_code}), intento {attempt}/{UPLOAD_ATTEMPTS}")
+        print(f"   . subida {how} a Instagram fallo ({r.status_code}), intento {attempt}/{UPLOAD_ATTEMPTS}")
         if attempt == UPLOAD_ATTEMPTS:
             _check(r)
         time.sleep(30 * attempt)

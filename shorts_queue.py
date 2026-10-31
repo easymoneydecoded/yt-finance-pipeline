@@ -144,6 +144,17 @@ def download_asset(asset_id: int, dest: Path) -> Path:
     return dest
 
 
+def signed_asset_url(asset_id: int) -> str:
+    """URL de descarga temporal (unos minutos) del MP4, sin autenticacion: la usa Instagram
+    para bajarse el video el mismo cuando la subida directa falla."""
+    headers, repo = _gh()
+    r = requests.get(f"https://api.github.com/repos/{repo}/releases/assets/{asset_id}", timeout=60,
+                     headers={**headers, "Accept": "application/octet-stream"}, allow_redirects=False)
+    if r.status_code not in (301, 302, 307) or "Location" not in r.headers:
+        raise RuntimeError(f"GitHub no dio URL temporal del asset ({r.status_code})")
+    return r.headers["Location"]
+
+
 def delete_asset(asset_id: int) -> None:
     headers, repo = _gh()
     requests.delete(f"https://api.github.com/repos/{repo}/releases/assets/{asset_id}", headers=headers, timeout=30)

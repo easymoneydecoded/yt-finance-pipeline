@@ -97,7 +97,8 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
 
 
 def post_instagram(item: dict, video: Path) -> None:
-    media_id = instagram.publish_reel(video, sq.caption_instagram(item))
+    media_id = instagram.publish_reel(video, sq.caption_instagram(item),
+                                      video_url=lambda: sq.signed_asset_url(item["asset_id"]))
     _mark(item, "instagram", True, media_id)
     link = instagram.permalink(media_id)
     _summary(f"- Instagram: Reel publicado {link or '(id ' + media_id + ')'}")
