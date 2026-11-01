@@ -183,8 +183,69 @@ def main() -> None:
         ia.save_state(state)
 
 
+def weekly_post(link: str, n_items: int = 3) -> tuple[str, str] | None:
+    """Resumen de la semana (los mismos datos que el de Telegram de insider_reddit.py). Devuelve (clave, texto)."""
+    import insider_reddit as ir
+    start, end, week = ir.week_data()
+    if not week:
+        return None
+    by, clusters, people, span = ir.week_summary(start, end, week)
+    lines = [f"📅 Insider buying, week of {span}: {len(week)} open-market buys, "
+             f"{ia.money(sum(b['value'] for b in week))} across {len(by)} stocks", ""]
+    items = [f"🔥 ${t}: {len({b['owner_cik'] for b in bs})} insiders buying, {ia.money(sum(b['value'] for b in bs))}"
+             for t, bs in clusters[:2]]
+    items += [f"💰 ${b['ticker']} {ia.money(b['value'])} ({b['role'].split(',')[0].strip()})" for b in people]
+    lines += items[:n_items] + ["", link]
+    return end.isoformat(), "\n".join(lines)
+
+
+def weekly() -> None:
+    """Domingo: el resumen semanal tambien en Bluesky, X y Threads (una vez por semana)."""
+    state = ia.load_state()
+    done = state.setdefault("social_weekly", [])
+    first = weekly_post("")
+    if not first:
+        print("Sin compras esta semana: no hay post")
+        return
+    key = first[0]
+    if key in done and not ia.DRY_RUN:
+        print(f"El resumen de la semana {key} ya se publico en redes")
+        return
+    bsky = None
+    for n in (3, 2, 1):                                           # limite de Bluesky: 300 caracteres
+        text = weekly_post(f"All buys: https://{SITE}", n)[1]
+        for tags in (BSKY_TAGS, BSKY_TAGS[:1], []):
+            cand = text + ("\n" + " ".join(tags) if tags else "")
+            if len(cand) <= 300:
+                bsky = cand
+                break
+        if bsky:
+            break
+    posts = {"Bluesky": (bluesky, bsky),
+             "X": (x_post, weekly_post("Every buy + free alerts: link in bio")[1]),
+             "Threads": (threads, weekly_post(f"All buys: https://{SITE}")[1] + f"\n{THREADS_TOPIC}")}
+    ok = False
+    for name, (fn, text) in posts.items():
+        if not text:
+            continue
+        if ia.DRY_RUN:
+            print(f"--- DRY RUN {name} ({len(text)} caracteres) ---\n{text}\n")
+            continue
+        try:
+            url = fn(text)
+            if url:
+                ok = True
+                print(f"   ✓ {name}: {url}")
+        except Exception as e:
+            print(f"   ! {name}: {e}")
+    if ok:
+        done.append(key)
+        state["social_weekly"] = done[-20:]
+        ia.save_state(state)
+
+
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["check"]:
+    if "check" in sys.argv[1:]:
         os.environ["DRY_RUN"] = "true"
         ia.DRY_RUN = True
-    main()
+    weekly() if "weekly" in sys.argv[1:] else main()

@@ -17,7 +17,7 @@ on:
       mode:
         description: 'scan = avisos nuevos · recap = scan + resumen + web + redes · site = solo web · check = comprobar bot y canales'
         type: choice
-        options: [scan, recap, teaser, site, reddit, check]
+        options: [scan, recap, teaser, site, reddit, weekly, check]
         default: scan
       dry_run:
         description: 'Modo prueba: escribe los mensajes en el log en vez de enviarlos'
@@ -89,6 +89,7 @@ jobs:
             site)  ;;
             teaser) python insider_alerts.py teaser ;;
             reddit) python insider_reddit.py weekly && python insider_reddit.py ;;
+            weekly) ;;   # solo el resumen semanal en redes (paso Redes)
             *)     python insider_alerts.py scan ;;
           esac
 
@@ -103,7 +104,7 @@ jobs:
           npx --yes wrangler@3 pages deploy site_dist --project-name=tickerpress --branch=main --commit-dirty=true
 
       - name: Redes (Bluesky, X, Threads)
-        if: steps.mode.outputs.mode == 'recap' && inputs.dry_run != true
+        if: contains(fromJSON('["recap","reddit","weekly"]'), steps.mode.outputs.mode) && inputs.dry_run != true
         continue-on-error: true
         env:
           BLUESKY_HANDLE:       ${{ vars.BLUESKY_HANDLE }}
@@ -116,10 +117,11 @@ jobs:
           THREADS_USER_ID:      ${{ vars.THREADS_USER_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}   # clave de secret_store (token renovado de Threads)
           MIN_BUY_USD:          ${{ vars.MIN_BUY_USD }}
-        run: python insider_social.py
+        # Martes a sabado: resumen del dia. Domingo (modo reddit): resumen de la semana.
+        run: python insider_social.py ${{ steps.mode.outputs.mode != 'recap' && 'weekly' || '' }}
 
       - name: Guardar historico de la web (y token renovado de Threads)
-        if: (steps.mode.outputs.mode == 'recap' || steps.mode.outputs.mode == 'site') && inputs.dry_run != true
+        if: contains(fromJSON('["recap","site","reddit","weekly"]'), steps.mode.outputs.mode) && inputs.dry_run != true
         run: |
           if [ -z "$(git status --porcelain -- site_data/ history/)" ]; then
             echo "Sin cambios"
