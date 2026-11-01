@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-31T19:18:05+00:00",
-  "pending": 0,
+  "updated": "2026-11-01T12:26:18+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -142,6 +142,120 @@
         }
       },
       "youtube_title": "Why Banks Profit When Tech Stocks Crash"
+    },
+    {
+      "id": "2026-11-01_s1",
+      "created": "2026-11-01T12:26:16+00:00",
+      "date": "2026-11-01",
+      "asset_id": 698278584,
+      "size": 16515333,
+      "title": "Coinbase Printed $719M While Trading Dropped",
+      "text": "Coinbase just posted a 66 percent net income surge to 719 million dollars. But retail crypto trading volume was not the hero. According to CNBC, Coinbase generated 1 billion 200 million dollars in total revenue, missing Wall Street estimates of 1 billion 233 million dollars. Instead, the driver was a 39 percent price surge in bitcoin during the third quarter, which dramatically revalued the crypto portfolio held on Coinbase balance sheet. That accounting swing pushed earnings to 2 dollars and 51 cents per share, crushing analyst projections of 6 cents per share. Balance sheet revaluation can transform weak volume into record earnings. That is how Coinbase just posted a 66 percent net income surge to 719 million dollars.",
+      "parent_title": "$719M Profit Surge: How Coinbase Beat the Crypto Slump",
+      "parent_video_id": "yvEjsYcUjEQ",
+      "parent_url": "https://youtu.be/yvEjsYcUjEQ",
+      "tags": [
+        "Coinbase earnings",
+        "crypto net income surge",
+        "Coinbase Q3 results",
+        "cryptocurrency market recovery",
+        "COIN stock",
+        "Robinhood Q3 earnings",
+        "HOOD stock",
+        "Bitcoin investment gains",
+        "Coinbase for agents",
+        "crypto prediction markets"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-01_s2",
+      "created": "2026-11-01T12:26:17+00:00",
+      "date": "2026-11-01",
+      "asset_id": 698278657,
+      "size": 12419921,
+      "title": "Robinhood Crypto Revenue Crashed 55 Percent",
+      "text": "Robinhood saw its crypto trading revenue collapse by 55 percent. CNBC reports retail crypto revenue fell to 120 million dollars in the third quarter as spot trading cooled. Total net income for Robinhood dropped from 556 million dollars down to 468 million dollars, sending shares down 8 percent in pre-market trading. To compensate, Robinhood expanded into prediction markets, pushing event contracts revenue up by more than 500 percent. Options revenue also rose 31 percent to 399 million dollars. Yet when retail crypto trading freezes, brokerage profits suffer deeply. That explains why Robinhood saw its crypto trading revenue collapse by 55 percent.",
+      "parent_title": "$719M Profit Surge: How Coinbase Beat the Crypto Slump",
+      "parent_video_id": "yvEjsYcUjEQ",
+      "parent_url": "https://youtu.be/yvEjsYcUjEQ",
+      "tags": [
+        "Coinbase earnings",
+        "crypto net income surge",
+        "Coinbase Q3 results",
+        "cryptocurrency market recovery",
+        "COIN stock",
+        "Robinhood Q3 earnings",
+        "HOOD stock",
+        "Bitcoin investment gains",
+        "Coinbase for agents",
+        "crypto prediction markets"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-01_s3",
+      "created": "2026-11-01T12:26:18+00:00",
+      "date": "2026-11-01",
+      "asset_id": 698278718,
+      "size": 14794076,
+      "title": "AI Agents Are Now Trading Crypto On Coinbase",
+      "text": "Artificial intelligence software can now manage your crypto portfolio directly. In October, Coinbase launched Coinbase for Agents, supporting AI tools like ChatGPT and Muse to research and execute trades. This aligns with Vice President of Product Max Branzburg telling CNBC that Coinbase is building an everything exchange for tokenized stocks, derivatives, and prediction markets. Prediction markets on Coinbase already generated over 200 million dollars in annualized revenue during the third quarter, with active traders growing 60 percent from the second quarter. As retail trading volume slows down, exchange infrastructure is handing control over to automated algorithms. That is why artificial intelligence software can now manage your crypto portfolio directly.",
+      "parent_title": "$719M Profit Surge: How Coinbase Beat the Crypto Slump",
+      "parent_video_id": "yvEjsYcUjEQ",
+      "parent_url": "https://youtu.be/yvEjsYcUjEQ",
+      "tags": [
+        "Coinbase earnings",
+        "crypto net income surge",
+        "Coinbase Q3 results",
+        "cryptocurrency market recovery",
+        "COIN stock",
+        "Robinhood Q3 earnings",
+        "HOOD stock",
+        "Bitcoin investment gains",
+        "Coinbase for agents",
+        "crypto prediction markets"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
