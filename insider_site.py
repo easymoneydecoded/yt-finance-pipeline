@@ -43,6 +43,13 @@ import insider_alerts as ia
 
 SITE_URL   = "https://tickerpress.net"
 TELEGRAM   = "https://t.me/tickerpress_insiders"
+ETSY_SHOP  = "https://www.etsy.com/shop/NeatSheetsStudioShop"
+TOOLS      = [  # plantillas de la tienda de Etsy que encajan con quien invierte (pagina /tools/)
+    ("Net Worth Tracker", "4607296392", "Track every account, investment and debt month by month and watch your net worth grow."),
+    ("Personal Finance Planner 2027", "4607213097", "Budget, expense tracker, debt payoff, savings goals and net worth in one file."),
+    ("Debt Payoff Planner", "4607253469", "Snowball or avalanche: see your debt-free date and how much interest you save."),
+    ("Savings Challenge & Sinking Funds", "4607292782", "52-week challenge, 100 envelope challenge and sinking funds to build your cash."),
+]
 DATA_FILE  = Path("site_data/insider_buys.json")
 CHECKS     = Path("site_data/price_checks.json")   # resultado de ia.plausible() por Form 4
 DIST       = Path("site_dist")
@@ -331,12 +338,13 @@ def page(path: str, title: str, description: str, body: str, *, noindex: bool = 
 <link rel="stylesheet" href="/style.css">
 </head><body>
 <header><div class="wrap"><a class="logo" href="/">TICKER<b>PRESS</b></a>
-<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/about/">About</a></nav>
+<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
 <a class="btn" href="{TELEGRAM}" rel="nofollow">Free alerts</a></div></header>
 <main class="wrap">{body}</main>
 <footer><div class="wrap">Data from SEC Form 4 filings (EDGAR). Open-market purchases (transaction code P) of
 {ia.money(ia.SITE_MIN_BUY)} or more. For information only, <b>not financial advice</b>: insiders buy for many reasons
 and can be wrong. © {date.today().year} Ticker Press · <a href="/about/">Methodology</a> ·
+<a href="/tools/">Spreadsheet tools</a> ·
 <a href="{TELEGRAM}" rel="nofollow">Telegram</a></div></footer>
 </body></html>
 """
@@ -562,6 +570,17 @@ research before investing.</p>
 <p>Questions: <a href="mailto:tickerpressyt@gmail.com">tickerpressyt@gmail.com</a> ·
 Alerts: <a href="{TELEGRAM}" rel="nofollow">Telegram</a></p></div>""")
     sitemap.append(("about/", today.isoformat()))
+
+    cards = "".join(f'<div class="stat"><b>{esc(name)}</b><p style="color:var(--muted);margin:6px 0 12px">{esc(text)}</p>'
+                    f'<a class="btn" href="https://www.etsy.com/listing/{lid}" rel="nofollow">See it on Etsy</a></div>'
+                    for name, lid, text in TOOLS)
+    page("tools/", "Spreadsheet Tools for Investors | Ticker Press",
+         "Excel and Google Sheets templates to track your net worth, budget, debt payoff and savings.",
+         f"<h1>Spreadsheet tools</h1><p class='lead'>Simple Excel and Google Sheets templates to track your own money: "
+         f"net worth, budget, debt and savings. Type your numbers in and everything is calculated for you.</p>"
+         f"<div class='stats'>{cards}</div>"
+         f"<p><a href='{ETSY_SHOP}' rel='nofollow'>See all 15 templates in our Etsy shop →</a></p>{cta()}")
+    sitemap.append(("tools/", today.isoformat()))
 
     page("404/", "Page not found | Ticker Press", "Page not found.",
          "<h1>Page not found</h1><p class='lead'>Try the <a href='/stocks/'>stock directory</a> or the "
