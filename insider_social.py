@@ -86,7 +86,17 @@ def bluesky(text: str) -> str | None:
 # ---------------------------------------------------------------------------
 # X (OAuth 1.0a de usuario)
 # ---------------------------------------------------------------------------
+def one_cashtag(text: str) -> str:
+    """X solo admite un cashtag ($NVDA) por post: se deja el primero y los demas van sin $."""
+    pat = r"\$([A-Z][A-Z.]{0,5})(?![\w.])"
+    first = re.search(pat, text)
+    if not first:
+        return text
+    return text[:first.end()] + re.sub(pat, r"\1", text[first.end():])
+
+
 def x_post(text: str) -> str | None:
+    text = one_cashtag(text)
     keys = [os.getenv(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_SECRET")]
     if not all(keys):
         print("   . X no configurado")
@@ -208,9 +218,9 @@ def weekly() -> None:
         print("Sin compras esta semana: no hay post")
         return
     key = first[0]
-    if key in done and not ia.DRY_RUN:
-        print(f"El resumen de la semana {key} ya se publico en redes")
-        return
+    # Una marca por red ("2026-10-30:X"): si una falla, se reintenta sin repetir las que ya salieron.
+    # Una marca sin red es del primer domingo (1-nov), en el que solo salio Bluesky.
+    published = {d.split(":", 1)[1] for d in done if d.startswith(key + ":")} | ({"Bluesky"} if key in done else set())
     bsky = None
     for n in (3, 2, 1):                                           # limite de Bluesky: 300 caracteres
         text = weekly_post(f"All buys: https://{SITE}", n)[1]
@@ -228,6 +238,9 @@ def weekly() -> None:
     for name, (fn, text) in posts.items():
         if not text:
             continue
+        if name in published and not ia.DRY_RUN:
+            print(f"   . {name}: el resumen de la semana {key} ya estaba publicado")
+            continue
         if ia.DRY_RUN:
             print(f"--- DRY RUN {name} ({len(text)} caracteres) ---\n{text}\n")
             continue
@@ -235,12 +248,12 @@ def weekly() -> None:
             url = fn(text)
             if url:
                 ok = True
+                done.append(f"{key}:{name}")
                 print(f"   ✓ {name}: {url}")
         except Exception as e:
             print(f"   ! {name}: {e}")
     if ok:
-        done.append(key)
-        state["social_weekly"] = done[-20:]
+        state["social_weekly"] = done[-60:]
         ia.save_state(state)
 
 
