@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T19:21:32+00:00",
+  "updated": "2026-11-01T23:17:07+00:00",
   "pending": 1,
   "items": [
     {
@@ -259,18 +259,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "eN712NcpP-o",
+          "at": "2026-11-01T23:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7703344895637129239",
+          "at": "2026-11-01T23:17+00:00"
         }
-      }
+      },
+      "youtube_title": "AI Agents Are Now Trading Crypto On Coinbase"
     }
   ]
 }
