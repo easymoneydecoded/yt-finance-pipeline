@@ -78,7 +78,8 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
               if i is not item and i["platforms"]["youtube"].get("status") == "done"]
     meta = up.build_short_metadata(
         {"title": item["title"], "text": item["text"]},
-        {"youtube_title": item["parent_title"], "tags": item.get("tags", [])},
+        {"youtube_title": item["parent_title"], "tags": item.get("tags", []),
+         "playlist": engagement.playlist_of(item.get("parent_video_id", ""))},
         int(item["id"].rsplit("_s", 1)[-1]) if "_s" in item["id"] else 1, taken, None)
     meta["snippet"]["description"] += f"\n\nFull video: {item['parent_url']}"
     vid = up.upload_video(youtube, video, meta, label="SHORT")
@@ -90,8 +91,9 @@ def post_youtube(item: dict, video: Path, all_items: list[dict]) -> None:
     yt_manage = engagement.client()
     if yt_manage:
         try:
-            engagement.post_comment(yt_manage, vid, f"Full breakdown with all the data: {item['parent_url']}"
-                                                    f"\n\n{engagement.TELEGRAM_CTA}")
+            engagement.post_comment(yt_manage, vid, f"Full breakdown with all the data: {item['parent_url']}\n\n"
+                                                    + engagement.ctas(engagement.playlist_of(item.get("parent_video_id", "")),
+                                                                      item["parent_title"]))
         except Exception as e:
             print(f"   ! comentario en el Short fallo: {e}")
 

@@ -45,6 +45,39 @@ TELEGRAM_URL     = os.getenv("TELEGRAM_CHANNEL_URL", "https://t.me/tickerpress_i
 TELEGRAM_CTA     = f"📲 Free daily insider-buying alerts (SEC Form 4) on Telegram: {TELEGRAM_URL}"
 CTA_PER_RUN      = 6    # descripciones antiguas actualizadas por ejecucion (51 unidades de cuota cada una)
 
+# Plantillas de la tienda de Etsy (NeatSheetsStudioShop): una por video segun su tema, debajo del enlace de Telegram
+ETSY_LISTING     = "https://www.etsy.com/listing/{}"
+TEMPLATES        = {
+    "planner":  ("Personal Finance Planner", "4607213097"),
+    "budget":   ("Simple Monthly Budget", "4607274270"),
+    "debt":     ("Debt Payoff Planner", "4607253469"),
+    "savings":  ("Savings Challenge & Sinking Funds", "4607292782"),
+    "networth": ("Net Worth Tracker", "4607296392"),
+}
+PLAYLIST_TEMPLATE = {
+    "Housing & Mortgages": "planner", "Stock Market Explained": "networth", "Retirement & Your 401k": "networth",
+    "Savings, Rates & Banks": "savings", "Inflation & The Economy": "budget", "Big Money Moves": "networth",
+    "Jobs, Paychecks & Taxes": "budget", "Crypto & Alternative Assets": "networth",
+}
+DEBT_WORDS       = ("debt", "credit card", "loan", "borrow", "interest rate")
+
+
+def template_cta(playlist: str = "", title: str = "") -> str:
+    """Linea con la plantilla de Etsy que encaja con el video (las deudas mandan sobre la lista)."""
+    key = "debt" if any(w in title.lower() for w in DEBT_WORDS) else PLAYLIST_TEMPLATE.get(playlist, "planner")
+    name, listing = TEMPLATES[key]
+    return f"📊 Track your own numbers: {name} spreadsheet (Excel & Google Sheets): {ETSY_LISTING.format(listing)}"
+
+
+def playlist_of(video_id: str) -> str:
+    """Lista del video largo (los Shorts de la cola no la guardan)."""
+    return next((v.get("playlist", "") for v in ch.load_history() if v.get("video_id") == video_id), "")
+
+
+def ctas(playlist: str = "", title: str = "") -> str:
+    """Telegram primero (como siempre) y la plantilla debajo."""
+    return f"{TELEGRAM_CTA}\n{template_cta(playlist, title)}"
+
 PLAYLISTS = {
     "Housing & Mortgages":          "Mortgage rates, home prices and what the housing market means for your money.",
     "Stock Market Explained":       "What is moving the stock market and how it hits your portfolio, explained with real data.",
@@ -160,7 +193,8 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
 
         if v.get("pinned_comment") and not v.get("comment_id"):
             try:
-                v["comment_id"] = post_comment(youtube, v["video_id"], f"{v['pinned_comment']}\n\n{TELEGRAM_CTA}")
+                v["comment_id"] = post_comment(youtube, v["video_id"],
+                                               f"{v['pinned_comment']}\n\n{ctas(v.get('playlist', ''), v.get('title', ''))}")
                 posted += 1
                 print(f"   . comentario en '{v['title'][:50]}'")
             except Exception as e:
@@ -171,7 +205,8 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
             if sid in done or not _due(at, now):
                 continue
             try:
-                post_comment(youtube, sid, f"Full breakdown with all the data: https://youtu.be/{v['video_id']}\n\n{TELEGRAM_CTA}")
+                post_comment(youtube, sid, f"Full breakdown with all the data: https://youtu.be/{v['video_id']}\n\n"
+                                           f"{ctas(v.get('playlist', ''), v.get('title', ''))}")
                 done.add(sid)
                 posted += 1
                 print(f"   . comentario en Short {sid}")
@@ -182,10 +217,10 @@ def post_pending_comments(youtube, history: list[dict]) -> int:
 
 
 def add_cta_to_descriptions(youtube, history: list[dict]) -> int:
-    """Anade el enlace de Telegram a la descripcion de los videos subidos antes de tenerlo."""
+    """Anade a las descripciones ya subidas lo que les falte: el enlace de Telegram y, debajo, la plantilla de Etsy."""
     pending = [vid for v in history if not v.get("seed") and v.get("video_id")
                for vid in [v["video_id"], *v.get("shorts_ids", [])]
-               if vid not in set(v.get("cta_done", []))]
+               if vid not in set(v.get("cta_done", [])) or vid not in set(v.get("tpl_done", []))]
     updated = 0
     for vid in pending[:CTA_PER_RUN]:
         owner = next(v for v in history if vid in [v.get("video_id"), *v.get("shorts_ids", [])])
@@ -193,14 +228,19 @@ def add_cta_to_descriptions(youtube, history: list[dict]) -> int:
             items = youtube.videos().list(part="snippet", id=vid).execute().get("items", [])
             if items:
                 snippet = items[0]["snippet"]
-                if TELEGRAM_URL not in snippet.get("description", ""):
-                    snippet["description"] = f"{snippet.get('description', '').rstrip()}\n\n{TELEGRAM_CTA}"[:5000]
+                desc = snippet.get("description", "").rstrip()
+                extra = [line for line, mark in ((TELEGRAM_CTA, TELEGRAM_URL),
+                                                 (template_cta(owner.get("playlist", ""), owner.get("title", "")), "etsy.com/"))
+                         if mark not in desc]
+                if extra:
+                    snippet["description"] = (desc + "\n\n" + "\n".join(extra))[:5000]
                     youtube.videos().update(part="snippet", body={"id": vid, "snippet": {
                         k: snippet[k] for k in ("title", "description", "tags", "categoryId",
                                                 "defaultLanguage", "defaultAudioLanguage") if k in snippet}}).execute()
                     updated += 1
-                    print(f"   . enlace de Telegram en la descripcion de {vid}")
-            owner["cta_done"] = sorted(set(owner.get("cta_done", [])) | {vid})
+                    print(f"   . descripcion de {vid}: {len(extra)} enlace(s) anadido(s)")
+            for key in ("cta_done", "tpl_done"):
+                owner[key] = sorted(set(owner.get(key, [])) | {vid})
         except Exception as e:
             print(f"   ! no pude actualizar la descripcion de {vid}: {str(e)[:120]}")
     return updated
@@ -213,9 +253,10 @@ def main() -> None:
         return
     history = ch.load_history()
     n = post_pending_comments(youtube, history)
-    before = sum(len(v.get("cta_done", [])) for v in history)
+    done = lambda: sum(len(v.get("cta_done", [])) + len(v.get("tpl_done", [])) for v in history)
+    before = done()
     add_cta_to_descriptions(youtube, history)
-    if n or sum(len(v.get("cta_done", [])) for v in history) != before:
+    if n or done() != before:
         ch.save_history(history)
     print(f"   . {n} comentarios publicados")
 

@@ -253,7 +253,7 @@ def build_long_video_metadata(script_data: dict, publish_at: datetime | None = N
     chapters    = build_chapters(timeline or {})
     description = "\n\n".join(x for x in (
         script_data.get("description", "").strip(),
-        engagement.TELEGRAM_CTA,
+        engagement.ctas(script_data.get("playlist", ""), title),
         chapters,
         "Data: Yahoo Finance, FRED (Federal Reserve Bank of St. Louis) and the news sources cited.",
         HASHTAGS,
@@ -298,7 +298,7 @@ def build_short_metadata(short_info: dict, script_data: dict, short_index: int,
     description = (
         f"{first_line}.\n\n"
         f"Full breakdown: {parent_title}\n\n"
-        f"{engagement.TELEGRAM_CTA}\n\n"
+        f"{engagement.ctas(script_data.get('playlist', ''), parent_title)}\n\n"
         f"Education, not financial advice.\n\n"
         f"#Shorts {HASHTAGS}"
     )
