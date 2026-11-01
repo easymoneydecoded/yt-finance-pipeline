@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T18:53:36+00:00",
+  "updated": "2026-11-01T19:17:59+00:00",
   "n_videos": 33,
   "videos": [
     {
@@ -73,10 +73,12 @@
         7055344
       ],
       "shorts_titles": [
-        "$719M Profit Surge: How Coinbase Beat the Crypto Slump - Part 1"
+        "$719M Profit Surge: How Coinbase Beat the Crypto Slump - Part 1",
+        "Robinhood Crypto Revenue Crashed 55 Percent"
       ],
       "shorts_ids": [
-        "jdeIj_Lb8S4"
+        "jdeIj_Lb8S4",
+        "hEIrZZe2Iss"
       ],
       "publish_at": "2026-11-01T14:00+00:00",
       "shorts_publish_at": [],
@@ -87,10 +89,12 @@
       "comment_id": "Ugyd5q3ZeLB_D-dLklZ4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "hEIrZZe2Iss",
         "jdeIj_Lb8S4",
         "yvEjsYcUjEQ"
       ],
       "tpl_done": [
+        "hEIrZZe2Iss",
         "jdeIj_Lb8S4",
         "yvEjsYcUjEQ"
       ]
@@ -298,6 +302,12 @@
         "shorts_views": 42
       },
       "cta_done": [
+        "6d1nnM85LAw",
+        "GJ8p3zg6Oac",
+        "nUu7_Mn4twI",
+        "uHSjshPOtpY"
+      ],
+      "tpl_done": [
         "6d1nnM85LAw",
         "GJ8p3zg6Oac",
         "nUu7_Mn4twI",

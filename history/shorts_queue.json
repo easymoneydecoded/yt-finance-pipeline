@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T18:53:32+00:00",
+  "updated": "2026-11-01T19:17:56+00:00",
   "pending": 2,
   "items": [
     {
@@ -213,18 +213,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "hEIrZZe2Iss",
+          "at": "2026-11-01T19:14+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18109801373189570",
+          "at": "2026-11-01T19:17+00:00"
         },
         "tiktok": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "Expecting value: line 1 column 1 (char 0)"
         }
-      }
+      },
+      "youtube_title": "Robinhood Crypto Revenue Crashed 55 Percent"
     },
     {
       "id": "2026-11-01_s3",
