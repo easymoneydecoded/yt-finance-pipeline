@@ -109,7 +109,15 @@ def post_instagram(item: dict, video: Path) -> None:
 
 def post_tiktok(item: dict, video: Path) -> None:
     caption = sq.caption_tiktok(item)
-    publish_id = tiktok.upload(video, caption)
+    try:
+        publish_id = tiktok.upload(video, caption)
+    except Exception as e:
+        if tiktok.MODE == "direct":
+            raise
+        # En modo borrador lo que de verdad usa el usuario es el video por Telegram: si la API de
+        # TikTok falla (a veces responde vacio), se manda igual y no se pierde la franja
+        print(f"   ! TikTok fallo ({str(e)[:100]}): el video va solo por Telegram")
+        publish_id = "solo-telegram"
     _mark(item, "tiktok", True, publish_id)
     if tiktok.MODE == "direct":
         _summary("- TikTok: publicado")
