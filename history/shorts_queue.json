@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-02T02:27:52+00:00",
-  "pending": 1,
+  "updated": "2026-11-02T02:46:49+00:00",
+  "pending": 0,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -265,8 +265,8 @@
           "at": "2026-11-01T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 2,
+          "status": "failed",
+          "attempts": 3,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
