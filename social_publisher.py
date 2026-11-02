@@ -175,6 +175,13 @@ def publish_item(item: dict, all_items: list[dict]) -> None:
                 final = item["platforms"][p]["status"] == "failed"
                 TELEGRAM.append(f"⚠️ {p}: fallo ({notify.esc(str(e)[:120])}). "
                                 + ("Agotados los reintentos." if final else "Se reintenta en la siguiente franja."))
+                if final and p == "instagram":
+                    # Instagram a veces rechaza un video concreto (ProcessingFailedError): para no perder el
+                    # Reel, el MP4 llega por Telegram (antes de borrarlo de la cola) para subirlo desde el movil
+                    notify.send_video(video, "📸 <b>Para Instagram</b> (la subida automática falló): Compartir → "
+                                             "Instagram → Reel y pega este texto (toca para copiar):\n\n"
+                                             f"<code>{notify.esc(sq.caption_instagram(item))}</code>")
+                    TELEGRAM.append("📸 Instagram: <b>vídeo enviado arriba</b> para subirlo a mano")
 
     if sq.is_finished(item):
         try:
