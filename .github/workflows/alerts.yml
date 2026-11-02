@@ -88,8 +88,9 @@ jobs:
             recap) python insider_alerts.py scan && python insider_alerts.py recap ;;
             site)  ;;
             teaser) python insider_alerts.py teaser ;;
-            reddit) python insider_reddit.py weekly && python insider_reddit.py ;;
-            weekly) ;;   # solo el resumen semanal en redes (paso Redes)
+            reddit) python insider_reddit.py weekly && python insider_reddit.py
+                    python insider_alerts.py performance || true ;;   # balance de los avisos en premium
+            weekly) python insider_alerts.py performance || true ;;   # + resumen semanal en redes (paso Redes)
             *)     python insider_alerts.py scan ;;
           esac
 

@@ -522,6 +522,65 @@ def teaser() -> None:
     save_state(state)
 
 
+PERF_DAYS = 30   # avisos premium que entran en el balance semanal
+PERF_TOP  = 5
+
+
+def performance_text(events: list[dict]) -> str | None:
+    """Mejores avisos de compra del premium de los ultimos 30 dias y el balance de todos (cuantos van en positivo).
+    Se ensenan solo las ganadoras arriba, pero el balance cuenta todas: sin el, el mensaje daria a entender que
+    los avisos suelen acertar. None si no hay ninguna ganadora que ensenar."""
+    import insider_site as site
+    site.load_prices(datetime.now(timezone.utc).date())
+    since = (datetime.now(timezone.utc) - timedelta(days=PERF_DAYS)).isoformat()
+    alerts, seen = [], set()
+    for e in events:
+        b = dict(e, ticker=site.clean_ticker(e["ticker"]))
+        # La misma compra presentada por varios insiders (Form 4 conjuntos) cuenta una vez
+        key = (b["ticker"], b["trade_date"], round(b["price"], 2), round(b["shares"]))
+        if b["kind"] != "buy" or not b["posted"] or b["found_at"] < since or key in seen:
+            continue
+        seen.add(key)
+        ret = site.since_buy(b)
+        if ret is not None:
+            alerts.append((ret, b))
+    winners, tickers = [], set()
+    for ret, b in sorted((x for x in alerts if x[0] > 0), key=lambda x: -x[0]):
+        if b["ticker"] not in tickers and len(winners) < PERF_TOP:
+            winners.append((ret, b))
+            tickers.add(b["ticker"])
+    if not winners:
+        return None
+    lines = [f"🏆 <b>Best insider alerts · last {PERF_DAYS} days</b>",
+             "How the top Premium alerts have done since the insider bought:", ""]
+    for i, (ret, e) in enumerate(winners, 1):
+        role = e["role"].split(",")[0]
+        lines.append(f"{i}. <b>${esc(e['ticker'])} +{ret * 100:.0f}%</b> — {esc(role)} bought {money(e['value'])} "
+                     f"@ ${e['price']:,.2f} ({nice_date(e['trade_date'] or e['filed'])})")
+    up = sum(1 for ret, _ in alerts if ret > 0)
+    lines += ["", f"📊 Of the {len(alerts)} buy alerts sent in the last {PERF_DAYS} days, {up} are up so far.",
+              "", "<i>Latest close vs. the insider's price, split-adjusted. Past performance does not predict "
+              "future results. Not financial advice.</i>"]
+    return "\n".join(lines)
+
+
+def performance() -> None:
+    """Domingo: balance de los avisos en el canal premium (una vez por semana)."""
+    state = load_state()
+    week = datetime.now(ET_TZ).strftime("%G-W%V")
+    if week in state.setdefault("performance", []) and not DRY_RUN:
+        print(f"El balance de la semana {week} ya se publico")
+        return
+    text = performance_text(state["events"])
+    if not text:
+        print("Ningun aviso en positivo con precio: no hay balance esta semana")
+        return
+    if send(PREMIUM_CHAT, text):
+        state["performance"] = (state["performance"] + [week])[-20:]
+        print(f"   ✓ balance semanal en premium ({week})")
+    save_state(state)
+
+
 def check() -> None:
     me = tg("getMe")
     if not me.get("ok"):
@@ -575,8 +634,8 @@ def setup() -> None:
 
 
 if __name__ == "__main__":
-    modes = {"scan": scan, "recap": recap, "teaser": teaser, "check": check, "setup": setup}
+    modes = {"scan": scan, "recap": recap, "teaser": teaser, "performance": performance, "check": check, "setup": setup}
     if sys.argv[1:2] and sys.argv[1] in modes:
         modes[sys.argv[1]]()
     else:
-        print("Uso: python insider_alerts.py scan | recap | teaser | check | setup")
+        print("Uso: python insider_alerts.py scan | recap | teaser | performance | check | setup")

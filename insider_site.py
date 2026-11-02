@@ -317,7 +317,16 @@ def update_prices(batch: int = 200) -> None:
     print(f"   . precios: {ok}/{len(tickers)} acciones actualizadas ({len(prices)} en {PRICES})")
 
 
-PRICE: dict[str, dict] = {}  # ticker -> {"close", "date", "splits"} (lo carga build())
+PRICE: dict[str, dict] = {}  # ticker -> {"close", "date", "splits", "ref"} (lo carga load_prices())
+
+
+def load_prices(today: date) -> None:
+    """Carga site_data/prices.json. Los precios de hace mas de 10 dias (la descarga fallo varias noches) no se usan."""
+    try:
+        fresh = (today - timedelta(days=10)).isoformat()
+        PRICE.update({t: p for t, p in json.loads(PRICES.read_text(encoding="utf-8")).items() if p["date"] >= fresh})
+    except (OSError, json.JSONDecodeError):
+        print("   ! sin site_data/prices.json: no hay rentabilidades (python insider_site.py prices)")
 
 
 def since_buy(b: dict) -> float | None:
@@ -655,11 +664,7 @@ def build() -> None:
     shutil.copy("branding/avatar.png", DIST / "avatar.png")
     today = date.fromisoformat(rows[0]["filed"])
     sitemap = [("", today.isoformat())]
-    try:  # precios de hace mas de 10 dias (la descarga fallo varias noches) no se muestran
-        fresh = (today - timedelta(days=10)).isoformat()
-        PRICE.update({t: p for t, p in json.loads(PRICES.read_text(encoding="utf-8")).items() if p["date"] >= fresh})
-    except (OSError, json.JSONDecodeError):
-        print("   ! sin site_data/prices.json: la web sale sin rentabilidades (python insider_site.py prices)")
+    load_prices(today)
 
     # Insiders: las URLs se calculan antes para enlazar sus nombres desde todas las tablas
     by_owner = defaultdict(list)
