@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T19:17:14+00:00",
+  "updated": "2026-11-02T23:11:18+00:00",
   "n_videos": 34,
   "videos": [
     {
@@ -77,11 +77,13 @@
       ],
       "shorts_titles": [
         "The Anatomy of the Breach",
-        "The Three Billion Dollar Freeze"
+        "The Three Billion Dollar Freeze",
+        "The History of Escalating Losses"
       ],
       "shorts_ids": [
         "J3RuImHGiJc",
-        "PexyRzLq-_A"
+        "PexyRzLq-_A",
+        "IQ8qhMQDmnE"
       ],
       "publish_at": "2026-11-02T14:00+00:00",
       "shorts_publish_at": [],
@@ -92,11 +94,13 @@
       "comment_id": "UgwzC6nIdHkU32iyZ0Z4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "IQ8qhMQDmnE",
         "J3RuImHGiJc",
         "PexyRzLq-_A",
         "d58_8OIl7Zc"
       ],
       "tpl_done": [
+        "IQ8qhMQDmnE",
         "J3RuImHGiJc",
         "PexyRzLq-_A",
         "d58_8OIl7Zc"

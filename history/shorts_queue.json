@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T19:17:14+00:00",
+  "updated": "2026-11-02T23:11:17+00:00",
   "pending": 1,
   "items": [
     {
@@ -402,18 +402,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "IQ8qhMQDmnE",
+          "at": "2026-11-02T23:05+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7703714764152784918",
+          "at": "2026-11-02T23:11+00:00"
         }
-      }
+      },
+      "youtube_title": "The History of Escalating Losses"
     }
   ]
 }
