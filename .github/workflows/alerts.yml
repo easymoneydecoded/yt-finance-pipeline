@@ -48,7 +48,7 @@ jobs:
           python-version: '3.12'
 
       - name: Instalar dependencias minimas
-        run: pip install requests python-dotenv yfinance requests-oauthlib cryptography   # cryptography: token renovado de Threads
+        run: pip install requests python-dotenv yfinance requests-oauthlib cryptography matplotlib   # cryptography: token renovado de Threads
 
       # El estado (Form 4 ya vistos, avisos del dia) vive en la cache de Actions
       # y no en el repo: asi no hay un commit cada hora. Si se pierde, el script

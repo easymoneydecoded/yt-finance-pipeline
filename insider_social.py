@@ -25,6 +25,7 @@ import time
 from datetime import datetime, timedelta, timezone
 
 import requests
+from pathlib import Path
 
 import insider_alerts as ia
 
@@ -53,7 +54,11 @@ def recap_post(day: str, buys: list[dict], link: str) -> str:
 # ---------------------------------------------------------------------------
 # Bluesky
 # ---------------------------------------------------------------------------
-def bluesky(text: str) -> str | None:
+IMAGE_URL = None   # URL publica de la imagen tras subirla a Bluesky (Threads la descarga de ahi)
+
+
+def bluesky(text: str, image: Path | None = None, alt: str = "") -> str | None:
+    global IMAGE_URL
     handle, password = os.getenv("BLUESKY_HANDLE"), os.getenv("BLUESKY_APP_PASSWORD")
     if not handle or not password:
         print("   . Bluesky no configurado")
@@ -75,6 +80,15 @@ def bluesky(text: str) -> str | None:
                        "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": m.group(1).decode()}]})
     record = {"$type": "app.bsky.feed.post", "text": text, "facets": facets,
               "createdAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "langs": ["en"]}
+    if image:
+        try:
+            blob = requests.post(f"{api}/com.atproto.repo.uploadBlob", timeout=60, data=image.read_bytes(),
+                                 headers={"Authorization": f"Bearer {s['accessJwt']}", "Content-Type": "image/png"}).json()["blob"]
+            record["embed"] = {"$type": "app.bsky.embed.images", "images": [
+                {"image": blob, "alt": alt[:900], "aspectRatio": {"width": 1200, "height": 675}}]}
+            IMAGE_URL = f"https://cdn.bsky.app/img/feed_fullsize/plain/{s['did']}/{blob['ref']['$link']}@png"
+        except Exception as e:
+            print(f"   ! Bluesky: imagen no subida ({e}), va sin imagen")
     r = requests.post(f"{api}/com.atproto.repo.createRecord", timeout=30,
                       headers={"Authorization": f"Bearer {s['accessJwt']}"},
                       json={"repo": s["did"], "collection": "app.bsky.feed.post", "record": record}).json()
@@ -95,14 +109,36 @@ def one_cashtag(text: str) -> str:
     return text[:first.end()] + re.sub(pat, r"\1", text[first.end():])
 
 
-def x_post(text: str) -> str | None:
+def x_media(image: Path, auth) -> str | None:
+    """Sube la imagen a X (API v2; si falla, la v1.1). Devuelve el media_id o None."""
+    try:
+        r = requests.post("https://api.x.com/2/media/upload", auth=auth, timeout=60,
+                          files={"media": (image.name, image.read_bytes(), "image/png")},
+                          data={"media_category": "tweet_image"})
+        if r.ok:
+            return r.json()["data"]["id"]
+        r = requests.post("https://upload.twitter.com/1.1/media/upload.json", auth=auth, timeout=60,
+                          files={"media": image.read_bytes()})
+        if r.ok:
+            return r.json()["media_id_string"]
+        print(f"   ! X: imagen no subida ({r.status_code} {r.text[:120]}), va sin imagen")
+    except Exception as e:
+        print(f"   ! X: imagen no subida ({e}), va sin imagen")
+    return None
+
+
+def x_post(text: str, image: Path | None = None, alt: str = "") -> str | None:
     text = one_cashtag(text)
     keys = [os.getenv(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_SECRET")]
     if not all(keys):
         print("   . X no configurado")
         return None
     from requests_oauthlib import OAuth1
-    r = requests.post("https://api.x.com/2/tweets", json={"text": text}, timeout=30, auth=OAuth1(*keys))
+    body = {"text": text}
+    media = x_media(image, OAuth1(*keys)) if image else None
+    if media:
+        body["media"] = {"media_ids": [media]}
+    r = requests.post("https://api.x.com/2/tweets", json=body, timeout=30, auth=OAuth1(*keys))
     if r.status_code not in (200, 201):
         raise RuntimeError(f"X {r.status_code}: {r.text[:200]}")
     return f"https://x.com/i/status/{r.json()['data']['id']}"
@@ -136,17 +172,23 @@ def threads_token() -> str | None:
     return token
 
 
-def threads(text: str) -> str | None:
+def threads(text: str, image: Path | None = None, alt: str = "") -> str | None:
     token, user = threads_token(), os.getenv("THREADS_USER_ID", "me")
     if not token:
         print("   . Threads no configurado")
         return None
     api = "https://graph.threads.net/v1.0"
-    c = requests.post(f"{api}/{user}/threads", timeout=30,
-                      data={"media_type": "TEXT", "text": text, "access_token": token}).json()
+    data = {"media_type": "TEXT", "text": text, "access_token": token}
+    if image and IMAGE_URL:                        # la imagen ya esta publicada en el CDN de Bluesky
+        data.update({"media_type": "IMAGE", "image_url": IMAGE_URL, "alt_text": alt[:900]})
+    c = requests.post(f"{api}/{user}/threads", timeout=30, data=data).json()
+    if "id" not in c and data["media_type"] == "IMAGE":
+        print(f"   ! Threads: imagen rechazada ({c.get('error', {}).get('message')}), va sin imagen")
+        data = {"media_type": "TEXT", "text": text, "access_token": token}
+        c = requests.post(f"{api}/{user}/threads", timeout=30, data=data).json()
     if "id" not in c:
         raise RuntimeError(f"Threads: {c.get('error', {}).get('message')}")
-    time.sleep(5)                                  # Meta recomienda esperar antes de publicar
+    time.sleep(15 if data["media_type"] == "IMAGE" else 5)   # Meta recomienda esperar antes de publicar
     p = requests.post(f"{api}/{user}/threads_publish", timeout=30,
                       data={"creation_id": c["id"], "access_token": token}).json()
     if "id" not in p:
@@ -172,6 +214,10 @@ def main() -> None:
         if len(bsky_text) + len(" ".join(tags)) + 1 <= 300:
             bsky_text += "\n" + " ".join(tags)
             break
+    import insider_cards
+    card = insider_cards.daily_card(day, buys)
+    alt = (f"Ticker Press card: insiders bought {ia.money(sum(b['value'] for b in buys))} of stock in {len(buys)} "
+           f"open-market purchases. Top buy: {buys[0]['ticker']} {ia.money(buys[0]['value'])}, with its 6-month price chart.")
     posts = {"Bluesky": (bluesky, bsky_text),
              "X": (x_post, recap_post(day, buys, "Full list + free alerts: link in bio")),
              "Threads": (threads, recap_post(day, buys, f"All buys: https://{day_url}") + f"\n{THREADS_TOPIC}")}
@@ -181,7 +227,7 @@ def main() -> None:
             print(f"--- DRY RUN {name} ({len(text)} caracteres) ---\n{text}\n")
             continue
         try:
-            url = fn(text)
+            url = fn(text, card, alt)
             if url:
                 ok = True
                 print(f"   ✓ {name}: {url}")
@@ -231,6 +277,13 @@ def weekly() -> None:
                 break
         if bsky:
             break
+    import insider_cards
+    import insider_reddit as ir
+    start, end, week = ir.week_data()
+    by, clusters, people, span = ir.week_summary(start, end, week)
+    card = insider_cards.weekly_card(span, week, by, clusters, people)
+    alt = (f"Ticker Press weekly recap, {span}: {len(week)} insider buys worth {ia.money(sum(b['value'] for b in week))} "
+           f"across {len(by)} stocks, with a bar chart of the stocks insiders bought most.")
     posts = {"Bluesky": (bluesky, bsky),
              "X": (x_post, weekly_post("Every buy + free alerts: link in bio")[1]),
              "Threads": (threads, weekly_post(f"All buys: https://{SITE}")[1] + f"\n{THREADS_TOPIC}")}
@@ -245,7 +298,7 @@ def weekly() -> None:
             print(f"--- DRY RUN {name} ({len(text)} caracteres) ---\n{text}\n")
             continue
         try:
-            url = fn(text)
+            url = fn(text, card, alt)
             if url:
                 ok = True
                 done.append(f"{key}:{name}")
