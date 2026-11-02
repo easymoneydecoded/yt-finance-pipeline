@@ -8,6 +8,8 @@
    /stock/<ticker>/       todas las compras de directivos de una accion
    /day/<fecha>/          compras presentadas ese dia
    /cluster-buys/         acciones con varios directivos comprando (30 dias)
+   /insider/<nombre>/     todas las compras de un directivo o fondo (2+ compras)
+   /insiders/             los que mas han comprado en 12 meses
    /stocks/<letra>/       directorio A-Z (para que Google encuentre todo)
    /about/                metodologia y aviso legal
  Cada pagina lleva al canal gratis de Telegram (@tickerpress_insiders).
@@ -61,6 +63,9 @@ FIELDS = ("acc", "ticker", "issuer", "issuer_cik", "owner", "owner_cik", "joint"
           "value", "price", "after", "stake_change", "trade_date", "filed", "plan")
 INDEX_MIN_BUYS  = 2          # una accion se indexa con 2+ compras...
 INDEX_MIN_VALUE = 100_000    # ...o con una compra de 100.000 $ o mas
+INSIDER_MIN_BUYS    = 2          # un insider (persona o fondo) tiene pagina con 2+ compras...
+INSIDER_INDEX_BUYS  = 3          # ...y se indexa con 3+ compras...
+INSIDER_INDEX_VALUE = 1_000_000  # ...o con 1 millon de $ o mas en total
 LATEST_DAYS     = 7
 CLUSTER_DAYS    = 30
 
@@ -284,6 +289,15 @@ def person(b: dict) -> str:
     return ia.smart_title(b["owner"]) + (f" +{b['joint']}" if b["joint"] else "")
 
 
+INSIDER_URLS: dict[str, str] = {}  # owner_cik -> /insider/<slug>/ (lo rellena build())
+
+
+def person_link(b: dict, n: int = 30) -> str:
+    name = esc(short(person(b), n))
+    url = INSIDER_URLS.get(b["owner_cik"])
+    return f"<a href='{url}'>{name}</a>" if url else name
+
+
 CSS = """
 :root{--bg:#090d16;--bg2:#101828;--card:#131c2e;--line:#22304a;--text:#f5f7fa;--muted:#96a2b6;
 --green:#00d67d;--green-soft:rgba(0,214,125,.12);--red:#ff5c6c}
@@ -338,7 +352,7 @@ def page(path: str, title: str, description: str, body: str, *, noindex: bool = 
 <link rel="stylesheet" href="/style.css">
 </head><body>
 <header><div class="wrap"><a class="logo" href="/">TICKER<b>PRESS</b></a>
-<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
+<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/insiders/">Top insiders</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
 <a class="btn" href="{TELEGRAM}" rel="nofollow">Free alerts</a></div></header>
 <main class="wrap">{body}</main>
 <footer><div class="wrap">Data from SEC Form 4 filings (EDGAR). Open-market purchases (transaction code P) of
@@ -374,7 +388,7 @@ def buys_table(rows: list[dict], *, ticker_col: bool = True) -> str:
         plan = '<span class="tag" title="Pre-scheduled trade (Rule 10b5-1 plan)">10b5-1</span>' if b["plan"] else ""
         tk = (f"<td><a class='tk' href='/stock/{slug(b['ticker'])}/'>{esc(b['ticker'])}</a>"
               f"<small>{esc(short(b['issuer'], 30))}</small></td>") if ticker_col else ""
-        out.append(f"<tr><td>{fmt_date(b['filed'], False)}</td>{tk}<td>{esc(short(person(b), 30))}{plan}"
+        out.append(f"<tr><td>{fmt_date(b['filed'], False)}</td>{tk}<td>{person_link(b)}{plan}"
                    f"<small>{esc(short(b['role'], 34))}</small></td>"
                    f"<td class='num up'><b>{ia.money(b['value'])}</b></td><td class='num'>{b['shares']:,}</td>"
                    f"<td class='num'>${b['price']:,.2f}</td>"
@@ -449,6 +463,74 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
     return issuer, indexable
 
 
+def insider_urls(by_owner: dict[str, list[dict]]) -> dict[str, str]:
+    """owner_cik -> /insider/<nombre>/ para los insiders con pagina. Si dos comparten nombre, se anade el CIK."""
+    taken, out = set(), {}
+    for cik in sorted(c for c, bs in by_owner.items() if len(bs) >= INSIDER_MIN_BUYS):
+        s = re.sub(r"[^a-z0-9]+", "-", ia.smart_title(by_owner[cik][0]["owner"]).lower()).strip("-") or "insider"
+        if s in taken:
+            s = f"{s}-{int(cik)}"
+        taken.add(s)
+        out[cik] = f"/insider/{s}/"
+    return out
+
+
+def insider_indexable(bs: list[dict]) -> bool:
+    return len(bs) >= INSIDER_INDEX_BUYS or sum(b["value"] for b in bs) >= INSIDER_INDEX_VALUE
+
+
+def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
+    bs = sorted(bs, key=lambda b: (b["filed"], b["acc"]), reverse=True)
+    name, last = ia.smart_title(bs[0]["owner"]), bs[0]
+    total, top = sum(b["value"] for b in bs), max(bs, key=lambda b: b["value"])
+    by_stock = defaultdict(list)
+    for b in bs:
+        by_stock[b["ticker"]].append(b)
+    indexable = insider_indexable(bs)
+
+    summary = (f"{esc(name)} has made <b>{len(bs)}</b> open-market purchases worth <b>{ia.money(total)}</b> in "
+               f"{len(by_stock)} compan{'ies' if len(by_stock) != 1 else 'y'} since {fmt_date(bs[-1]['filed'])}, "
+               f"according to SEC Form 4 filings. The most recent was filed on {fmt_date(last['filed'])}: "
+               f"{last['shares']:,} shares of {esc(last['ticker'])} at ${last['price']:,.2f} "
+               f"({esc(last['role'])}), worth {ia.money(last['value'])}.")
+    if top is not last:
+        summary += (f" The largest was {ia.money(top['value'])} of {esc(top['ticker'])} "
+                    f"on {fmt_date(top['trade_date'] or top['filed'])}.")
+    stocks = sorted(by_stock.items(), key=lambda kv: -sum(b["value"] for b in kv[1]))
+    rows = "".join(
+        f"<tr><td><a class='tk' href='/stock/{slug(t)}/'>{esc(t)}</a></td><td>{esc(short(names.get(t, sb[0]['issuer']), 40))}</td>"
+        f"<td>{esc(short(sb[0]['role'], 34))}</td><td class='num'>{len(sb)}</td>"
+        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in sb))}</b></td>"
+        f"<td>{fmt_date(max(b['filed'] for b in sb), False)}</td></tr>" for t, sb in stocks)
+    body = (f"<h1>{esc(name)}: insider buys</h1>"
+            f"<p class='lead'>Every open-market stock purchase reported by {esc(name)} to the SEC on Form 4.</p>"
+            f"<div class='stats'><div class='stat'><span>Total bought</span><b>{ia.money(total)}</b></div>"
+            f"<div class='stat'><span>Purchases</span><b>{len(bs)}</b></div>"
+            f"<div class='stat'><span>Companies</span><b>{len(by_stock)}</b></div>"
+            f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div></div>"
+            f"<div class='prose'><p>{summary}</p></div>"
+            f"<h2>Companies {esc(short(name, 40))} bought</h2><div class='tbl'><table><thead><tr><th>Ticker</th>"
+            f"<th>Company</th><th>Role</th><th class='num'>Buys</th><th class='num'>Total</th><th>Last filed</th>"
+            f"</tr></thead><tbody>{rows}</tbody></table></div>"
+            f"{cta(f'Get the next {short(name, 40)} purchase on Telegram')}"
+            f"<h2>All purchases</h2>{buys_table(bs)}")
+    title = f"{short(name, 45)} Stock Purchases: Insider Buys (SEC Form 4) | Ticker Press"
+    desc = (f"{name} bought {ia.money(total)} of stock in {len(bs)} open-market purchases "
+            f"({', '.join(t for t, _ in stocks[:3])}). Every trade from SEC Form 4 filings.")
+    page(INSIDER_URLS[cik].strip("/") + "/", title, desc, body, noindex=not indexable)
+    return indexable
+
+
+def insider_table(rows: list[tuple[str, list[dict]]]) -> str:
+    out = "".join(
+        f"<tr><td><a href='{INSIDER_URLS[cik]}'><b>{esc(short(ia.smart_title(bs[0]['owner']), 40))}</b></a></td>"
+        f"<td>{', '.join(sorted({esc(b['ticker']) for b in bs})[:4])}</td><td class='num'>{len(bs)}</td>"
+        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in bs))}</b></td>"
+        f"<td>{fmt_date(max(b['filed'] for b in bs), False)}</td></tr>" for cik, bs in rows)
+    return ("<div class='tbl'><table><thead><tr><th>Insider</th><th>Stocks</th><th class='num'>Buys</th>"
+            f"<th class='num'>Total</th><th>Last filed</th></tr></thead><tbody>{out}</tbody></table></div>")
+
+
 def build() -> None:
     rows = sorted(load_buys().values(), key=lambda b: (b["filed"], b["value"]), reverse=True)
     for b in rows:
@@ -465,6 +547,13 @@ def build() -> None:
     today = date.fromisoformat(rows[0]["filed"])
     sitemap = [("", today.isoformat())]
 
+    # Insiders: las URLs se calculan antes para enlazar sus nombres desde todas las tablas
+    by_owner = defaultdict(list)
+    for b in rows:
+        by_owner[b["owner_cik"]].append(b)
+    INSIDER_URLS.clear()
+    INSIDER_URLS.update(insider_urls(by_owner))
+
     # Acciones
     by_ticker = defaultdict(list)
     for b in rows:
@@ -475,6 +564,21 @@ def build() -> None:
         names[ticker] = issuer
         if indexable:
             sitemap.append((f"stock/{slug(ticker)}/", max(b["filed"] for b in bs)))
+
+    for cik in INSIDER_URLS:
+        if insider_page(cik, by_owner[cik], names):
+            sitemap.append((INSIDER_URLS[cik].strip("/") + "/", max(b["filed"] for b in by_owner[cik])))
+    year_ago = (today - timedelta(days=365)).isoformat()
+    top_insiders = sorted(((c, [b for b in by_owner[c] if b["filed"] >= year_ago]) for c in INSIDER_URLS
+                           if insider_indexable(by_owner[c])), key=lambda x: -sum(b["value"] for b in x[1]))
+    top_insiders = [x for x in top_insiders if x[1]]
+    page("insiders/", "Top Insider Buyers: Executives & Funds Buying Stock | Ticker Press",
+         "The insiders and funds that bought the most stock on the open market in the last 12 months, "
+         "from SEC Form 4 filings. Updated daily.",
+         f"<h1>Top insider buyers</h1><p class='lead'>The executives, directors and investment funds that put the most "
+         f"money into their own companies' stock on the open market in the last 12 months.</p>"
+         f"{insider_table(top_insiders[:200])}{cta()}")
+    sitemap.append(("insiders/", today.isoformat()))
 
     # Dias
     by_day = defaultdict(list)
@@ -543,7 +647,9 @@ def build() -> None:
             f"<p><a href='/day/{today.isoformat()}/'>All buys filed {fmt_date(today.isoformat())} →</a></p>"
             f"<h2>Top cluster buys (last {CLUSTER_DAYS} days)</h2>{cluster_table(cs[:10])}"
             f"<p><a href='/cluster-buys/'>All cluster buys →</a></p>"
-            f"<h2>Biggest insider buys this month</h2>{buys_table(biggest)}")
+            f"<h2>Biggest insider buys this month</h2>{buys_table(biggest)}"
+            f"<h2>Top insider buyers (last 12 months)</h2>{insider_table(top_insiders[:10])}"
+            f"<p><a href='/insiders/'>All top insiders →</a></p>")
     page("", "Insider Buying Today: Latest SEC Form 4 Insider Purchases | Ticker Press",
          "Track what company insiders are buying: every open-market insider purchase from SEC Form 4 filings, "
          "cluster buys and the biggest buys, updated daily. Free alerts on Telegram.", body)
