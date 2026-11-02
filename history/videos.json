@@ -1,7 +1,89 @@
 {
-  "updated": "2026-11-01T23:17:07+00:00",
-  "n_videos": 33,
+  "updated": "2026-11-02T14:00:22+00:00",
+  "n_videos": 34,
   "videos": [
+    {
+      "date": "2026-11-02",
+      "video_id": "d58_8OIl7Zc",
+      "url": "https://youtu.be/d58_8OIl7Zc",
+      "title": "Inside the $6.3B Binance Breach: What Your Custody Risk Is",
+      "thumbnail_text": "$6.3B STOLEN",
+      "topic_key": "binance 6.3 billion crypto hack",
+      "entities": [
+        "Binance"
+      ],
+      "format": "data deep-dive",
+      "title_style": "TIMEFRAME WARNING",
+      "keywords": [
+        "Binance 6.3 billion hack",
+        "crypto security breach",
+        "largest crypto theft",
+        "Binance asset recovery"
+      ],
+      "source_headlines": [
+        "$6.3 billion Binance hack is largest crypto theft on record"
+      ],
+      "source_urls": [
+        "https://www.cnbc.com/2026/10/29/circle-tether-freeze-funds-impacted-by-potential-binance-security-issue.html"
+      ],
+      "thumb_layout": "box",
+      "thumb_color": "green",
+      "thumb_pexels_id": 3865559,
+      "broll_pexels_ids": [
+        6964235,
+        38581103,
+        7055177,
+        27454111,
+        7578608,
+        7580434,
+        7534330,
+        7821643,
+        6963744,
+        36036808,
+        13522087,
+        11274341,
+        10332227,
+        9278554,
+        6962343,
+        31358014,
+        4118494,
+        40607898,
+        6258102,
+        854078,
+        8348720,
+        34129037,
+        5377647,
+        8720758,
+        7714491,
+        7714379,
+        32829410,
+        5240978,
+        7055348,
+        3865559,
+        35758017,
+        7702049,
+        10482317,
+        10482308,
+        30728672,
+        40304895,
+        8292925,
+        7766931,
+        3258366,
+        4183797,
+        34839621,
+        34596707,
+        10142349,
+        10166811
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-02T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Would you keep your digital assets on a centralized exchange after a record six billion dollar breach?",
+      "playlist": "Crypto & Alternative Assets",
+      "quality": 8.0,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-01",
       "video_id": "yvEjsYcUjEQ",
@@ -101,7 +183,15 @@
         "hEIrZZe2Iss",
         "jdeIj_Lb8S4",
         "yvEjsYcUjEQ"
-      ]
+      ],
+      "stats": {
+        "views": 1,
+        "likes": 0,
+        "comments": 1,
+        "updated": "2026-11-02T13:32:36+00:00",
+        "source": "api",
+        "shorts_views": 141
+      }
     },
     {
       "date": "2026-10-31",
@@ -195,12 +285,12 @@
         "m19JKJKJsfs"
       ],
       "stats": {
-        "views": 4,
+        "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
-        "shorts_views": 68
+        "shorts_views": 209
       },
       "tpl_done": [
         "4SQwFbLV4Ao",
@@ -301,9 +391,12 @@
         "views": 2,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
-        "shorts_views": 42
+        "shorts_views": 214,
+        "avg_view_sec": 134.0,
+        "avg_view_pct": 32.0,
+        "subs_gained": 0
       },
       "cta_done": [
         "6d1nnM85LAw",
@@ -327,8 +420,8 @@
       "entities": [],
       "seed": true,
       "stats": {
-        "views": 0,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "views": 1,
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -345,8 +438,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 0,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "views": 2,
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -363,13 +456,13 @@
       ],
       "seed": true,
       "stats": {
-        "views": 12,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "views": 14,
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
-        "likes": 0,
+        "likes": 1,
         "comments": 0,
-        "avg_view_sec": 132.0,
-        "avg_view_pct": 29.0,
+        "avg_view_sec": 159.0,
+        "avg_view_pct": 34.9,
         "subs_gained": 0
       }
     },
@@ -385,7 +478,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -404,7 +497,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -425,7 +518,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -447,12 +540,12 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
-        "avg_view_sec": 191.0,
-        "avg_view_pct": 41.3,
+        "avg_view_sec": 144.0,
+        "avg_view_pct": 31.2,
         "subs_gained": 0
       }
     },
@@ -468,7 +561,7 @@
       "seed": true,
       "stats": {
         "views": 7,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -489,13 +582,13 @@
       ],
       "seed": true,
       "stats": {
-        "views": 39,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "views": 40,
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
-        "avg_view_sec": 224.0,
-        "avg_view_pct": 45.8,
+        "avg_view_sec": 236.0,
+        "avg_view_pct": 48.1,
         "subs_gained": 1
       }
     },
@@ -513,7 +606,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -535,7 +628,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -558,7 +651,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -581,7 +674,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -604,7 +697,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -627,7 +720,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -648,8 +741,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 0,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "views": 1,
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -668,7 +761,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -690,7 +783,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -712,7 +805,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -734,7 +827,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -757,7 +850,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -779,12 +872,12 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
-        "avg_view_sec": 232.0,
-        "avg_view_pct": 47.5,
+        "avg_view_sec": 204.0,
+        "avg_view_pct": 41.7,
         "subs_gained": 0
       }
     },
@@ -801,7 +894,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -823,7 +916,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -845,7 +938,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -867,7 +960,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -889,7 +982,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -910,7 +1003,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -932,7 +1025,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -954,7 +1047,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-01T11:52:50+00:00",
+        "updated": "2026-11-02T13:32:36+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,

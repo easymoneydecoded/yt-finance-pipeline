@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-02T02:46:49+00:00",
-  "pending": 0,
+  "updated": "2026-11-02T14:00:22+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -277,6 +277,129 @@
         }
       },
       "youtube_title": "AI Agents Are Now Trading Crypto On Coinbase"
+    },
+    {
+      "id": "2026-11-02_s1",
+      "created": "2026-11-02T14:00:18+00:00",
+      "date": "2026-11-02",
+      "asset_id": 701945529,
+      "size": 7380734,
+      "title": "The Anatomy of the Breach",
+      "text": "According to CNBC, the security incident impacted about six point three billion dollars in client assets. Initially, the exchange pointed toward a compromised developer laptop that allowed an unauthorized withdrawal submission. However, Co-CEO Richard Teng later clarified that the operation involved a much more complex process than a simple password theft or standard exploit. The hackers executed signatures obtained in advance in one single coordinated burst. Blockchain intelligence firm TRM Labs noted striking similarities to earlier North Korea linked heists, including small Tornado Cash withdrawals funding operator wallets, extensive staging phases that began well before the actual theft, and prior exploits like the KelpDAO hack in April 2026. Chainalysis also pointed directly to cybercrime group TraderTraitor, noting their history of targeting exchanges and DeFi protocols to raise funds for the regime. But here is what nobody priced in: while deposits remained completely unaffected, the mechanics exposed how vulnerable centralized custody models remain when advanced attackers target internal infrastructure. You might assume your funds are safe just because deposits kept operating normally, but the lack of private key leaks means the attack vector was far more sophisticated than casual observers realize.",
+      "parent_title": "Inside the $6.3B Binance Breach: What Your Custody Risk Is",
+      "parent_video_id": "d58_8OIl7Zc",
+      "parent_url": "https://youtu.be/d58_8OIl7Zc",
+      "tags": [
+        "Binance 6.3 billion hack",
+        "crypto security breach",
+        "largest crypto theft",
+        "Binance asset recovery",
+        "Bitcoin price",
+        "Ethereum price",
+        "crypto exchange hack",
+        "North Korea crypto hackers",
+        "TRM Labs crypto",
+        "Chainalysis Binance",
+        "centralized crypto custody",
+        "crypto safety 2026",
+        "Binance hack details"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-02_s2",
+      "created": "2026-11-02T14:00:20+00:00",
+      "date": "2026-11-02",
+      "asset_id": 701945600,
+      "size": 16186346,
+      "title": "The Three Billion Dollar Freeze",
+      "text": "Speed is everything when billions walk out the digital door. Within hours of the alert, around three billion dollars was successfully frozen on chain. This rapid containment happened because major industry players like Circle Internet Group, Tether, and Ripple coordinated swift freeze protocols on tokens tied directly to the hack. Binance also announced plans to cover remaining losses using its Secure Asset Fund for Users, a protection reserve created back in 2018 precisely for catastrophic events. The FBI confirmed it is actively coordinating with public and private partners to evaluate potential impacts, understand the full scope of the activity, and establish appropriate investigative steps. Yet this defensive success hides a deeper structural problem. When stablecoin issuers can freeze funds with a single backend command, it proves your centralized assets are entirely at the mercy of third party issuers. You think you own your coins on an exchange, but you actually rely on corporate emergency buttons that can be pressed at a moment notice.",
+      "parent_title": "Inside the $6.3B Binance Breach: What Your Custody Risk Is",
+      "parent_video_id": "d58_8OIl7Zc",
+      "parent_url": "https://youtu.be/d58_8OIl7Zc",
+      "tags": [
+        "Binance 6.3 billion hack",
+        "crypto security breach",
+        "largest crypto theft",
+        "Binance asset recovery",
+        "Bitcoin price",
+        "Ethereum price",
+        "crypto exchange hack",
+        "North Korea crypto hackers",
+        "TRM Labs crypto",
+        "Chainalysis Binance",
+        "centralized crypto custody",
+        "crypto safety 2026",
+        "Binance hack details"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-02_s3",
+      "created": "2026-11-02T14:00:22+00:00",
+      "date": "2026-11-02",
+      "asset_id": 701945708,
+      "size": 14563324,
+      "title": "The History of Escalating Losses",
+      "text": "This massive breach is not an isolated incident. It is the continuation of an escalating, relentless war between sophisticated state sponsored hackers and centralized platforms. In twenty twenty five, Bybit suffered roughly one point five billion dollars in losses due to a security breach. More recently, Bitget lost more than three hundred fifty million dollars worth of digital assets in a similar cyber theft. Over the past several years, bad actors have continually drained billions from both centralized exchanges and decentralized protocols. Every time an exchange scales up its operations and liquidity pools, the payout for hackers grows exponentially. The playbook is identical across all these major attacks: long staging periods, precise execution, and rapid laundering attempts through crypto mixers. If you keep your entire crypto net worth sitting passively on a single centralized exchange, you are betting that their security team can outsmart government backed cyber units every single day without a single slip-up.",
+      "parent_title": "Inside the $6.3B Binance Breach: What Your Custody Risk Is",
+      "parent_video_id": "d58_8OIl7Zc",
+      "parent_url": "https://youtu.be/d58_8OIl7Zc",
+      "tags": [
+        "Binance 6.3 billion hack",
+        "crypto security breach",
+        "largest crypto theft",
+        "Binance asset recovery",
+        "Bitcoin price",
+        "Ethereum price",
+        "crypto exchange hack",
+        "North Korea crypto hackers",
+        "TRM Labs crypto",
+        "Chainalysis Binance",
+        "centralized crypto custody",
+        "crypto safety 2026",
+        "Binance hack details"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
