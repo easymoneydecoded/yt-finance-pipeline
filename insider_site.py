@@ -54,6 +54,7 @@ TOOLS      = [  # plantillas de la tienda de Etsy que encajan con quien invierte
 ]
 DATA_FILE  = Path("site_data/insider_buys.json")
 CHECKS     = Path("site_data/price_checks.json")   # resultado de ia.plausible() por Form 4
+PRICES     = Path("site_data/prices.json")         # ultimo cierre y splits por accion (insider_site.py prices)
 DIST       = Path("site_dist")
 CACHE      = Path("data/sec")
 DATASETS   = "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets"
@@ -262,6 +263,97 @@ def update() -> None:
 
 
 # ---------------------------------------------------------------------------
+# Precios: rentabilidad desde la compra
+# ---------------------------------------------------------------------------
+def update_prices(batch: int = 200) -> None:
+    """Ultimo cierre, splits y cierre del dia de cada compra (para contrastar el precio declarado) de cada
+    accion, con yfinance. Las acciones que fallen conservan su dato anterior."""
+    import yfinance as yf
+    rows = load_buys().values()
+    tickers = sorted({clean_ticker(b["ticker"]) for b in rows} - {""})
+    days = defaultdict(set)
+    for b in rows:
+        days[clean_ticker(b["ticker"])].add(b["trade_date"] or b["filed"])
+    start = (date.fromisoformat(min(b["filed"] for b in rows)) - timedelta(days=30)).isoformat()
+    try:
+        prices = json.loads(PRICES.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        prices = {}
+    done = set()
+    # Yahoo corta por timeout cuando se piden muchas a la vez: las que fallan se reintentan en lotes pequenos
+    for size in (batch, 25):
+        pending = [t for t in tickers if t not in done]
+        for i in range(0, len(pending), size):
+            chunk = pending[i:i + size]
+            yahoo = {t.replace(".", "-"): t for t in chunk}
+            try:
+                d = yf.download(list(yahoo), start=start, auto_adjust=False, actions=True,
+                                progress=False, threads=size > 25, group_by="column")
+            except Exception as e:
+                print(f"   ! precios {chunk[0]}-{chunk[-1]}: {type(e).__name__}")
+                continue
+            if d.empty:
+                continue
+            for yt, t in yahoo.items():
+                try:
+                    close = d["Close"][yt].dropna()
+                    splits = d["Stock Splits"][yt].fillna(0)
+                except KeyError:
+                    continue
+                if close.empty:
+                    continue
+                close.index = close.index.tz_localize(None) if close.index.tz else close.index
+                ref = {}
+                for day in days[t]:
+                    before = close[:day[:10]]  # cierre de ese dia o del ultimo dia de bolsa anterior
+                    if not before.empty and (date.fromisoformat(day[:10]) - before.index[-1].date()).days <= 5:
+                        ref[day] = round(float(before.iloc[-1]), 4)
+                prices[t] = {"close": round(float(close.iloc[-1]), 4), "date": close.index[-1].date().isoformat(),
+                             "splits": [[day.date().isoformat(), float(r)] for day, r in splits[splits > 0].items()],
+                             "ref": ref}
+                done.add(t)
+    ok = len(done)
+    PRICES.write_text(json.dumps(prices, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+    print(f"   . precios: {ok}/{len(tickers)} acciones actualizadas ({len(prices)} en {PRICES})")
+
+
+PRICE: dict[str, dict] = {}  # ticker -> {"close", "date", "splits"} (lo carga build())
+
+
+def since_buy(b: dict) -> float | None:
+    """Rentabilidad desde el precio de compra hasta el ultimo cierre, ajustando los splits posteriores.
+    None si no hay precio, si el precio declarado no se parece al cierre de ese dia (ADRs frente a acciones
+    ordinarias, conversiones, errores del Form 4) o si el resultado es absurdo."""
+    p = PRICE.get(b["ticker"])
+    day = b["trade_date"] or b["filed"]
+    if not p or not b["price"] or p["date"] < day:
+        return None
+    factor = 1.0
+    for d, r in p["splits"]:
+        if d > day:
+            factor *= r
+    ref = p.get("ref", {}).get(day)  # Yahoo da los cierres pasados ya ajustados: se deshace el ajuste
+    if not ref or not 0.65 < b["price"] / (ref * factor) < 1.5:
+        return None
+    ret = p["close"] * factor / b["price"] - 1
+    return ret if -0.99 < ret < 10 else None
+
+
+def total_return(bs: list[dict]) -> float | None:
+    """Rentabilidad conjunta de varias compras, ponderada por el dinero invertido en cada una."""
+    pairs = [(b["value"], r) for b in bs if (r := since_buy(b)) is not None]
+    invested = sum(v for v, _ in pairs)
+    return sum(v * r for v, r in pairs) / invested if invested else None
+
+
+def pct(ret: float | None, *, bold: bool = False) -> str:
+    if ret is None:
+        return "—"
+    txt = f"{ret * 100:+.0f}%" if abs(ret) >= 0.1 else f"{ret * 100:+.1f}%"
+    return f"<span class='{'up' if ret >= 0 else 'down'}'>{'<b>' + txt + '</b>' if bold else txt}</span>"
+
+
+# ---------------------------------------------------------------------------
 # HTML
 # ---------------------------------------------------------------------------
 def esc(text) -> str:
@@ -322,7 +414,7 @@ th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);whit
 th{color:var(--muted);font-weight:600;font-size:13px;background:var(--bg2)}tr:last-child td{border-bottom:0}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}.tk{font-weight:700}
 td small{display:block;color:var(--muted);font-size:12.5px;line-height:1.3}
-.up{color:var(--green)}.tag{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px}
+.up{color:var(--green)}.down{color:var(--red)}.tag{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px}
 .cta{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--green-soft);
 border:1px solid rgba(0,214,125,.35);border-radius:14px;padding:18px 20px;margin:28px 0}
 .cta p{margin:0;max-width:640px}.cta strong{display:block;font-size:18px}
@@ -380,7 +472,8 @@ def short(text: str, n: int) -> str:
 def buys_table(rows: list[dict], *, ticker_col: bool = True) -> str:
     head = ("<th>Filed</th>" + ("<th>Stock</th>" if ticker_col else "") +
             "<th>Insider</th><th class='num'>Value</th><th class='num'>Shares</th><th class='num'>Price</th>"
-            "<th class='num'>Stake</th><th>Trade</th><th></th>")
+            "<th class='num' title='Change from the insider purchase price to the latest close, split-adjusted'>"
+            "Since buy</th><th class='num'>Stake</th><th>Trade</th><th></th>")
     out = []
     for b in rows:
         stake = (("new" if ia.is_new_position(b) else "—") if b["stake_change"] is None else
@@ -391,7 +484,7 @@ def buys_table(rows: list[dict], *, ticker_col: bool = True) -> str:
         out.append(f"<tr><td>{fmt_date(b['filed'], False)}</td>{tk}<td>{person_link(b)}{plan}"
                    f"<small>{esc(short(b['role'], 34))}</small></td>"
                    f"<td class='num up'><b>{ia.money(b['value'])}</b></td><td class='num'>{b['shares']:,}</td>"
-                   f"<td class='num'>${b['price']:,.2f}</td>"
+                   f"<td class='num'>${b['price']:,.2f}</td><td class='num'>{pct(since_buy(b))}</td>"
                    f"<td class='num'>{stake}</td><td>{fmt_date(b['trade_date'], False)}</td>"
                    f"<td><a href='{sec_url(b)}' rel='nofollow'>SEC</a></td></tr>")
     return f"<div class='tbl'><table><thead><tr>{head}</tr></thead><tbody>{''.join(out)}</tbody></table></div>"
@@ -444,6 +537,12 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
     plans = sum(b["plan"] for b in bs)
     if plans:
         summary += f" {plans} of these trades were pre-scheduled under a Rule 10b5-1 plan."
+    ret, last_ret = total_return(bs), since_buy(last)
+    if ret is not None:
+        p = PRICE[ticker]
+        summary += (f" {esc(ticker)} last closed at ${p['close']:,.2f} on {fmt_date(p['date'])}: taken together, "
+                    f"the insider purchases listed here are {'up' if ret >= 0 else 'down'} "
+                    f"<b>{abs(ret) * 100:.0f}%</b> since they were made (split-adjusted, weighted by amount).")
 
     body = (f"<h1>{esc(ticker)} insider buying</h1>"
             f"<p class='lead'>Every open-market purchase of {esc(issuer)} ({esc(ticker)}) stock by its officers, "
@@ -451,7 +550,9 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
             f"<div class='stats'><div class='stat'><span>Bought, last 12 months</span><b>{ia.money(total)}</b></div>"
             f"<div class='stat'><span>Insiders buying (12m)</span><b>{len(insiders)}</b></div>"
             f"<div class='stat'><span>Purchases on record</span><b>{len(bs)}</b></div>"
-            f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div></div>"
+            f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div>"
+            + (f"<div class='stat'><span>Since last insider buy</span><b>{pct(last_ret)}</b></div>"
+               if last_ret is not None else "") + "</div>"
             f"<div class='prose'><p>{summary}</p></div>"
             f"{cta(f'Get the next {ticker} insider buy on Telegram')}"
             f"<h2>All {esc(ticker)} insider purchases</h2>{buys_table(bs, ticker_col=False)}")
@@ -496,21 +597,28 @@ def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
     if top is not last:
         summary += (f" The largest was {ia.money(top['value'])} of {esc(top['ticker'])} "
                     f"on {fmt_date(top['trade_date'] or top['filed'])}.")
+    ret = total_return(bs)
+    if ret is not None:
+        summary += (f" Taken together, these purchases are {'up' if ret >= 0 else 'down'} <b>{abs(ret) * 100:.0f}%</b> "
+                    f"at the latest closing prices (split-adjusted, weighted by amount).")
     stocks = sorted(by_stock.items(), key=lambda kv: -sum(b["value"] for b in kv[1]))
     rows = "".join(
         f"<tr><td><a class='tk' href='/stock/{slug(t)}/'>{esc(t)}</a></td><td>{esc(short(names.get(t, sb[0]['issuer']), 40))}</td>"
         f"<td>{esc(short(sb[0]['role'], 34))}</td><td class='num'>{len(sb)}</td>"
-        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in sb))}</b></td>"
+        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in sb))}</b></td><td class='num'>{pct(total_return(sb))}</td>"
         f"<td>{fmt_date(max(b['filed'] for b in sb), False)}</td></tr>" for t, sb in stocks)
     body = (f"<h1>{esc(name)}: insider buys</h1>"
             f"<p class='lead'>Every open-market stock purchase reported by {esc(name)} to the SEC on Form 4.</p>"
             f"<div class='stats'><div class='stat'><span>Total bought</span><b>{ia.money(total)}</b></div>"
             f"<div class='stat'><span>Purchases</span><b>{len(bs)}</b></div>"
             f"<div class='stat'><span>Companies</span><b>{len(by_stock)}</b></div>"
-            f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div></div>"
+            f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div>"
+            + (f"<div class='stat'><span>Return on these buys</span><b>{pct(ret)}</b></div>" if ret is not None else "")
+            + "</div>"
             f"<div class='prose'><p>{summary}</p></div>"
             f"<h2>Companies {esc(short(name, 40))} bought</h2><div class='tbl'><table><thead><tr><th>Ticker</th>"
-            f"<th>Company</th><th>Role</th><th class='num'>Buys</th><th class='num'>Total</th><th>Last filed</th>"
+            f"<th>Company</th><th>Role</th><th class='num'>Buys</th><th class='num'>Total</th>"
+            f"<th class='num'>Since buy</th><th>Last filed</th>"
             f"</tr></thead><tbody>{rows}</tbody></table></div>"
             f"{cta(f'Get the next {short(name, 40)} purchase on Telegram')}"
             f"<h2>All purchases</h2>{buys_table(bs)}")
@@ -525,10 +633,11 @@ def insider_table(rows: list[tuple[str, list[dict]]]) -> str:
     out = "".join(
         f"<tr><td><a href='{INSIDER_URLS[cik]}'><b>{esc(short(ia.smart_title(bs[0]['owner']), 40))}</b></a></td>"
         f"<td>{', '.join(sorted({esc(b['ticker']) for b in bs})[:4])}</td><td class='num'>{len(bs)}</td>"
-        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in bs))}</b></td>"
+        f"<td class='num up'><b>{ia.money(sum(b['value'] for b in bs))}</b></td><td class='num'>{pct(total_return(bs))}</td>"
         f"<td>{fmt_date(max(b['filed'] for b in bs), False)}</td></tr>" for cik, bs in rows)
     return ("<div class='tbl'><table><thead><tr><th>Insider</th><th>Stocks</th><th class='num'>Buys</th>"
-            f"<th class='num'>Total</th><th>Last filed</th></tr></thead><tbody>{out}</tbody></table></div>")
+            f"<th class='num'>Total</th><th class='num'>Since buy</th><th>Last filed</th></tr></thead>"
+            f"<tbody>{out}</tbody></table></div>")
 
 
 def build() -> None:
@@ -546,6 +655,11 @@ def build() -> None:
     shutil.copy("branding/avatar.png", DIST / "avatar.png")
     today = date.fromisoformat(rows[0]["filed"])
     sitemap = [("", today.isoformat())]
+    try:  # precios de hace mas de 10 dias (la descarga fallo varias noches) no se muestran
+        fresh = (today - timedelta(days=10)).isoformat()
+        PRICE.update({t: p for t, p in json.loads(PRICES.read_text(encoding="utf-8")).items() if p["date"] >= fresh})
+    except (OSError, json.JSONDecodeError):
+        print("   ! sin site_data/prices.json: la web sale sin rentabilidades (python insider_site.py prices)")
 
     # Insiders: las URLs se calculan antes para enlazar sus nombres desde todas las tablas
     by_owner = defaultdict(list)
@@ -634,6 +748,12 @@ def build() -> None:
     latest = [b for b in rows if b["filed"] >= week]
     month = [b for b in rows if b["filed"] >= (today - timedelta(days=30)).isoformat()]
     biggest = sorted(month, key=lambda b: -b["value"])[:15]
+    # Mejores compras de 6 meses: de 250.000 $ o mas y a 1 $ o mas, para que no las dominen apuestas diminutas
+    # ni acciones de centimos
+    half_year = (today - timedelta(days=182)).isoformat()
+    best = sorted((b for b in rows if b["filed"] >= half_year and b["value"] >= 250_000 and b["price"] >= 1
+                   and since_buy(b) is not None),
+                  key=lambda b: -since_buy(b))[:10]
     body = (f"<h1>What are insiders buying?</h1>"
             f"<p class='lead'>When CEOs, CFOs and directors buy their own company's stock on the open market, "
             f"they bet their own money. Every one of those trades is reported to the SEC on Form 4. "
@@ -648,6 +768,10 @@ def build() -> None:
             f"<h2>Top cluster buys (last {CLUSTER_DAYS} days)</h2>{cluster_table(cs[:10])}"
             f"<p><a href='/cluster-buys/'>All cluster buys →</a></p>"
             f"<h2>Biggest insider buys this month</h2>{buys_table(biggest)}"
+            + (f"<h2>Best-performing insider buys (last 6 months)</h2><p>Purchases of $250K or more at $1 or more per "
+               f"share, ranked by how "
+               f"much the stock has moved since the insider bought (latest close, split-adjusted).</p>{buys_table(best)}"
+               if best else "") +
             f"<h2>Top insider buyers (last 12 months)</h2>{insider_table(top_insiders[:10])}"
             f"<p><a href='/insiders/'>All top insiders →</a></p>")
     page("", "Insider Buying Today: Latest SEC Form 4 Insider Purchases | Ticker Press",
@@ -665,6 +789,11 @@ the insider paid cash at market prices. Option exercises, grants, gifts and sale
 in one filing are added up and shown at their average price. “Stake” is how much the purchase increased the
 insider's holdings. Trades marked <span class="tag">10b5-1</span> were pre-scheduled under a trading plan and are
 usually a weaker signal.</p>
+<h2>Performance since the purchase</h2>
+<p>“Since buy” compares the price the insider paid with the stock's latest closing price, adjusted for any stock splits
+after the trade. For several purchases it is weighted by the amount invested in each one. Dividends are not included.
+Prices come from public market data and can be delayed or occasionally wrong; past performance says nothing about the
+future.</p>
 <h2>Cluster buys</h2>
 <p>A stock is a cluster buy when at least two different insiders bought on the open market within {CLUSTER_DAYS} days.</p>
 <h2>Sources and updates</h2>
@@ -709,7 +838,9 @@ if __name__ == "__main__":
         backfill(int(sys.argv[2]) if len(sys.argv) > 2 else 4)
     elif cmd == ["update"]:
         update()
+    elif cmd == ["prices"]:
+        update_prices()
     elif cmd == ["build"]:
         build()
     else:
-        print("Uso: python insider_site.py backfill [trimestres] | update | build")
+        print("Uso: python insider_site.py backfill [trimestres] | update | prices | build")

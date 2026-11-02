@@ -100,6 +100,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           python insider_site.py update
+          python insider_site.py prices || echo "precios no actualizados: se usan los guardados"
           python insider_site.py build
           npx --yes wrangler@3 pages deploy site_dist --project-name=tickerpress --branch=main --commit-dirty=true
 
