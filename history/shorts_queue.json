@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-02T14:00:22+00:00",
-  "pending": 3,
+  "updated": "2026-11-02T15:15:31+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -306,18 +306,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "J3RuImHGiJc",
+          "at": "2026-11-02T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18134338996743200",
+          "at": "2026-11-02T15:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7703592326069930006",
+          "at": "2026-11-02T15:15+00:00"
         }
-      }
+      },
+      "youtube_title": "The Anatomy of the Breach"
     },
     {
       "id": "2026-11-02_s2",

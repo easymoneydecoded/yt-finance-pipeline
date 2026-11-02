@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T14:00:22+00:00",
+  "updated": "2026-11-02T15:15:33+00:00",
   "n_videos": 34,
   "videos": [
     {
@@ -75,14 +75,28 @@
         10142349,
         10166811
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "The Anatomy of the Breach"
+      ],
+      "shorts_ids": [
+        "J3RuImHGiJc"
+      ],
       "publish_at": "2026-11-02T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Would you keep your digital assets on a centralized exchange after a record six billion dollar breach?",
       "playlist": "Crypto & Alternative Assets",
       "quality": 8.0,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgwzC6nIdHkU32iyZ0Z4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "J3RuImHGiJc",
+        "d58_8OIl7Zc"
+      ],
+      "tpl_done": [
+        "J3RuImHGiJc",
+        "d58_8OIl7Zc"
+      ]
     },
     {
       "date": "2026-11-01",
