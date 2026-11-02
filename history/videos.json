@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T15:15:33+00:00",
+  "updated": "2026-11-02T19:17:14+00:00",
   "n_videos": 34,
   "videos": [
     {
@@ -76,10 +76,12 @@
         10166811
       ],
       "shorts_titles": [
-        "The Anatomy of the Breach"
+        "The Anatomy of the Breach",
+        "The Three Billion Dollar Freeze"
       ],
       "shorts_ids": [
-        "J3RuImHGiJc"
+        "J3RuImHGiJc",
+        "PexyRzLq-_A"
       ],
       "publish_at": "2026-11-02T14:00+00:00",
       "shorts_publish_at": [],
@@ -91,10 +93,12 @@
       "shorts_commented": [],
       "cta_done": [
         "J3RuImHGiJc",
+        "PexyRzLq-_A",
         "d58_8OIl7Zc"
       ],
       "tpl_done": [
         "J3RuImHGiJc",
+        "PexyRzLq-_A",
         "d58_8OIl7Zc"
       ]
     },

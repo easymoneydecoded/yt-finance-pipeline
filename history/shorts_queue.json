@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-02T15:15:31+00:00",
-  "pending": 2,
+  "updated": "2026-11-02T19:17:14+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -354,18 +354,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "PexyRzLq-_A",
+          "at": "2026-11-02T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17971091498965647",
+          "at": "2026-11-02T19:15+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7703654616114415638",
+          "at": "2026-11-02T19:17+00:00"
         }
-      }
+      },
+      "youtube_title": "The Three Billion Dollar Freeze"
     },
     {
       "id": "2026-11-02_s3",
