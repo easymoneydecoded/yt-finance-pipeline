@@ -31,6 +31,7 @@ import insider_alerts as ia
 
 SITE = "tickerpress.net"
 BSKY_TAGS     = ["#stocks", "#investing", "#insidertrading"]
+X_TAGS        = ["#InsiderTrading", "#stocks"]   # pocos: en X muchos hashtags restan alcance
 THREADS_TOPIC = "#Stocks"
 
 
@@ -127,8 +128,16 @@ def x_media(image: Path, auth) -> str | None:
     return None
 
 
+def x_tags(text: str) -> str:
+    """Anade los hashtags de tema que quepan. X cuenta los emojis como 2 caracteres: se deja margen sobre 280."""
+    for tags in (X_TAGS, X_TAGS[:1]):
+        if len(text) + len(" ".join(tags)) + 1 <= 265:
+            return text + "\n" + " ".join(tags)
+    return text
+
+
 def x_post(text: str, image: Path | None = None, alt: str = "") -> str | None:
-    text = one_cashtag(text)
+    text = x_tags(one_cashtag(text))
     keys = [os.getenv(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_SECRET")]
     if not all(keys):
         print("   . X no configurado")
