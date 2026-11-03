@@ -407,6 +407,9 @@ def render_final(track: Path, audio: Path, subs: Path, duration: float, out: Pat
          "-filter_complex", f"[0:v]{ass_filter(subs)}[s];[s][2:v]overlay={pos}[vout]",
          "-map", "[vout]", "-map", "1:a",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf), "-pix_fmt", "yuv420p",
-         "-c:a", "aac", "-b:a", "192k", "-t", f"{duration:.3f}", "-movflags", "+faststart", str(out)],
+         # Estereo a 48 kHz (el formato recomendado por Instagram): con la voz en mono a 44,1 kHz
+         # Meta rechazaba a ratos los Reels con ProcessingFailedError
+         "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+         "-t", f"{duration:.3f}", "-movflags", "+faststart", str(out)],
         f"render final -> {out.name}")
     return out
