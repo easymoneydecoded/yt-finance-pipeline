@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-03T20:57:08+00:00",
-  "pending": 2,
+  "updated": "2026-11-03T23:14:28+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -500,18 +500,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "VbbD6zPyfaA",
+          "at": "2026-11-03T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17993999883063145",
+          "at": "2026-11-03T23:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7704086376094140438",
+          "at": "2026-11-03T23:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Too Much For Markets"
     },
     {
       "id": "2026-11-03_s3",

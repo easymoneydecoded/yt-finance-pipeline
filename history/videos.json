@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T19:17:40+00:00",
+  "updated": "2026-11-03T23:14:28+00:00",
   "n_videos": 35,
   "videos": [
     {
@@ -64,10 +64,12 @@
         4069295
       ],
       "shorts_titles": [
-        "The Concentration Trap"
+        "The Concentration Trap",
+        "Too Much For Markets"
       ],
       "shorts_ids": [
-        "O89oeaABZyU"
+        "O89oeaABZyU",
+        "VbbD6zPyfaA"
       ],
       "publish_at": "2026-11-03T17:00+00:00",
       "shorts_publish_at": [],
@@ -79,11 +81,13 @@
       "shorts_commented": [],
       "cta_done": [
         "4Smnu2Fruk4",
-        "O89oeaABZyU"
+        "O89oeaABZyU",
+        "VbbD6zPyfaA"
       ],
       "tpl_done": [
         "4Smnu2Fruk4",
-        "O89oeaABZyU"
+        "O89oeaABZyU",
+        "VbbD6zPyfaA"
       ]
     },
     {
