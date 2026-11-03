@@ -1,7 +1,77 @@
 {
-  "updated": "2026-11-03T12:50:14+00:00",
-  "n_videos": 34,
+  "updated": "2026-11-03T17:00:41+00:00",
+  "n_videos": 35,
   "videos": [
+    {
+      "date": "2026-11-03",
+      "video_id": "4Smnu2Fruk4",
+      "url": "https://youtu.be/4Smnu2Fruk4",
+      "title": "Blackstone Just Warned The AI Debt Bubble Is Cracking",
+      "thumbnail_text": "AI DEBT CRACK",
+      "topic_key": "blackstone ai debt risk warning",
+      "entities": [
+        "Blackstone"
+      ],
+      "format": "data deep-dive",
+      "title_style": "BOLD CONTRARIAN CLAIM stated as fact (e.g. 'Lower Rates Will Make Housing Less Affordable')",
+      "keywords": [
+        "Blackstone AI debt warning",
+        "AI infrastructure funding",
+        "Jon Gray Blackstone",
+        "debt risks AI buildout"
+      ],
+      "source_headlines": [
+        "Blackstone president calls for more equity to fund AI buildout as debt risks mount"
+      ],
+      "source_urls": [
+        "https://www.cnbc.com/2026/11/03/equity-ai-debt-blackstone-pimco-financing.html"
+      ],
+      "thumb_layout": "chart",
+      "thumb_color": "orange",
+      "thumb_pexels_id": 7735914,
+      "broll_pexels_ids": [
+        12781233,
+        34906235,
+        38771100,
+        38622908,
+        6950314,
+        7850311,
+        6780089,
+        8479056,
+        39383796,
+        38222819,
+        8731407,
+        7647676,
+        8939452,
+        8631873,
+        6951506,
+        8343954,
+        6326928,
+        7735914,
+        8478942,
+        35518228,
+        38975928,
+        38133088,
+        7989833,
+        7989701,
+        30064790,
+        3141208,
+        10288594,
+        3866849,
+        8426047,
+        8170609,
+        8369275,
+        4069295
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-03T17:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Do you think private capital can save the AI infrastructure boom from a debt crisis, or are lenders taking on too much risk?",
+      "playlist": "Stock Market Explained",
+      "quality": 8.3,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-02",
       "video_id": "d58_8OIl7Zc",
@@ -109,9 +179,9 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
-        "shorts_views": 175
+        "shorts_views": 178
       }
     },
     {
@@ -218,7 +288,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "shorts_views": 164
       }
@@ -318,7 +388,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "shorts_views": 206,
         "avg_view_sec": 179.0,
@@ -424,7 +494,7 @@
         "views": 4,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "shorts_views": 214,
         "avg_view_sec": 134.0,
@@ -454,7 +524,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -472,7 +542,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -490,7 +560,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -511,7 +581,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -530,7 +600,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -551,7 +621,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -573,7 +643,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -594,7 +664,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -615,8 +685,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 40,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "views": 41,
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -639,7 +709,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -661,7 +731,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -684,7 +754,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -707,7 +777,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -730,7 +800,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -753,7 +823,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -775,7 +845,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -794,7 +864,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -816,7 +886,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -838,7 +908,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -860,7 +930,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -883,7 +953,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -905,7 +975,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -927,7 +997,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -949,7 +1019,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -971,7 +1041,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -993,7 +1063,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1015,7 +1085,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1036,7 +1106,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1058,7 +1128,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1080,7 +1150,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-03T12:50:14+00:00",
+        "updated": "2026-11-03T16:36:33+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,

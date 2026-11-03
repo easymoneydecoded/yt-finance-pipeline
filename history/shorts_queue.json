@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-02T23:26:07+00:00",
-  "pending": 0,
+  "updated": "2026-11-03T17:00:41+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -422,6 +422,129 @@
         }
       },
       "youtube_title": "The History of Escalating Losses"
+    },
+    {
+      "id": "2026-11-03_s1",
+      "created": "2026-11-03T17:00:36+00:00",
+      "date": "2026-11-03",
+      "asset_id": 706386763,
+      "size": 23107102,
+      "title": "The Concentration Trap",
+      "text": "According to CNBC, Blackstone President Jon Gray warned at the Hong Kong Monetary Authority's Global Financial Leaders' Investment Summit that the sheer scale of capital required for artificial intelligence is creating severe concentration risks for debt investors across the entire sector and at individual companies. Unlike equity shareholders who capture the full upside of explosive technological growth, lenders face a fundamentally capped reality. Their returns are largely confined to fixed interest and principal repayments while taking on the severe downside risk of massive corporate leverage. When a single nascent sector gobbles up hundreds of billions in credit, traditional bank portfolios and private credit lenders become dangerously exposed to the exact same technological outcome and execution risks. This asymmetric risk profile means that while tech firms reap massive rewards if their language models succeed, debt holders absorb the shock if consumer demand stumbles or monetization stalls. Many retail investors fail to realize that corporate debt does not share in the equity upside, making these massive credit concentrations particularly hazardous for conservative fixed-income portfolios. Stay with me because the sheer dollar amounts involved dwarf standard corporate borrowing cycles, threatening broader financial stability if a credit correction hits the wider markets.",
+      "parent_title": "Blackstone Just Warned The AI Debt Bubble Is Cracking",
+      "parent_video_id": "4Smnu2Fruk4",
+      "parent_url": "https://youtu.be/4Smnu2Fruk4",
+      "tags": [
+        "Blackstone AI debt warning",
+        "AI infrastructure funding",
+        "Jon Gray Blackstone",
+        "debt risks AI buildout",
+        "Pimco AI debt",
+        "AI capital spending",
+        "artificial intelligence debt",
+        "Blackstone President Jon Gray",
+        "AI market concentration risks",
+        "credit markets AI bubble",
+        "AI buildout financing",
+        "Goldman Sachs data center demand",
+        "BX stock"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-03_s2",
+      "created": "2026-11-03T17:00:38+00:00",
+      "date": "2026-11-03",
+      "asset_id": 706386859,
+      "size": 18698478,
+      "title": "Too Much For Markets",
+      "text": "At the same prestigious financial summit, Pimco CEO Emmanuel Roman delivered an even starker macroeconomic warning. Roman noted that about $550 billion in AI debt had been issued in various forms so far this year alone, reflecting an unprecedented borrowing velocity. Citing General Atlantic CEO Bill Ford's estimate, Roman pointed out that cumulative capital spending could reach around $10 trillion over the next five years. To put that staggering figure in perspective, the entire global corporate bond market sits at roughly $20 trillion, meaning AI buildout alone will consume half of that liquidity pool. Roman bluntly warned investors that at some point in time, the sheer volume of financing is simply going to be too much for global markets to absorb. This massive issuance velocity puts intense pressure on standard underwriting committees, forcing credit desks to stretch limits just to keep up with relentless hyperscaler demands. Furthermore, Goldman Sachs recently reported that global data center demand alone will require about $8.5 trillion in capital spending over that same timeframe, compounding the strain on global liquidity. But the spending pressure does not stop at corporate balance sheets; it requires unprecedented engineering of global financial plumbing.",
+      "parent_title": "Blackstone Just Warned The AI Debt Bubble Is Cracking",
+      "parent_video_id": "4Smnu2Fruk4",
+      "parent_url": "https://youtu.be/4Smnu2Fruk4",
+      "tags": [
+        "Blackstone AI debt warning",
+        "AI infrastructure funding",
+        "Jon Gray Blackstone",
+        "debt risks AI buildout",
+        "Pimco AI debt",
+        "AI capital spending",
+        "artificial intelligence debt",
+        "Blackstone President Jon Gray",
+        "AI market concentration risks",
+        "credit markets AI bubble",
+        "AI buildout financing",
+        "Goldman Sachs data center demand",
+        "BX stock"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-03_s3",
+      "created": "2026-11-03T17:00:41+00:00",
+      "date": "2026-11-03",
+      "asset_id": 706386948,
+      "size": 19545495,
+      "title": "Inside The Portfolio",
+      "text": "Despite these looming credit concerns, Gray remains fundamentally bullish on the underlying technology because real-world commercial demand is ferocious. Spending on artificial intelligence models across Blackstone portfolio companies has surged 20-fold over the past year as businesses harvest tangible financial benefits from automated coding, customer engagement, and content creation. Yet securing actual physical real estate sites, local power permits, scarce semiconductor chips, and the necessary capital remains exceptionally difficult. To combat these mounting pressures, companies are increasingly turning to structured transactions, public-private partnerships, and cash generated directly by hyperscalers to limit their reliance on raw debt. Gray emphasizes that intense creativity is mandatory because the scale of capital is enormous. The bottleneck is no longer just software brilliance or algorithmic superiority. It is whether the financial plumbing can survive a capital expenditure cycle unlike anything modern credit markets have ever attempted to digest, all while interest rates remain elevated and macroeconomic headwinds challenge over-leveraged market participants.",
+      "parent_title": "Blackstone Just Warned The AI Debt Bubble Is Cracking",
+      "parent_video_id": "4Smnu2Fruk4",
+      "parent_url": "https://youtu.be/4Smnu2Fruk4",
+      "tags": [
+        "Blackstone AI debt warning",
+        "AI infrastructure funding",
+        "Jon Gray Blackstone",
+        "debt risks AI buildout",
+        "Pimco AI debt",
+        "AI capital spending",
+        "artificial intelligence debt",
+        "Blackstone President Jon Gray",
+        "AI market concentration risks",
+        "credit markets AI bubble",
+        "AI buildout financing",
+        "Goldman Sachs data center demand",
+        "BX stock"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
