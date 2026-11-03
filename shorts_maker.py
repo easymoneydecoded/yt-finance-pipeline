@@ -63,7 +63,8 @@ def short_jobs(script: dict, audio: dict) -> list[dict]:
         idx = a["short_index"] - 1
         sh = script_shorts[idx] if idx < len(script_shorts) else {}
         jobs.append({"title": a.get("title") or sh.get("title", ""), "audio": INPUT_DIR / a["audio_file"],
-                     "visuals": sh.get("visuals", []), "text": a.get("text", ""), "trim": None})
+                     "visuals": sh.get("visuals", []), "text": a.get("text", ""), "trim": None,
+                     "hook": sh.get("hook_text") or a.get("title") or sh.get("title", "")})
     if jobs:
         return jobs[:MAX_SHORTS]
 
@@ -73,7 +74,7 @@ def short_jobs(script: dict, audio: dict) -> list[dict]:
         if a.get("section_type") == "body" and i < len(sections):
             jobs.append({"title": sections[i].get("title", ""), "audio": INPUT_DIR / a["audio_file"],
                          "visuals": sections[i].get("visuals", []), "text": a.get("text", ""),
-                         "trim": FALLBACK_MAX})
+                         "trim": FALLBACK_MAX, "hook": sections[i].get("title", "")})
     return jobs[:MAX_SHORTS]
 
 
@@ -119,7 +120,7 @@ def main() -> None:
             track, seg_log = tl.build_video_track(planned, lambda t: list(clips), total, SIZE, TEMP_DIR, tag)
             mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / f"mix{tag}.wav",
                                   tl.sfx_events(seg_log))
-            subs = tl.build_short_captions(words, TEMP_DIR / f"subs{tag}.ass")
+            subs = tl.build_short_captions(words, TEMP_DIR / f"subs{tag}.ass", hook=job["hook"], total=total)
             out = tl.render_final(track, mixed, subs, total, OUTPUT_DIR / f"short_{n}_{TODAY}.mp4",
                                   crf=20, vertical=True)
         except Exception as e:

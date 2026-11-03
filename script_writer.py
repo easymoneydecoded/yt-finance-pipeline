@@ -304,7 +304,11 @@ intro 1, each body 2-3, outro 0-1. Use at least 2 chart/fred visuals in the whol
 
 === 3 STANDALONE SHORTS ("shorts" list) ===
 Each Short is a separate 40-55 second vertical video (95-150 words) about ONE striking fact from this story:
-- First sentence <= 12 words, a pattern-breaking claim. No intro, no "did you know".
+- First sentence <= 12 words, a pattern-breaking claim with the number or the surprise in it. NEVER start
+  with "According to", a source name, "Did you know", "Today", "In a recent" or "So": viewers swipe
+  away in the first second. Put the source later in the Short.
+- "hook_text": 2-5 words shown huge on screen during the first 2 seconds: the most striking number or
+  claim (e.g. "$6.3B STOLEN", "BANKS WIN, YOU LOSE"). Not the title.
 - One idea, one payoff. Last sentence loops back into the first so it rewatches naturally.
 - Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" (same types/rules).
 
@@ -342,9 +346,9 @@ Return ONLY this JSON:
     {{"type": "outro", "text": "...", "visuals": [...]}}
   ],
   "shorts": [
-    {{"title": "...", "text": "...", "visuals": [...]}},
-    {{"title": "...", "text": "...", "visuals": [...]}},
-    {{"title": "...", "text": "...", "visuals": [...]}}
+    {{"title": "...", "hook_text": "...", "text": "...", "visuals": [...]}},
+    {{"title": "...", "hook_text": "...", "text": "...", "visuals": [...]}},
+    {{"title": "...", "hook_text": "...", "text": "...", "visuals": [...]}}
   ]
 }}
 """
@@ -444,7 +448,11 @@ Return ONLY JSON: {{"youtube_title": "...", "thumbnail_text": "..."}}
 
 SHORTS_PROMPT = """Write 3 standalone YouTube Shorts (vertical, 40-55 seconds, 95-150 words each) based on
 this video script. Each Short covers ONE striking fact from the story.
-- First sentence <= 12 words, a pattern-breaking claim. No intro, no "did you know".
+- First sentence <= 12 words, a pattern-breaking claim with the number or the surprise in it. NEVER start
+  with "According to", a source name, "Did you know", "Today", "In a recent" or "So": viewers swipe
+  away in the first second. Put the source later in the Short.
+- "hook_text": 2-5 words shown huge on screen during the first 2 seconds: the most striking number or
+  claim (e.g. "$6.3B STOLEN", "BANKS WIN, YOU LOSE"). Not the title.
 - One idea, one payoff. The last sentence loops back into the first so it rewatches naturally.
 - Every number must come from the fact sheet. Written for voice-over (no emojis, no parentheses).
 - Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" using ONLY these types:
@@ -459,7 +467,7 @@ SCRIPT:
 FACT SHEET:
 {fact_sheet}
 
-Return ONLY JSON: {{"shorts": [{{"title": "...", "text": "...", "visuals": [...]}}, ...3 items]}}
+Return ONLY JSON: {{"shorts": [{{"title": "...", "hook_text": "...", "text": "...", "visuals": [...]}}, ...3 items]}}
 """
 
 OUTRO_PROMPT = """This finance video script is missing its OUTRO. Write it (60-110 words, for voice-over):
@@ -901,16 +909,27 @@ def clean_sections(raw: dict) -> list[dict]:
     return out
 
 
+WEAK_OPENER = re.compile(r"^(according to [^,]{1,60},|did you know( that)?|so,?|today,?|in a recent [^,]{1,60},)\s*", re.I)
+
+
+def fix_opening(text: str) -> str:
+    """Quita la coletilla floja del arranque ("According to CNBC, ..."): en TikTok la mayoria se iba en
+    el segundo 1. La fuente se queda en el resto del Short."""
+    fixed = WEAK_OPENER.sub("", text, count=1)
+    return fixed[:1].upper() + fixed[1:] if fixed != text and fixed else text
+
+
 def clean_shorts(raw: dict) -> list[dict]:
     out = []
     for sh in raw.get("shorts", []) or []:
-        text = str(sh.get("text", "")).strip()
+        text = fix_opening(str(sh.get("text", "")).strip())
         if count_words(text) < SHORT_WORDS[0] * 0.6:
             continue
         out.append({
-            "title":   str(sh.get("title", "")).strip()[:90],
-            "text":    text,
-            "visuals": [v for v in sh.get("visuals", []) or [] if isinstance(v, dict)],
+            "title":     str(sh.get("title", "")).strip()[:90],
+            "hook_text": str(sh.get("hook_text", "")).strip()[:40],
+            "text":      text,
+            "visuals":   [v for v in sh.get("visuals", []) or [] if isinstance(v, dict)],
         })
     return out[:3]
 

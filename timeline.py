@@ -355,6 +355,8 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Default,Anton,104,&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,0,0,0,0,100,100,1,0,1,7,3,2,60,60,400,1
+Style: Hook,Anton,138,&H0000D7FF,&H0000D7FF,&H40000000,&HB4000000,0,0,0,0,100,100,1,0,3,18,0,8,70,70,330,1
+Style: Cta,Anton,82,&H00FFFFFF,&H00FFFFFF,&H40000000,&HB4000000,0,0,0,0,100,100,1,0,3,16,0,8,70,70,360,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -373,9 +375,21 @@ def build_long_subs(words: list[dict], out: Path) -> Path:
     return out
 
 
-def build_short_captions(words: list[dict], out: Path) -> Path:
-    """Captions grandes de 1-3 palabras; la palabra que suena va en amarillo."""
+HOOK_SECONDS = 2.5   # TikTok: la mayoria se iba en el segundo 1 (media de 2,5 s vistos de 52)
+CTA_SECONDS = 2.5
+
+
+def build_short_captions(words: list[dict], out: Path, hook: str = "", total: float = 0.0,
+                         cta: str = "FOLLOW FOR DAILY\\NMARKET NEWS") -> Path:
+    """Captions grandes de 1-3 palabras; la palabra que suena va en amarillo. Con 'hook', el titular
+    del Short sale enorme arriba los primeros segundos (el primer plano suele ser b-roll que no dice
+    nada); con 'total', una llamada a seguir al final (solo texto: la voz cierra en bucle)."""
     lines = [ASS_SHORT]
+    if hook:
+        pop = r"{\fscx70\fscy70\t(0,160,\fscx100\fscy100)}"
+        lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(HOOK_SECONDS)},Hook,,0,0,0,,{pop}{_clean(hook).upper()}")
+    if total > HOOK_SECONDS + CTA_SECONDS + 5:
+        lines.append(f"Dialogue: 1,{ass_time(total - CTA_SECONDS)},{ass_time(total)},Cta,,0,0,0,,{cta}")
     for c in chunk_words(words, max_chars=16, max_words=3, max_sec=1.4):
         group = [w for w in words if c["start"] <= w["start"] <= c["end"]]
         for k, w in enumerate(group):
