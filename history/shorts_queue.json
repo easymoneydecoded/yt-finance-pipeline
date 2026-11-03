@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T17:00:41+00:00",
+  "updated": "2026-11-03T19:17:39+00:00",
   "pending": 3,
   "items": [
     {
@@ -451,18 +451,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "O89oeaABZyU",
+          "at": "2026-11-03T19:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7704025677121013782",
+          "at": "2026-11-03T19:17+00:00"
         }
-      }
+      },
+      "youtube_title": "The Concentration Trap"
     },
     {
       "id": "2026-11-03_s2",
