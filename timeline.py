@@ -346,6 +346,7 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Default,DejaVu Sans,58,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,4,1,2,120,120,48,1
+Style: Subscribe,Anton,62,&H00FFFFFF,&H00FFFFFF,&H000000E6,&H64000000,0,0,0,0,100,100,2,0,3,14,0,3,90,90,190,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -372,10 +373,20 @@ def _clean(text: str) -> str:
     return text.replace("{", "").replace("}", "").replace("\n", " ").strip()
 
 
-def build_long_subs(words: list[dict], out: Path) -> Path:
+SUBSCRIBE_EARLY = 90.0   # el primer recordatorio, cuando el espectador ya esta enganchado
+SUBSCRIBE_END = 8.0      # el ultimo, mientras el outro pide la suscripcion
+
+
+def build_long_subs(words: list[dict], out: Path, total: float = 0.0) -> Path:
+    """Subtitulos del video largo; con 'total', un boton rojo de SUBSCRIBE abajo a la derecha hacia el
+    minuto 1:30 y en los ultimos segundos."""
     lines = [ASS_LONG]
     for c in chunk_words(words, max_chars=44, max_words=9, max_sec=3.2):
         lines.append(f"Dialogue: 0,{ass_time(c['start'])},{ass_time(c['end'] + 0.1)},Default,,0,0,0,,{_clean(c['text'])}")
+    pop = r"{\fscx60\fscy60\t(0,200,\fscx100\fscy100)}"
+    for a, b in ((SUBSCRIBE_EARLY, SUBSCRIBE_EARLY + 5), (total - SUBSCRIBE_END, total)):
+        if total > 3 * 60 and a > 0:
+            lines.append(f"Dialogue: 1,{ass_time(a)},{ass_time(b)},Subscribe,,0,0,0,,{pop}SUBSCRIBE")
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
 

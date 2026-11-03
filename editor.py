@@ -112,7 +112,7 @@ def main() -> None:
 
     print("\n5/6  Audio + subtitulos...")
     mixed = tl.mix_music(voice, total, MUSIC_DIR, MUSIC_VOLUME, TEMP_DIR / "mix.wav", tl.sfx_events(seg_log))
-    subs = tl.build_long_subs(words, TEMP_DIR / "subs.ass")
+    subs = tl.build_long_subs(words, TEMP_DIR / "subs.ass", total=total)
 
     print("\n6/6  Render final...")
     final = tl.render_final(track, mixed, subs, total, OUTPUT_DIR / f"video_{TODAY}.mp4")
