@@ -281,7 +281,9 @@ def mix_music(voice: Path, duration: float, music_dir: Path, volume: float, out:
     """Voz normalizada (-16 LUFS) + musica de fondo + efectos de sonido."""
     tracks = sorted(music_dir.glob("*.mp3")) + sorted(music_dir.glob("*.wav"))
     inputs = ["-i", str(voice)]
-    filters = ["[0:a]loudnorm=I=-16:TP=-1.5:LRA=11[v]"]
+    # Silencio al final ANTES de loudnorm: su ventana de ~3 s no se vaciaba al acabar el audio (ffmpeg de
+    # Ubuntu) y los Shorts perdian la ultima frase (audio 51,0 s en un video de 53,9 s). El -t recorta luego.
+    filters = ["[0:a]apad=pad_dur=4,loudnorm=I=-16:TP=-1.5:LRA=11[v]"]
     labels = ["[v]"]
     if tracks:
         chosen = random.choice(tracks)
@@ -302,6 +304,9 @@ def mix_music(voice: Path, duration: float, music_dir: Path, volume: float, out:
     run(["ffmpeg", "-y", "-loglevel", "error", *inputs, "-filter_complex", ";".join(filters),
          "-map", "[out]", "-c:a", "pcm_s16le", "-ar", "44100", "-t", f"{duration:.3f}", str(out)],
         f"mezclando voz + musica + {len(events or [])} efectos")
+    mixed = ffprobe_duration(out)
+    if mixed < duration - 0.2:
+        print(f"   ! la mezcla dura {mixed:.1f}s y la voz {duration:.1f}s: el final saldra sin audio")
     return out
 
 
