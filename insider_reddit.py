@@ -141,7 +141,90 @@ def main(preview: bool = False) -> None:
         print("Sin compras esta semana")
         return
     title, body = build_post(start, end, week)
-    sub = SUBREDDITS[end.isocalendar().week % len(SUBREDDITS)]
+    send_post(SUBREDDITS[end.isocalendar().week % len(SUBREDDITS)], title, body, "Post de Reddit de la semana", preview)
+
+
+# ---------------------------------------------------------------------------
+# Post del miercoles: una sola compra destacada (otro formato y otro subreddit que el del domingo)
+# ---------------------------------------------------------------------------
+MIDWEEK_SUBS = ["ValueInvesting", "StockMarket", "insiderData"]
+MIN_CAP = 2e9   # "empresa conocida": se prefieren las de 2.000 M$ o mas de capitalizacion
+
+
+def market_info(ticker: str) -> tuple[float | None, float | None, float | None]:
+    """(capitalizacion, ultimo cierre, maximo de 52 semanas) con yfinance; None si no hay datos."""
+    try:
+        import yfinance as yf
+        t = yf.Ticker(ticker.replace(".", "-"))
+        h = t.history(period="1y")["Close"].dropna()
+        cap = getattr(t.fast_info, "market_cap", None)
+        return cap, (float(h.iloc[-1]) if len(h) else None), (float(h.max()) if len(h) else None)
+    except Exception:
+        return None, None, None
+
+
+def pick_midweek(week: list[dict]) -> tuple[dict, float | None, float | None, float | None] | None:
+    """La compra de un directivo (no un fondo) mas grande de la semana, en una empresa de 2.000 M$+ si la hay."""
+    cands = sorted((dict(b, ticker=site.clean_ticker(b["ticker"])) for b in merge_by_person(week) if is_person(b)),
+                   key=lambda b: -b["value"])[:12]
+    infos = [(b, *market_info(b["ticker"])) for b in cands if b["ticker"]]
+    grandes = [x for x in infos if x[1] and x[1] >= MIN_CAP]
+    return (grandes or infos or [None])[0]
+
+
+def build_midweek(b: dict, cap, close, high, rows: list[dict]) -> tuple[str, str]:
+    company, role = site.short(b["issuer"], 40), b["role"].split(",")[0].strip()
+    tk = b["ticker"]
+    same = [x for x in rows if site.clean_ticker(x["ticker"]) == tk]
+    before = [x for x in same if x["filed"] < b["filed"]]
+    since = min(x["filed"] for x in rows)
+    first = not before
+    title = f"{company} (${tk}) {role} just bought {ia.money(b['value'])} of stock on the open market"
+    if first:
+        title += f" — the first insider buy there since at least {date.fromisoformat(since):%B %Y}"
+    lines = [f"{site.person(b)}, {b['role']} of {company}, bought {b['shares']:,.0f} shares at ${b['price']:,.2f} "
+             f"(about {ia.money(b['value'])}), according to a Form 4 filed on {ia.nice_date(b['filed'])}. "
+             "Open-market purchase (code P): cash at market price, not options or a grant.", "", "Some context:", ""]
+    if b["stake_change"] is not None:
+        lines.append(f"- It increased their holdings by {b['stake_change']:.0f}%." if b["stake_change"] <= 999
+                     else "- It increased their holdings more than tenfold.")
+    elif ia.is_new_position(b):
+        lines.append("- It is a new position: they had no shares before.")
+    if close and high:
+        drop = close / high - 1
+        lines.append(f"- {tk} closed at ${close:,.2f}, {abs(drop) * 100:.0f}% below its 52-week high of ${high:,.2f}."
+                     if drop < -0.03 else f"- {tk} closed at ${close:,.2f}, close to its 52-week high.")
+    if cap:
+        lines.append(f"- Market cap: about {ia.money(cap)}.")
+    others = {x["owner_cik"] for x in same if x["owner_cik"] != b["owner_cik"]
+              and x["filed"] >= (date.fromisoformat(b["filed"]) - timedelta(days=90)).isoformat()}
+    if others:
+        lines.append(f"- {len(others)} other insider{'s' if len(others) > 1 else ''} also bought {tk} in the last 90 days.")
+    lines.append(f"- First open-market insider purchase at {company} in the filings I track (since {date.fromisoformat(since):%b %Y})."
+                 if first else f"- {len({x['owner_cik'] for x in before})} insider(s) bought {tk} before this, in the filings I track.")
+    if b["plan"]:
+        lines.append("- It was pre-scheduled under a 10b5-1 plan, which is usually a weaker signal.")
+    lines += ["", f"Source: [SEC filing]({site.sec_url(b)})", "",
+              "Insiders sell for many reasons but usually buy for one. Does this change how you look at the stock?", "",
+              "I track every insider buy (full list by stock and a free daily Telegram channel, linked in my profile). "
+              "Not financial advice."]
+    return title, "\n".join(lines)
+
+
+def midweek(preview: bool = False) -> None:
+    start, end, week = week_data()
+    pick = pick_midweek(week) if week else None
+    if not pick:
+        print("Sin compras de directivos esta semana")
+        return
+    title, body = build_midweek(*pick, list(site.load_buys().values()))
+    n = end.isocalendar().week
+    sunday = SUBREDDITS[n % len(SUBREDDITS)]
+    sub = next(s for i in range(3) if (s := MIDWEEK_SUBS[(n + i) % 3]) != sunday)
+    send_post(sub, title, body, "Post de Reddit del miércoles (compra destacada)", preview)
+
+
+def send_post(sub: str, title: str, body: str, label: str, preview: bool) -> None:
     url = f"https://www.reddit.com/r/{sub}/submit?" + urlencode({"selftext": "true", "title": title, "text": body})
     if len(url) > MAX_URL:
         url = f"https://www.reddit.com/r/{sub}/submit?" + urlencode({"selftext": "true", "title": title})
@@ -149,7 +232,7 @@ def main(preview: bool = False) -> None:
     if preview:
         return
 
-    msg = (f"📝 <b>Post de Reddit de la semana</b> → r/{sub}\n"
+    msg = (f"📝 <b>{label}</b> → r/{sub}\n"
            f"Pulsa el botón, revisa y dale a <b>Post</b>. Si el texto no aparece rellenado, cópialo de abajo.\n\n"
            f"<b>{notify.esc(title)}</b>\n\n<pre>{html.escape(body[:3300])}</pre>")
     if not notify.enabled():
@@ -199,5 +282,7 @@ def telegram_weekly(preview: bool = False) -> None:
 if __name__ == "__main__":
     if sys.argv[1:2] == ["weekly"]:
         telegram_weekly(preview=sys.argv[2:3] == ["preview"])
+    elif sys.argv[1:2] == ["midweek"]:
+        midweek(preview=sys.argv[2:3] == ["preview"])
     else:
         main(preview=sys.argv[1:2] == ["preview"])

@@ -11,13 +11,14 @@ on:
     - cron: '23 0-2 * * 2-6'
     - cron: '40 3 * * 2-6'
     - cron: '7 16 * * 0'          # domingo: post de Reddit + resumen semanal en Telegram (insider_reddit.py)
+    - cron: '7 16 * * 3'          # miercoles: post de Reddit con una compra destacada (insider_reddit.py midweek)
     - cron: '33 16 * * 1-5'       # mediodia en Nueva York: un aviso premium con retraso en el canal gratis
   workflow_dispatch:
     inputs:
       mode:
         description: 'scan = avisos nuevos · recap = scan + resumen + web + redes · site = solo web · check = comprobar bot y canales'
         type: choice
-        options: [scan, recap, teaser, site, reddit, weekly, check]
+        options: [scan, recap, teaser, site, reddit, midweek, weekly, check]
         default: scan
       dry_run:
         description: 'Modo prueba: escribe los mensajes en el log en vez de enviarlos'
@@ -78,6 +79,7 @@ jobs:
             case "${{ github.event.schedule }}" in
               "40 3 * * 2-6") MODE=recap ;;
               "7 16 * * 0")   MODE=reddit ;;
+              "7 16 * * 3")   MODE=midweek ;;
               "33 16 * * 1-5") MODE=teaser ;;
               *)              MODE=scan ;;
             esac
@@ -91,6 +93,7 @@ jobs:
             reddit) python insider_reddit.py weekly && python insider_reddit.py
                     python insider_alerts.py performance || true ;;   # balance de los avisos en premium
             weekly) python insider_alerts.py performance || true ;;   # + resumen semanal en redes (paso Redes)
+            midweek) python insider_reddit.py midweek ;;
             *)     python insider_alerts.py scan ;;
           esac
 
