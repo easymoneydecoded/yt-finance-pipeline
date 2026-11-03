@@ -77,6 +77,25 @@ def week_summary(start: date, end: date, week: list[dict]):
     return by, clusters, people, span
 
 
+def last_week_results(start: date) -> list[str]:
+    """Como han ido los cluster buys de la semana anterior desde la compra (todos, suban o bajen):
+    da una razon para volver cada semana. Misma rentabilidad que la web (site.since_buy)."""
+    rows = list(site.load_buys().values())
+    prev_start, prev_end = start - timedelta(days=7), start - timedelta(days=1)
+    prev = [dict(b, ticker=site.clean_ticker(b["ticker"])) for b in rows
+            if prev_start.isoformat() <= b["filed"] <= prev_end.isoformat() and not is_spac(b)]
+    _, clusters, _, span = week_summary(prev_start, prev_end, prev)
+    site.load_prices(start + timedelta(days=7))
+    res = [(t, r) for t, bs in clusters if (r := site.total_return(bs)) is not None]
+    if not res:
+        return []
+    up = sum(1 for _, r in res if r > 0)
+    items = ", ".join(f"${t} {r * 100:+.0f}%" if abs(r) >= 0.1 else f"${t} {r * 100:+.1f}%"
+                      for t, r in sorted(res, key=lambda x: -x[1]))
+    return [f"How last week's cluster buys ({span}) have done since the insiders bought: {items}. "
+            f"{up} of {len(res)} are up so far.", ""]
+
+
 def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
     by, clusters, people, span = week_summary(start, end, week)
 
@@ -87,6 +106,7 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
              "",
              f"This week: {len(week)} insider buys worth {ia.money(sum(b['value'] for b in week))} "
              f"across {len(by)} stocks.", ""]
+    lines += last_week_results(start)
     if clusters:
         lines += ["Cluster buys (2+ different insiders buying the same stock):", "",
                   "| Ticker | Company | Insiders | Total bought | Who |", "|---|---|---|---|---|"]
@@ -109,7 +129,9 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
         lines += [f"{plans} of this week's buys were pre-scheduled under 10b5-1 plans, which are usually a weaker signal.", ""]
     lines += ["Insiders sell for many reasons, but they usually buy for one. Curious which of these you'd look into "
               "and which look like noise.", "",
-              "Data straight from SEC EDGAR. I keep the full list by stock at tickerpress.net. Not financial advice."]
+              "Data straight from SEC EDGAR. I keep the full list by stock (with how each buy has done since) at "
+              "tickerpress.net, and I post the day's buys on a free Telegram channel, both linked in my profile. "
+              "Not financial advice."]
     return title, "\n".join(lines)
 
 
