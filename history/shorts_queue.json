@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-03T19:17:39+00:00",
-  "pending": 3,
+  "updated": "2026-11-03T20:57:08+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -457,9 +457,11 @@
           "at": "2026-11-03T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
+          "status": "done",
           "attempts": 1,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}",
+          "id": "18129844271513834",
+          "at": "2026-11-03T20:57+00:00"
         },
         "tiktok": {
           "status": "done",
