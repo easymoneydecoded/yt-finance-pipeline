@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T23:11:18+00:00",
+  "updated": "2026-11-03T12:50:14+00:00",
   "n_videos": 34,
   "videos": [
     {
@@ -104,7 +104,15 @@
         "J3RuImHGiJc",
         "PexyRzLq-_A",
         "d58_8OIl7Zc"
-      ]
+      ],
+      "stats": {
+        "views": 0,
+        "likes": 0,
+        "comments": 1,
+        "updated": "2026-11-03T12:50:14+00:00",
+        "source": "api",
+        "shorts_views": 175
+      }
     },
     {
       "date": "2026-11-01",
@@ -207,12 +215,12 @@
         "yvEjsYcUjEQ"
       ],
       "stats": {
-        "views": 1,
+        "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
-        "shorts_views": 141
+        "shorts_views": 164
       }
     },
     {
@@ -310,9 +318,12 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
-        "shorts_views": 209
+        "shorts_views": 206,
+        "avg_view_sec": 179.0,
+        "avg_view_pct": 37.5,
+        "subs_gained": 0
       },
       "tpl_done": [
         "4SQwFbLV4Ao",
@@ -410,10 +421,10 @@
         "uHSjshPOtpY"
       ],
       "stats": {
-        "views": 2,
+        "views": 4,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "shorts_views": 214,
         "avg_view_sec": 134.0,
@@ -443,7 +454,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -461,7 +472,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -479,7 +490,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -500,7 +511,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -519,7 +530,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -540,7 +551,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -562,7 +573,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -582,8 +593,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 7,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "views": 8,
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -605,7 +616,7 @@
       "seed": true,
       "stats": {
         "views": 40,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -628,7 +639,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -650,7 +661,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -673,7 +684,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -696,7 +707,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -719,7 +730,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -742,7 +753,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -764,7 +775,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0
@@ -783,7 +794,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -805,7 +816,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -827,7 +838,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -849,7 +860,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -872,7 +883,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -894,7 +905,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -916,7 +927,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -938,7 +949,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -960,7 +971,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -982,7 +993,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1004,7 +1015,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1025,7 +1036,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1047,7 +1058,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1069,7 +1080,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-02T13:32:36+00:00",
+        "updated": "2026-11-03T12:50:14+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
