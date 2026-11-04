@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-04T13:03:26+00:00",
+  "updated": "2026-11-04T15:17:04+00:00",
   "n_videos": 35,
   "videos": [
     {
@@ -65,11 +65,13 @@
       ],
       "shorts_titles": [
         "The Concentration Trap",
-        "Too Much For Markets"
+        "Too Much For Markets",
+        "Inside The Portfolio"
       ],
       "shorts_ids": [
         "O89oeaABZyU",
-        "VbbD6zPyfaA"
+        "VbbD6zPyfaA",
+        "pL_VsZ1z-fc"
       ],
       "publish_at": "2026-11-03T17:00+00:00",
       "shorts_publish_at": [],
@@ -82,12 +84,14 @@
       "cta_done": [
         "4Smnu2Fruk4",
         "O89oeaABZyU",
-        "VbbD6zPyfaA"
+        "VbbD6zPyfaA",
+        "pL_VsZ1z-fc"
       ],
       "tpl_done": [
         "4Smnu2Fruk4",
         "O89oeaABZyU",
-        "VbbD6zPyfaA"
+        "VbbD6zPyfaA",
+        "pL_VsZ1z-fc"
       ],
       "stats": {
         "views": 0,
