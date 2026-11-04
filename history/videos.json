@@ -1,7 +1,85 @@
 {
-  "updated": "2026-11-04T15:17:04+00:00",
-  "n_videos": 35,
+  "updated": "2026-11-04T17:26:49+00:00",
+  "n_videos": 36,
   "videos": [
+    {
+      "date": "2026-11-04",
+      "video_id": "ty8LYtV03U4",
+      "url": "https://youtu.be/ty8LYtV03U4",
+      "title": "How Bill Ackman's $388B Bet Rewires Your Mortgage",
+      "thumbnail_text": "$388B HOUSING BET",
+      "topic_key": "fannie mae freddie mac bill ackman conservatorship",
+      "entities": [
+        "Fannie Mae",
+        "Freddie Mac",
+        "Bill Ackman"
+      ],
+      "format": "explainer of a hidden mechanism",
+      "title_style": "HOW IT WORKS",
+      "keywords": [
+        "fannie mae freddie mac conservatorship",
+        "bill ackman housing bet",
+        "mortgage market changes 2026",
+        "government sponsored enterprises"
+      ],
+      "source_headlines": [
+        "Fannie Mae, Freddie Mac rally as Ackman presses for conservatorship exit"
+      ],
+      "source_urls": [
+        "https://www.cnbc.com/2026/11/03/ackman-fannie-mae-freddie-mac-conservatorship.html"
+      ],
+      "thumb_layout": "center",
+      "thumb_color": "red",
+      "thumb_pexels_id": 8246440,
+      "broll_pexels_ids": [
+        35904585,
+        33389406,
+        38440687,
+        39212846,
+        37298361,
+        13175364,
+        39481292,
+        38698437,
+        10803350,
+        5597031,
+        5920904,
+        6023463,
+        37489138,
+        36229320,
+        38859052,
+        38754634,
+        8246440,
+        8052731,
+        8705296,
+        39886150,
+        6780083,
+        6700020,
+        7577972,
+        8293018,
+        6963480,
+        855232,
+        32883960,
+        4203565,
+        8061607,
+        7735489,
+        7577931,
+        8471048,
+        7822029,
+        7821646,
+        8170599,
+        8426049,
+        4928880,
+        10452985
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-04T17:26+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Do you think privatizing Fannie and Freddie will drive mortgage rates higher or lower for home buyers?",
+      "playlist": "Housing & Mortgages",
+      "quality": 6.8,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-03",
       "video_id": "4Smnu2Fruk4",
@@ -97,9 +175,9 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
-        "shorts_views": 74
+        "shorts_views": 76
       }
     },
     {
@@ -209,7 +287,7 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "shorts_views": 178
       }
@@ -318,7 +396,7 @@
         "views": 4,
         "likes": 0,
         "comments": 21,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "shorts_views": 174,
         "avg_view_sec": 228.0,
@@ -421,7 +499,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "shorts_views": 206,
         "avg_view_sec": 145.0,
@@ -527,7 +605,7 @@
         "views": 4,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "shorts_views": 214,
         "avg_view_sec": 134.0,
@@ -557,7 +635,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -578,7 +656,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -599,7 +677,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -620,7 +698,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -639,7 +717,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -660,7 +738,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -682,7 +760,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -703,7 +781,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -725,7 +803,7 @@
       "seed": true,
       "stats": {
         "views": 43,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -748,7 +826,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -770,7 +848,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -793,7 +871,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -816,7 +894,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -839,7 +917,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -862,7 +940,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -884,7 +962,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -906,7 +984,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -928,7 +1006,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -950,7 +1028,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -972,7 +1050,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -995,7 +1073,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1017,7 +1095,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1039,7 +1117,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1061,7 +1139,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1083,7 +1161,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1105,7 +1183,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1127,7 +1205,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1148,7 +1226,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1170,7 +1248,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1192,7 +1270,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-04T13:03:26+00:00",
+        "updated": "2026-11-04T16:46:35+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,

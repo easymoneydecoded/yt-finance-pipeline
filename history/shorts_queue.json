@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-04T15:17:03+00:00",
-  "pending": 1,
+  "updated": "2026-11-04T17:26:49+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -566,6 +566,120 @@
         }
       },
       "youtube_title": "Inside The Portfolio"
+    },
+    {
+      "id": "2026-11-04_s1",
+      "created": "2026-11-04T17:26:44+00:00",
+      "date": "2026-11-04",
+      "asset_id": 710313551,
+      "size": 14011934,
+      "title": "Bill Ackman's 10-Fold Housing Bet Explained",
+      "text": "Can a ten fold gain actually happen when Fannie Mae and Freddie Mac leave government control? Pershing Square holds stakes in both home loan giants, which surged over 60 percent from October 14 to Monday. They have been stuck in federal conservatorship since September 2008 following the financial crisis. According to CNBC, Treasury Secretary Scott Bessent suggested the administration could tackle the 388 billion dollar government ownership stake over the next two years. Ackman believes privatizing these entities will stop political meddling, while Washington promises mortgage spreads will not increase for everyday homebuyers. A ten fold gain remains his target.",
+      "parent_title": "How Bill Ackman's $388B Bet Rewires Your Mortgage",
+      "parent_video_id": "ty8LYtV03U4",
+      "parent_url": "https://youtu.be/ty8LYtV03U4",
+      "tags": [
+        "fannie mae freddie mac conservatorship",
+        "bill ackman housing bet",
+        "mortgage market changes 2026",
+        "government sponsored enterprises",
+        "scott bessent mortgage spreads",
+        "pershing square fannie mae",
+        "30 year mortgage rate today",
+        "fannie mae stock rally",
+        "freddie mac privatization",
+        "mortgage backed securities explained"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-04_s2",
+      "created": "2026-11-04T17:26:46+00:00",
+      "date": "2026-11-04",
+      "asset_id": 710313649,
+      "size": 17949297,
+      "title": "How the 388 Billion Dollar Mortgage Trap Works",
+      "text": "Who controls the 388 billion dollar stake trapping your home loans inside the federal government? Fannie Mae and Freddie Mac package debt into mortgage-backed securities, but they have been under government control since 2008. CNBC reports that stock prices jumped 3 percent on Tuesday as investors anticipate a conservatorship exit after the midterms. Treasury Secretary Scott Bessent stated that making mortgages affordable will guide the decision next year or the year after. The big fear is whether privatization will increase mortgage spreads above the 10 Year Treasury Yield, making home loans more expensive. That is how the government holds a 388 billion dollar stake.",
+      "parent_title": "How Bill Ackman's $388B Bet Rewires Your Mortgage",
+      "parent_video_id": "ty8LYtV03U4",
+      "parent_url": "https://youtu.be/ty8LYtV03U4",
+      "tags": [
+        "fannie mae freddie mac conservatorship",
+        "bill ackman housing bet",
+        "mortgage market changes 2026",
+        "government sponsored enterprises",
+        "scott bessent mortgage spreads",
+        "pershing square fannie mae",
+        "30 year mortgage rate today",
+        "fannie mae stock rally",
+        "freddie mac privatization",
+        "mortgage backed securities explained"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-04_s3",
+      "created": "2026-11-04T17:26:49+00:00",
+      "date": "2026-11-04",
+      "asset_id": 710313781,
+      "size": 18189710,
+      "title": "Will Privatizing Fannie Mae Raise Your Mortgage Rate?",
+      "text": "Will your 30 year mortgage rate at 7.24 percent explode if Wall Street privatizes Fannie Mae and Freddie Mac? Bill Ackman is lobbying to free both entities from federal conservatorship, where they have stayed since 2010 OTC delisting. Treasury Secretary Scott Bessent assured buyers on 2Way's podcast that any plan will prevent mortgage spreads over the 10 Year Treasury Yield from rising. But privatizing these giants requires recapitalization and handling a 388 billion dollar Treasury stake. If secondary markets demand higher yields, everyday buyers will feel the squeeze when taking out a 7.24 percent home loan.",
+      "parent_title": "How Bill Ackman's $388B Bet Rewires Your Mortgage",
+      "parent_video_id": "ty8LYtV03U4",
+      "parent_url": "https://youtu.be/ty8LYtV03U4",
+      "tags": [
+        "fannie mae freddie mac conservatorship",
+        "bill ackman housing bet",
+        "mortgage market changes 2026",
+        "government sponsored enterprises",
+        "scott bessent mortgage spreads",
+        "pershing square fannie mae",
+        "30 year mortgage rate today",
+        "fannie mae stock rally",
+        "freddie mac privatization",
+        "mortgage backed securities explained"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
