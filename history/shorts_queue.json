@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-04T17:26:49+00:00",
-  "pending": 4,
+  "updated": "2026-11-04T19:17:21+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -554,9 +554,11 @@
           "at": "2026-11-04T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
+          "status": "done",
           "attempts": 1,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}",
+          "id": "18126865117912690",
+          "at": "2026-11-04T19:13+00:00"
         },
         "tiktok": {
           "status": "done",
@@ -592,18 +594,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "IP0RrxieQMI",
+          "at": "2026-11-04T19:13+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18454504804127163",
+          "at": "2026-11-04T19:15+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7704396856758978582",
+          "at": "2026-11-04T19:17+00:00"
         }
-      }
+      },
+      "youtube_title": "Bill Ackman's 10-Fold Housing Bet Explained"
     },
     {
       "id": "2026-11-04_s2",

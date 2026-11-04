@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-04T17:26:49+00:00",
+  "updated": "2026-11-04T19:17:23+00:00",
   "n_videos": 36,
   "videos": [
     {
@@ -71,14 +71,28 @@
         4928880,
         10452985
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Bill Ackman's 10-Fold Housing Bet Explained"
+      ],
+      "shorts_ids": [
+        "IP0RrxieQMI"
+      ],
       "publish_at": "2026-11-04T17:26+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Do you think privatizing Fannie and Freddie will drive mortgage rates higher or lower for home buyers?",
       "playlist": "Housing & Mortgages",
       "quality": 6.8,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugxv1_0YljCX5OVVaz54AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "IP0RrxieQMI",
+        "ty8LYtV03U4"
+      ],
+      "tpl_done": [
+        "IP0RrxieQMI",
+        "ty8LYtV03U4"
+      ]
     },
     {
       "date": "2026-11-03",
