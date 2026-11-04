@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-04T19:17:23+00:00",
+  "updated": "2026-11-04T23:15:11+00:00",
   "n_videos": 36,
   "videos": [
     {
@@ -72,10 +72,12 @@
         10452985
       ],
       "shorts_titles": [
-        "Bill Ackman's 10-Fold Housing Bet Explained"
+        "Bill Ackman's 10-Fold Housing Bet Explained",
+        "How the 388 Billion Dollar Mortgage Trap Works"
       ],
       "shorts_ids": [
-        "IP0RrxieQMI"
+        "IP0RrxieQMI",
+        "g5Oj6I9mq1U"
       ],
       "publish_at": "2026-11-04T17:26+00:00",
       "shorts_publish_at": [],
@@ -87,10 +89,12 @@
       "shorts_commented": [],
       "cta_done": [
         "IP0RrxieQMI",
+        "g5Oj6I9mq1U",
         "ty8LYtV03U4"
       ],
       "tpl_done": [
         "IP0RrxieQMI",
+        "g5Oj6I9mq1U",
         "ty8LYtV03U4"
       ]
     },

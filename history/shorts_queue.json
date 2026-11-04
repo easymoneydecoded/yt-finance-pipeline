@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-04T19:17:21+00:00",
-  "pending": 2,
+  "updated": "2026-11-04T23:15:10+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -639,18 +639,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "g5Oj6I9mq1U",
+          "at": "2026-11-04T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18504900931102322",
+          "at": "2026-11-04T23:15+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "solo-telegram",
+          "at": "2026-11-04T23:15+00:00"
         }
-      }
+      },
+      "youtube_title": "How the 388 Billion Dollar Mortgage Trap Works"
     },
     {
       "id": "2026-11-04_s3",
