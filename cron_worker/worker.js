@@ -1,21 +1,25 @@
-// Despertador de respaldo para los Shorts: GitHub a veces no lanza sus crons (sobre todo en fin de semana).
-// A las :10 de cada franja (15, 19 y 23 UTC) pide a GitHub que ejecute social.yml. Si GitHub ya publico esa
-// franja, social_publisher.py lo sabe (history/social_slots.json) y no repite; el grupo de concurrencia evita
-// que dos ejecuciones publiquen a la vez.
+// Despertador de respaldo: GitHub a veces retrasa horas o se salta sus crons (sobre todo en fin de semana).
+// - A las :10 de cada franja (15, 19 y 23 UTC) pide a GitHub que ejecute social.yml (Shorts). Si GitHub ya
+//   publico esa franja, social_publisher.py lo sabe (history/social_slots.json) y no repite.
+// - A las 9:35 UTC lanza el episodio diario de Zibu (zibu-stories/daily.yml con auto=true): si hoy ya hay
+//   episodio, el workflow no hace nada. En los dos, el grupo de concurrencia evita ejecuciones a la vez.
+const JOBS = {
+  "35 9 * * *": { repo: "easymoneydecoded/zibu-stories", workflow: "daily.yml", inputs: { auto: "true" } },
+  default: { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "social.yml", inputs: undefined },
+};
+
 export default {
   async scheduled(event, env, ctx) {
-    const r = await fetch(
-      "https://api.github.com/repos/easymoneydecoded/yt-finance-pipeline/actions/workflows/social.yml/dispatches",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${env.GH_TOKEN}`,
-          Accept: "application/vnd.github+json",
-          "User-Agent": "tickerpress-cron",
-        },
-        body: JSON.stringify({ ref: "main" }),
+    const job = JOBS[event.cron] || JOBS.default;
+    const r = await fetch(`https://api.github.com/repos/${job.repo}/actions/workflows/${job.workflow}/dispatches`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.GH_TOKEN}`,
+        Accept: "application/vnd.github+json",
+        "User-Agent": "tickerpress-cron",
       },
-    );
-    console.log("dispatch social.yml:", r.status, await r.text());
+      body: JSON.stringify({ ref: "main", ...(job.inputs ? { inputs: job.inputs } : {}) }),
+    });
+    console.log(`dispatch ${job.repo}/${job.workflow}:`, r.status, await r.text());
   },
 };
