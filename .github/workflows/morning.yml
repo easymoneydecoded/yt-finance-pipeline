@@ -52,7 +52,7 @@ jobs:
     needs: check
     if: needs.check.outputs.skip != 'true'
     runs-on: ubuntu-24.04   # fijado: ubuntu-latest pasa a Ubuntu 26 y podria cambiar paquetes
-    timeout-minutes: 150
+    timeout-minutes: 210
 
     steps:
       - name: Descargar el codigo del repositorio
@@ -99,7 +99,7 @@ jobs:
         run: python morning_pipeline.py
 
       - name: Etapa 2 - Guion, juez de calidad y fact-check
-        timeout-minutes: 45
+        timeout-minutes: 75   # el guionista reescribe hasta 60 min antes de publicar el mejor guion
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python script_writer.py

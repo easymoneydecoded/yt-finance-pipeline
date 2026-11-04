@@ -67,11 +67,12 @@ MAX_METADATA_RETRIES = 3
 
 # Juez de calidad
 QUALITY_THRESHOLD    = 7.5   # nota para aceptar a la primera
-MIN_PUBLISH_SCORE    = 6.5   # por debajo de esto, no se publica nada
+MIN_PUBLISH_SCORE    = 6.5   # nota que se busca antes de publicar
 MAX_IDEAS_TO_TRY     = 3
-# Presupuesto de tiempo: si Gemini va lento (saturado), no se prueban mas ideas
-# ni reescrituras y se usa el mejor guion conseguido (si pasa la nota minima)
-STAGE_BUDGET_SEC     = 28 * 60
+MAX_REWRITES         = 3     # reescrituras por idea con las correcciones del juez
+# Presupuesto de tiempo: se reescribe y se prueban ideas (dando vueltas a la lista) hasta llegar a la nota
+# o agotarlo. Nunca un dia sin video: si nada llega a MIN_PUBLISH_SCORE, se publica el mejor guion.
+STAGE_BUDGET_SEC     = 60 * 60
 _T0                  = time.time()
 
 
@@ -758,18 +759,24 @@ def best_script_for_idea(idea: dict, payload: dict, history: list[dict]) -> tupl
     if verdict["overall"] >= QUALITY_THRESHOLD or verdict.get("unavailable"):
         return raw, verdict, ctx
 
-    if over_budget(margin_sec=6 * 60):
-        print("   . Sin tiempo para reescribir, me quedo con esta version")
-        return raw, verdict, ctx
-    print(f"   . Nota {verdict['overall']} < {QUALITY_THRESHOLD}: reescribo con las correcciones del juez...")
-    try:
-        raw2 = rewrite(raw, verdict, ctx)
-        if measure_script(raw2)["total_words"] >= MIN_TOTAL_WORDS * 0.85:
+    # Reescrituras con las correcciones del juez, siempre sobre la mejor version hasta ahora
+    for n in range(1, MAX_REWRITES + 1):
+        if verdict["overall"] >= QUALITY_THRESHOLD:
+            break
+        if over_budget(margin_sec=6 * 60):
+            print("   . Sin tiempo para reescribir, me quedo con la mejor version")
+            break
+        print(f"   . Nota {verdict['overall']} < {QUALITY_THRESHOLD}: reescritura {n}/{MAX_REWRITES} con las correcciones del juez...")
+        try:
+            raw2 = rewrite(raw, verdict, ctx)
+            if measure_script(raw2)["total_words"] < MIN_TOTAL_WORDS * 0.85:
+                print("   ! la reescritura sale demasiado corta, se descarta")
+                continue
             verdict2 = judge(raw2, ctx)
             if verdict2["overall"] >= verdict["overall"]:
-                return raw2, verdict2, ctx
-    except (RuntimeError, llm.LLMError) as e:
-        print(f"   ! reescritura fallo: {e}")
+                raw, verdict = raw2, verdict2
+        except (RuntimeError, llm.LLMError) as e:
+            print(f"   ! reescritura fallo: {e}")
     return raw, verdict, ctx
 
 
@@ -992,15 +999,24 @@ def main() -> None:
 
     print(f"\n2/4  Guion + juez de calidad (modelo {llm.MODEL_SMART}, respaldo {llm.MODEL_FAST})...")
     best = None
-    for n, idea in enumerate(candidates, 1):
+    n = 0
+    # Se dan vueltas a la lista de ideas (con guiones nuevos cada vez) hasta llegar a la nota minima o agotar
+    # el presupuesto de tiempo; con la nota "de primera" se para en cuanto aparece
+    while candidates:
+        if best and best[1]["overall"] >= MIN_PUBLISH_SCORE and n >= len(candidates):
+            break
         if best and over_budget(margin_sec=12 * 60):
             print("\n   . Presupuesto de tiempo agotado: no pruebo mas ideas")
             break
-        print(f"\n   --- Idea {n}/{len(candidates)}: '{idea.get('title')}' ---")
+        idea = candidates[n % len(candidates)]
+        n += 1
+        print(f"\n   --- Intento {n} (idea {(n - 1) % len(candidates) + 1}/{len(candidates)}): '{idea.get('title')}' ---")
         try:
             raw, verdict, ctx = best_script_for_idea(idea, payload, history)
         except (RuntimeError, llm.LLMError) as e:
             print(f"   ! fallo con esta idea: {e}")
+            if n >= 4 * len(candidates):
+                break  # el modelo no responde: no se insiste para siempre
             continue
         if not best or verdict["overall"] > best[1]["overall"]:
             best = (raw, verdict, ctx, idea)
@@ -1008,13 +1024,11 @@ def main() -> None:
             break
 
     if not best:
-        raise RuntimeError("No se pudo generar ningun guion.")
+        raise RuntimeError("No se pudo generar ningun guion (el modelo no respondio).")
     raw, verdict, ctx, idea = best
     if verdict["overall"] < MIN_PUBLISH_SCORE:
-        raise RuntimeError(
-            f"Calidad insuficiente ({verdict['overall']}/10 < {MIN_PUBLISH_SCORE}). "
-            "Hoy no se publica: mejor ningun video que uno malo."
-        )
+        # Nunca un dia sin video: se publica el mejor guion conseguido y queda anotado
+        print(f"   ! Ningun guion llego a {MIN_PUBLISH_SCORE} tras {n} intentos: publico el mejor ({verdict['overall']}/10)")
 
     print(f"\n3/4  Fact-check y metadata (idea elegida: '{idea.get('title')}', nota {verdict['overall']})...")
     raw = ensure_structure(raw, ctx)
