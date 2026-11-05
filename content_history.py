@@ -103,9 +103,12 @@ def append_video(entry: dict) -> None:
 
 
 def already_uploaded_on(date: str, history: list[dict] | None = None) -> dict | None:
-    """Devuelve la entrada si ya se subio un video largo pipeline-generado ese dia."""
+    """Devuelve la entrada si ya se subio un video largo pipeline-generado ese dia, o uno que se publica ese dia:
+    si una ejecucion tardia (GitHub retrasado, Gemini saturado) termino despues de las 20:00 UTC, su video queda
+    programado para el dia siguiente y ese dia no hay que subir otro a la misma hora."""
     for v in history if history is not None else load_history():
-        if v.get("date") == date and v.get("video_id") and not v.get("seed"):
+        sched = str(v.get("publish_at") or "")[:10]
+        if (v.get("date") == date or sched == date) and v.get("video_id") and not v.get("seed"):
             return v
     return None
 
