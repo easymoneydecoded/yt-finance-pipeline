@@ -127,6 +127,8 @@ jobs:
           THREADS_USER_ID:      ${{ vars.THREADS_USER_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}   # clave de secret_store (token renovado de Threads)
           MIN_BUY_USD:          ${{ vars.MIN_BUY_USD }}
+          TELEGRAM_BOT_TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}     # aviso a tu Telegram personal de cada post
+          TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
         # Martes a sabado: resumen del dia. Domingo (modo reddit): resumen de la semana.
         run: python insider_social.py ${{ steps.mode.outputs.mode != 'recap' && 'weekly' || '' }}
 

@@ -202,7 +202,28 @@ def threads(text: str, image: Path | None = None, alt: str = "") -> str | None:
                       data={"creation_id": c["id"], "access_token": token}).json()
     if "id" not in p:
         raise RuntimeError(f"Threads publish: {p.get('error', {}).get('message')}")
-    return p["id"]
+    try:                                           # enlace para el aviso de Telegram
+        link = requests.get(f"{api}/{p['id']}", timeout=30,
+                            params={"fields": "permalink", "access_token": token}).json().get("permalink")
+    except (requests.RequestException, ValueError):
+        link = None
+    return link or p["id"]
+
+
+def avisar(titulo: str, results: dict[str, str]) -> None:
+    """Aviso a tu Telegram personal (notify.py) con lo publicado en cada red: enlace o error ("!..." = error)."""
+    if not results or ia.DRY_RUN:
+        return
+    import notify
+    lines = [f"📣 <b>{notify.esc(titulo)}</b>", ""]
+    for name, res in results.items():
+        if res.startswith("!"):
+            lines.append(f"❌ {name}: {notify.esc(res[1:][:200])}")
+        elif res.startswith("http"):
+            lines.append(f'✅ {name}: <a href="{notify.esc(res)}">ver post</a>')
+        else:
+            lines.append(f"✅ {name}: publicado ({notify.esc(res)})")
+    notify.send("\n".join(lines))
 
 
 def main() -> None:
@@ -231,6 +252,7 @@ def main() -> None:
              "X": (x_post, recap_post(day, buys, "Full list + free alerts: link in bio")),
              "Threads": (threads, recap_post(day, buys, f"All buys: https://{day_url}") + f"\n{THREADS_TOPIC}")}
     ok = False
+    results: dict[str, str] = {}
     for name, (fn, text) in posts.items():
         if ia.DRY_RUN:
             print(f"--- DRY RUN {name} ({len(text)} caracteres) ---\n{text}\n")
@@ -239,9 +261,12 @@ def main() -> None:
             url = fn(text, card, alt)
             if url:
                 ok = True
+                results[name] = url
                 print(f"   ✓ {name}: {url}")
         except Exception as e:
+            results[name] = f"!{e}"
             print(f"   ! {name}: {e}")
+    avisar(f"Redes: resumen del {day}", results)
     if ok:
         if day not in done:
             done.append(day)
@@ -298,6 +323,7 @@ def weekly() -> None:
              "X": (x_post, weekly_post("Every buy + free alerts: link in bio")[1]),
              "Threads": (threads, weekly_post(f"All buys: https://{SITE}")[1] + f"\n{THREADS_TOPIC}")}
     ok = False
+    results: dict[str, str] = {}
     for name, (fn, text) in posts.items():
         if not text:
             continue
@@ -311,10 +337,13 @@ def weekly() -> None:
             url = fn(text, card, alt)
             if url:
                 ok = True
+                results[name] = url
                 done.append(f"{key}:{name}")
                 print(f"   ✓ {name}: {url}")
         except Exception as e:
+            results[name] = f"!{e}"
             print(f"   ! {name}: {e}")
+    avisar(f"Redes: resumen semanal ({span})", results)
     if ok:
         state["social_weekly"] = done[-60:]
         ia.save_state(state)
