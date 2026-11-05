@@ -61,7 +61,8 @@ DATASETS   = "https://www.sec.gov/data-research/sec-markets-data/insider-transac
 DAILY_IDX  = "https://www.sec.gov/Archives/edgar/daily-index/{y}/QTR{q}/form.{d}.idx"
 
 FIELDS = ("acc", "ticker", "issuer", "issuer_cik", "owner", "owner_cik", "joint", "role", "shares",
-          "value", "price", "after", "stake_change", "trade_date", "filed", "plan")
+          "value", "price", "after", "stake_change", "trade_date", "filed", "plan",
+          "indirect", "via", "offering")   # indirecta (fondo, fideicomiso, familia) y colocacion privada u oferta
 INDEX_MIN_BUYS  = 2          # una accion se indexa con 2+ compras...
 INDEX_MIN_VALUE = 100_000    # ...o con una compra de 100.000 $ o mas
 INSIDER_MIN_BUYS    = 2          # un insider (persona o fondo) tiene pagina con 2+ compras...
@@ -114,6 +115,7 @@ def record(e: dict) -> dict:
     r["value"] = round(r["value"], 2)
     r["price"] = round(r["price"], 4)
     r["stake_change"] = None if r["stake_change"] is None else round(r["stake_change"], 1)
+    r["indirect"], r["offering"], r["via"] = bool(r["indirect"]), bool(r["offering"]), r["via"] or ""
     return r
 
 
@@ -157,12 +159,25 @@ def quarter_buys(zip_path: Path) -> list[dict]:
             continue
         if shares <= 0 or price <= 0:
             continue
-        t = totals.setdefault(r["ACCESSION_NUMBER"], {"shares": 0.0, "value": 0.0, "after": 0.0, "dates": []})
+        t = totals.setdefault(r["ACCESSION_NUMBER"], {"shares": 0.0, "value": 0.0, "after": 0.0, "dates": [],
+                                                      "indirect": 0.0, "via": [], "fn": set()})
         t["shares"] += shares
         t["value"] += shares * price
         t["after"] = after or t["after"]
         t["dates"].append(_sec_date(r["TRANS_DATE"]))
+        if r.get("DIRECT_INDIRECT_OWNERSHIP") == "I":   # a traves de un fondo, fideicomiso o familiar
+            t["indirect"] += shares * price
+            if r.get("NATURE_OF_OWNERSHIP") and r["NATURE_OF_OWNERSHIP"] not in t["via"]:
+                t["via"].append(r["NATURE_OF_OWNERSHIP"])
+        for k, v in r.items():                           # notas al pie que cita la linea (F1, F2...)
+            if k.endswith("_FN") and v:
+                t["fn"].update(x.strip() for x in v.split(","))
     totals = {acc: t for acc, t in totals.items() if t["value"] >= ia.SITE_MIN_BUY}  # plausible(): en load_buys
+    notes = defaultdict(list)
+    for r in rows("FOOTNOTES.tsv"):
+        t = totals.get(r["ACCESSION_NUMBER"])
+        if t and r["FOOTNOTE_ID"] in t["fn"]:
+            notes[r["ACCESSION_NUMBER"]].append(r["FOOTNOTE_TXT"])
 
     subs = {r["ACCESSION_NUMBER"]: r for r in rows("SUBMISSION.tsv")
             if r["ACCESSION_NUMBER"] in totals and r["DOCUMENT_TYPE"] == "4"}
@@ -187,6 +202,8 @@ def quarter_buys(zip_path: Path) -> list[dict]:
             "after": t["after"], "stake_change": t["shares"] / before * 100 if before > 0 else None,
             "trade_date": min(d for d in t["dates"] if d) if any(t["dates"]) else "",
             "filed": _sec_date(s["FILING_DATE"]), "plan": s["AFF10B5ONE"] in ("1", "true"),
+            "indirect": t["indirect"] > t["value"] / 2, "via": "; ".join(t["via"])[:90],
+            "offering": ia.is_offering(notes[acc] + [s.get("REMARKS", "")]),
         }))
     return out
 
@@ -250,6 +267,37 @@ def backfill(quarters: int = 4) -> None:
             buys.update({b["acc"]: b for b in day_buys(day)})
             save_buys(buys)
         day += timedelta(days=1)
+
+
+def enrich() -> None:
+    """Anade 'indirect', 'via' y 'offering' a las compras guardadas: los trimestres con dataset se releen de la
+    cache (data/sec) y las posteriores, Form 4 a Form 4. Se usa una vez al introducir esos campos."""
+    buys = load_buys()
+    for path in sorted(CACHE.glob("*_form345.zip")):
+        rows = {b["acc"]: b for b in quarter_buys(path)}
+        n = 0
+        for acc, b in rows.items():
+            if acc in buys:
+                buys[acc].update({k: b[k] for k in ("indirect", "via", "offering")})
+                n += 1
+        print(f"   . {path.name}: {n} compras actualizadas")
+    pending = [b for b in buys.values() if "offering" not in b]
+    print(f"   . {len(pending)} compras sin dataset: releo su Form 4")
+
+    def one(b):
+        try:
+            for e in ia.parse_filing({"acc": b["acc"], "filed": b["filed"], "index_url": sec_url(b)}):
+                if e["kind"] == "buy":
+                    return b["acc"], {k: e[k] for k in ("indirect", "via", "offering")}
+        except Exception as ex:
+            print(f"   ! {b['acc']}: {type(ex).__name__}")
+        return b["acc"], None
+
+    with ThreadPoolExecutor(6) as pool:
+        for acc, extra in pool.map(one, pending):
+            if extra:
+                buys[acc].update(extra)
+    save_buys(buys)
 
 
 def update() -> None:
@@ -456,8 +504,8 @@ def page(path: str, title: str, description: str, body: str, *, noindex: bool = 
 <nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/insiders/">Top insiders</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
 <a class="btn" href="{TELEGRAM}" rel="nofollow">Free alerts</a></div></header>
 <main class="wrap">{body}</main>
-<footer><div class="wrap">Data from SEC Form 4 filings (EDGAR). Open-market purchases (transaction code P) of
-{ia.money(ia.SITE_MIN_BUY)} or more. For information only, <b>not financial advice</b>: insiders buy for many reasons
+<footer><div class="wrap">Data from SEC Form 4 filings (EDGAR). Purchases reported with transaction code P of
+{ia.money(ia.SITE_MIN_BUY)} or more; indirect and private ones are tagged. For information only, <b>not financial advice</b>: insiders buy for many reasons
 and can be wrong. © {date.today().year} Ticker Press · <a href="/about/">Methodology</a> ·
 <a href="/tools/">Spreadsheet tools</a> ·
 <a href="{TELEGRAM}" rel="nofollow">Telegram</a></div></footer>
@@ -488,6 +536,10 @@ def buys_table(rows: list[dict], *, ticker_col: bool = True) -> str:
         stake = (("new" if ia.is_new_position(b) else "—") if b["stake_change"] is None else
                  ">+999%" if b["stake_change"] > 999 else f"+{b['stake_change']:.0f}%")
         plan = '<span class="tag" title="Pre-scheduled trade (Rule 10b5-1 plan)">10b5-1</span>' if b["plan"] else ""
+        if b.get("indirect"):
+            plan += f'<span class="tag" title="{esc(b.get("via") or "Held through an entity, not a personal account")}">indirect</span>'
+        if b.get("offering"):
+            plan += '<span class="tag" title="Private placement or offering, not an open-market buy">private</span>'
         tk = (f"<td><a class='tk' href='/stock/{slug(b['ticker'])}/'>{esc(b['ticker'])}</a>"
               f"<small>{esc(short(b['issuer'], 30))}</small></td>") if ticker_col else ""
         out.append(f"<tr><td>{fmt_date(b['filed'], False)}</td>{tk}<td>{person_link(b)}{plan}"
@@ -789,11 +841,18 @@ def build() -> None:
 <p>Ticker Press tracks insider buying in US stocks. Every page is built from <b>SEC Form 4 filings</b>, the forms
 company insiders must file within two business days of trading their company's shares.</p>
 <h2>What we count</h2>
-<p>Only <b>open-market purchases</b> (transaction code “P”) of {ia.money(ia.SITE_MIN_BUY)} or more of common stock:
-the insider paid cash at market prices. Option exercises, grants, gifts and sales are not included. Several purchases
-in one filing are added up and shown at their average price. “Stake” is how much the purchase increased the
-insider's holdings. Trades marked <span class="tag">10b5-1</span> were pre-scheduled under a trading plan and are
-usually a weaker signal.</p>
+<p>Purchases of common stock reported with transaction code “P” (“open market or private purchase”) of
+{ia.money(ia.SITE_MIN_BUY)} or more: the insider paid cash. Option exercises, grants, gifts and sales are not included.
+Several purchases in one filing are added up and shown at their average price. “Stake” is how much the purchase
+increased the insider's holdings.</p>
+<p>Not every code-P purchase is the same signal, so we tag them:</p>
+<ul>
+<li><span class="tag">indirect</span> the shares were bought through an entity (a fund, trust, company or family
+member), not a personal account. Hover the tag to see which one.</li>
+<li><span class="tag">private</span> the filing's footnotes describe a private placement or an offering: the shares
+came from the company, not from the open market.</li>
+<li><span class="tag">10b5-1</span> the trade was pre-scheduled under a trading plan, usually a weaker signal.</li>
+</ul>
 <h2>Performance since the purchase</h2>
 <p>“Since buy” compares the price the insider paid with the stock's latest closing price, adjusted for any stock splits
 after the trade. For several purchases it is weighted by the amount invested in each one. Dividends are not included.
@@ -845,6 +904,8 @@ if __name__ == "__main__":
         update()
     elif cmd == ["prices"]:
         update_prices()
+    elif cmd == ["enrich"]:
+        enrich()
     elif cmd == ["build"]:
         build()
     else:

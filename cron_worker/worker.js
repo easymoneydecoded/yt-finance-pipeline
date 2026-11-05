@@ -3,8 +3,12 @@
 //   publico esa franja, social_publisher.py lo sabe (history/social_slots.json) y no repite.
 // - A las 9:35 UTC lanza el episodio diario de Zibu (zibu-stories/daily.yml con auto=true): si hoy ya hay
 //   episodio, el workflow no hace nada. En los dos, el grupo de concurrencia evita ejecuciones a la vez.
+// - Domingo y miercoles a las 16:20 UTC, los posts de Reddit (alerts.yml): insider_reddit.py recuerda lo
+//   enviado cada semana (reddit_sent) y no lo repite si GitHub tambien lanzo su cron de las 16:07.
 const JOBS = {
   "35 9 * * *": { repo: "easymoneydecoded/zibu-stories", workflow: "daily.yml", inputs: { auto: "true" } },
+  "20 16 * * 0": { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "alerts.yml", inputs: { mode: "reddit" } },
+  "20 16 * * 3": { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "alerts.yml", inputs: { mode: "midweek" } },
   default: { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "social.yml", inputs: undefined },
 };
 

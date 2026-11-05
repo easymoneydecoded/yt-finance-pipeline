@@ -251,6 +251,17 @@ def plausible(e: dict) -> bool:
     return PRICE_CHECKS[e["acc"]]
 
 
+# El codigo P es "open market OR private purchase": las notas al pie dicen si fue una colocacion privada
+# o una oferta (comprar al emisor, no en bolsa). Un lector de Reddit nos lo senalo con razon (RAPP).
+OFFERING_RE = re.compile(r"private placement|subscription agreement|securities purchase agreement|registered direct|"
+                         r"underwritten|public offering|initial public offering|\bIPO\b|\bPIPE\b|directed share program|"
+                         r"purchased (?:directly )?from the (?:issuer|company)", re.I)
+
+
+def is_offering(texts) -> bool:
+    return any(OFFERING_RE.search(t or "") for t in texts)
+
+
 def alertable(e: dict) -> bool:
     return e["value"] >= (MIN_BUY_USD if e["kind"] == "buy" else MIN_SELL_USD)
 
@@ -278,6 +289,7 @@ def parse_filing(filing: dict, min_buy: float = SITE_MIN_BUY) -> list[dict]:
     owner = owners[0] if owners else None
     plan = _txt(doc, "aff10b5One") in ("1", "true")
 
+    notes = {f.get("id"): "".join(f.itertext()) for f in doc.findall("footnotes/footnote")}
     totals = {}
     for tx in doc.findall("nonDerivativeTable/nonDerivativeTransaction"):
         code = _txt(tx, "transactionCoding/transactionCode")
@@ -287,11 +299,19 @@ def parse_filing(filing: dict, min_buy: float = SITE_MIN_BUY) -> list[dict]:
         price = _num(tx, "transactionAmounts/transactionPricePerShare/value")
         if shares <= 0 or price <= 0:
             continue
-        t = totals.setdefault(code, {"shares": 0.0, "value": 0.0, "after": 0.0, "dates": []})
+        t = totals.setdefault(code, {"shares": 0.0, "value": 0.0, "after": 0.0, "dates": [], "indirect": 0.0,
+                                     "via": [], "notes": []})
         t["shares"] += shares
         t["value"] += shares * price
         t["after"] = _num(tx, "postTransactionAmounts/sharesOwnedFollowingTransaction/value") or t["after"]
         t["dates"].append(_txt(tx, "transactionDate/value"))
+        # Directa o indirecta (fondos, fideicomisos, familia) y las notas al pie de esta linea
+        if _txt(tx, "ownershipNature/directOrIndirectOwnership/value") == "I":
+            t["indirect"] += shares * price
+            nature = _txt(tx, "ownershipNature/natureOfOwnership/value")
+            if nature and nature not in t["via"]:
+                t["via"].append(nature)
+        t["notes"] += [notes.get(fn.get("id"), "") for fn in tx.iter("footnoteId")]
 
     events = []
     for code, t in totals.items():
@@ -313,6 +333,8 @@ def parse_filing(filing: dict, min_buy: float = SITE_MIN_BUY) -> list[dict]:
             "stake_change": (t["shares"] / before * 100) if before > 0 else None,
             "trade_date": min(t["dates"]) if t["dates"] else "",
             "filed": filing["filed"], "plan": plan, "url": filing["index_url"],
+            "indirect": t["indirect"] > t["value"] / 2, "via": "; ".join(t["via"])[:90],
+            "offering": is_offering(t["notes"] + [_txt(doc, "remarks")]),
             "found_at": datetime.now(timezone.utc).isoformat(), "posted": False,
         })
     return [e for e in events if plausible(e)]
@@ -380,6 +402,10 @@ def alert_text(e: dict, events: list[dict]) -> str:
             lines.append(f"🔥 <b>Cluster buy:</b> {n} insiders buying ${esc(e['ticker'])} in the last {CLUSTER_DAYS} days")
     if e["plan"]:
         lines.append("🗓 Pre-scheduled trade (Rule 10b5-1 plan)")
+    if e.get("indirect"):
+        lines.append(f"🏦 Indirect: {esc(e.get('via') or 'through an entity, not a personal account')}")
+    if e.get("offering"):
+        lines.append("📑 Private placement / offering, not an open-market buy")
     lines.append(f'🔗 <a href="{esc(e["url"])}">SEC filing</a>')
     return "\n".join(lines)
 

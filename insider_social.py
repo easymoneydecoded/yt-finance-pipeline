@@ -45,7 +45,7 @@ def day_and_buys() -> tuple[str, list[dict]]:
 
 def recap_post(day: str, buys: list[dict], link: str) -> str:
     pretty = datetime.fromisoformat(day).strftime("%b %d").replace(" 0", " ")
-    lines = [f"📊 Insider buying {pretty}: {len(buys)} open-market buys, {ia.money(sum(b['value'] for b in buys))}", ""]
+    lines = [f"📊 Insider buying {pretty}: {len(buys)} insider buys, {ia.money(sum(b['value'] for b in buys))}", ""]
     for i, b in enumerate(buys[:3], 1):
         lines.append(f"{i}. ${b['ticker']} {ia.money(b['value'])} ({b['role'].split(',')[0].strip()})")
     lines += ["", link]
@@ -226,7 +226,7 @@ def main() -> None:
     import insider_cards
     card = insider_cards.daily_card(day, buys)
     alt = (f"Ticker Press card: insiders bought {ia.money(sum(b['value'] for b in buys))} of stock in {len(buys)} "
-           f"open-market purchases. Top buy: {buys[0]['ticker']} {ia.money(buys[0]['value'])}, with its 6-month price chart.")
+           f"insider purchases. Top buy: {buys[0]['ticker']} {ia.money(buys[0]['value'])}, with its 6-month price chart.")
     posts = {"Bluesky": (bluesky, bsky_text),
              "X": (x_post, recap_post(day, buys, "Full list + free alerts: link in bio")),
              "Threads": (threads, recap_post(day, buys, f"All buys: https://{day_url}") + f"\n{THREADS_TOPIC}")}
@@ -255,7 +255,7 @@ def weekly_post(link: str, n_items: int = 3) -> tuple[str, str] | None:
     if not week:
         return None
     by, clusters, people, span = ir.week_summary(start, end, week)
-    lines = [f"📅 Insider buying, week of {span}: {len(week)} open-market buys, "
+    lines = [f"📅 Insider buying, week of {span}: {len(week)} insider buys, "
              f"{ia.money(sum(b['value'] for b in week))} across {len(by)} stocks", ""]
     items = [f"🔥 ${t}: {len({b['owner_cik'] for b in bs})} insiders buying, {ia.money(sum(b['value'] for b in bs))}"
              for t, bs in clusters[:2]]

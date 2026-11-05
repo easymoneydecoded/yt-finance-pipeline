@@ -64,6 +64,11 @@ def is_person(b: dict) -> bool:
     return not ia.rank_key(b)[0]       # directivo o consejero, no un fondo con >10%
 
 
+def own_money(b: dict) -> bool:
+    """Compra con dinero propio: ni a traves de un fondo/fideicomiso (indirecta) ni colocacion privada u oferta."""
+    return is_person(b) and not b.get("indirect") and not b.get("offering")
+
+
 def week_summary(start: date, end: date, week: list[dict]):
     """(compras por accion, cluster buys, mayores compras de directivos, "Oct 24–30")."""
     by = defaultdict(list)
@@ -72,7 +77,7 @@ def week_summary(start: date, end: date, week: list[dict]):
     clusters = sorted(
         ((t, bs) for t, bs in by.items() if len({b["owner_cik"] for b in bs}) >= 2),
         key=lambda x: (-len({b["owner_cik"] for b in x[1]}), -sum(b["value"] for b in x[1])))[:8]
-    people = sorted((b for b in merge_by_person(week) if is_person(b)), key=lambda b: -b["value"])[:8]
+    people = sorted((b for b in merge_by_person(week) if own_money(b)), key=lambda b: -b["value"])[:8]
     span = f"{start:%b} {start.day}–{end:%b} {end.day}" if start.month != end.month else f"{start:%b} {start.day}–{end.day}"
     return by, clusters, people, span
 
@@ -101,8 +106,10 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
 
     title = (f"Insider buying this week ({span}): {len(clusters)} stocks where several insiders bought"
              if clusters else f"Insider buying this week ({span}): the biggest purchases by CEOs and directors")
-    lines = [f"Every week I go through all SEC Form 4 filings and pull out the open-market purchases "
-             f"(transaction code P: insiders paying cash at market price, no option exercises or grants).",
+    lines = [f"Every week I go through all SEC Form 4 filings and pull out the purchases (transaction code P: "
+             f"insiders paying cash, no option exercises or grants). Code P covers open-market and private purchases, "
+             f"so I also tag buys made indirectly (through funds, trusts or family) and private placements, and keep "
+             f"them out of the officers and directors table below.",
              "",
              f"This week: {len(week)} insider buys worth {ia.money(sum(b['value'] for b in week))} "
              f"across {len(by)} stocks.", ""]
@@ -116,7 +123,8 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
                          f"{ia.money(sum(b['value'] for b in bs))} | {', '.join(roles)[:60]} |")
         lines.append("")
     if people:
-        lines += ["Biggest buys by officers and directors (excluding funds with 10%+ stakes):", "",
+        lines += ["Biggest buys by officers and directors with their own money (direct ownership, no funds with "
+                  "10%+ stakes, no private placements):", "",
                   "| Ticker | Insider | Role | Amount | Price | Stake change |", "|---|---|---|---|---|---|"]
         for b in people:
             stake = ("new position" if ia.is_new_position(b) else "n/a") if b["stake_change"] is None else (
@@ -127,6 +135,10 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
     plans = sum(b["plan"] for b in week)
     if plans:
         lines += [f"{plans} of this week's buys were pre-scheduled under 10b5-1 plans, which are usually a weaker signal.", ""]
+    indirect, private = sum(bool(b.get("indirect")) for b in week), sum(bool(b.get("offering")) for b in week)
+    if indirect or private:
+        lines += [f"{indirect} of this week's buys were indirect (through a fund, trust or family member) and {private} "
+                  "were private placements or offerings, based on the Form 4 ownership field and footnotes.", ""]
     lines += ["Insiders sell for many reasons, but they usually buy for one. Curious which of these you'd look into "
               "and which look like noise.", "",
               "Data straight from SEC EDGAR. I keep the full list by stock (with how each buy has done since) at "
@@ -135,13 +147,35 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
     return title, "\n".join(lines)
 
 
+def already_sent(key: str) -> bool:
+    """Ya enviado esta semana (GitHub y el despertador de Cloudflare pueden lanzar lo mismo dos veces)."""
+    if key in ia.load_state().get("reddit_sent", []):
+        print(f"{key}: ya enviado esta semana")
+        return True
+    return False
+
+
+def mark_sent(key: str) -> None:
+    state = ia.load_state()
+    state["reddit_sent"] = (state.get("reddit_sent", []) + [key])[-30:]
+    ia.save_state(state)
+
+
+def week_key(kind: str) -> str:
+    return f"{date.today():%G-W%V}-{kind}"
+
+
 def main(preview: bool = False) -> None:
+    if not preview and already_sent(week_key("sunday")):
+        return
     start, end, week = week_data()
     if not week:
         print("Sin compras esta semana")
         return
     title, body = build_post(start, end, week)
     send_post(SUBREDDITS[end.isocalendar().week % len(SUBREDDITS)], title, body, "Post de Reddit de la semana", preview)
+    if not preview:
+        mark_sent(week_key("sunday"))
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +199,7 @@ def market_info(ticker: str) -> tuple[float | None, float | None, float | None]:
 
 def pick_midweek(week: list[dict]) -> tuple[dict, float | None, float | None, float | None] | None:
     """La compra de un directivo (no un fondo) mas grande de la semana, en una empresa de 2.000 M$+ si la hay."""
-    cands = sorted((dict(b, ticker=site.clean_ticker(b["ticker"])) for b in merge_by_person(week) if is_person(b)),
+    cands = sorted((dict(b, ticker=site.clean_ticker(b["ticker"])) for b in merge_by_person(week) if own_money(b)),
                    key=lambda b: -b["value"])[:12]
     infos = [(b, *market_info(b["ticker"])) for b in cands if b["ticker"]]
     grandes = [x for x in infos if x[1] and x[1] >= MIN_CAP]
@@ -179,12 +213,12 @@ def build_midweek(b: dict, cap, close, high, rows: list[dict]) -> tuple[str, str
     before = [x for x in same if x["filed"] < b["filed"]]
     since = min(x["filed"] for x in rows)
     first = not before
-    title = f"{company} (${tk}) {role} just bought {ia.money(b['value'])} of stock on the open market"
+    title = f"{company} (${tk}) {role} just bought {ia.money(b['value'])} of the company's stock with their own money"
     if first:
         title += f" — the first insider buy there since at least {date.fromisoformat(since):%B %Y}"
     lines = [f"{site.person(b)}, {b['role']} of {company}, bought {b['shares']:,.0f} shares at ${b['price']:,.2f} "
              f"(about {ia.money(b['value'])}), according to a Form 4 filed on {ia.nice_date(b['filed'])}. "
-             "Open-market purchase (code P): cash at market price, not options or a grant.", "", "Some context:", ""]
+             "Code P purchase held directly in their own name, with no private placement in the filing notes: cash, not options or a grant.", "", "Some context:", ""]
     if b["stake_change"] is not None:
         lines.append(f"- It increased their holdings by {b['stake_change']:.0f}%." if b["stake_change"] <= 999
                      else "- It increased their holdings more than tenfold.")
@@ -200,7 +234,7 @@ def build_midweek(b: dict, cap, close, high, rows: list[dict]) -> tuple[str, str
               and x["filed"] >= (date.fromisoformat(b["filed"]) - timedelta(days=90)).isoformat()}
     if others:
         lines.append(f"- {len(others)} other insider{'s' if len(others) > 1 else ''} also bought {tk} in the last 90 days.")
-    lines.append(f"- First open-market insider purchase at {company} in the filings I track (since {date.fromisoformat(since):%b %Y})."
+    lines.append(f"- First insider purchase at {company} in the filings I track (since {date.fromisoformat(since):%b %Y})."
                  if first else f"- {len({x['owner_cik'] for x in before})} insider(s) bought {tk} before this, in the filings I track.")
     if b["plan"]:
         lines.append("- It was pre-scheduled under a 10b5-1 plan, which is usually a weaker signal.")
@@ -212,6 +246,8 @@ def build_midweek(b: dict, cap, close, high, rows: list[dict]) -> tuple[str, str
 
 
 def midweek(preview: bool = False) -> None:
+    if not preview and already_sent(week_key("wednesday")):
+        return
     start, end, week = week_data()
     pick = pick_midweek(week) if week else None
     if not pick:
@@ -222,6 +258,8 @@ def midweek(preview: bool = False) -> None:
     sunday = SUBREDDITS[n % len(SUBREDDITS)]
     sub = next(s for i in range(3) if (s := MIDWEEK_SUBS[(n + i) % 3]) != sunday)
     send_post(sub, title, body, "Post de Reddit del miércoles (compra destacada)", preview)
+    if not preview:
+        mark_sent(week_key("wednesday"))
 
 
 def send_post(sub: str, title: str, body: str, label: str, preview: bool) -> None:
@@ -248,13 +286,15 @@ def send_post(sub: str, title: str, body: str, label: str, preview: bool) -> Non
 
 def telegram_weekly(preview: bool = False) -> None:
     """Resumen de la semana en los canales de Telegram (gratis con enlace al premium)."""
+    if not preview and already_sent(week_key("telegram")):
+        return
     start, end, week = week_data()
     if not week:
         return
     by, clusters, people, span = week_summary(start, end, week)
     esc = ia.esc
     lines = [f"📅 <b>Insider buying · week of {span}</b>",
-             f"{len(week)} open-market buys · {ia.money(sum(b['value'] for b in week))} across {len(by)} stocks", ""]
+             f"{len(week)} insider buys · {ia.money(sum(b['value'] for b in week))} across {len(by)} stocks", ""]
     if clusters:
         lines.append("🔥 <b>Cluster buys</b> (2+ insiders buying the same stock)")
         for t, bs in clusters[:5]:
@@ -277,6 +317,8 @@ def telegram_weekly(preview: bool = False) -> None:
         ia.DRY_RUN = True
     ia.send(ia.FREE_CHAT, free_text)
     ia.send(ia.PREMIUM_CHAT, premium_text)
+    if not preview:
+        mark_sent(week_key("telegram"))
 
 
 if __name__ == "__main__":
