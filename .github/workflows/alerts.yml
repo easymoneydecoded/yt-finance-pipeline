@@ -136,19 +136,7 @@ jobs:
       - name: Guardar historico de la web (y token renovado de Threads)
         if: contains(fromJSON('["recap","site","reddit","weekly"]'), steps.mode.outputs.mode) && inputs.dry_run != true
         run: |
-          if [ -z "$(git status --porcelain -- site_data/ history/)" ]; then
-            echo "Sin cambios"
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add -A site_data/ history/
-          git commit -m "Web: compras de directivos $(date -u +%F)"
-          for i in 1 2 3; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            sleep 5
-          done
-          exit 1
+          python repo_save.py "Web: compras de directivos $(date -u +%F)" site_data/ history/
 
       - name: Guardar estado
         if: always() && hashFiles('history/insider_state.json') != '' && inputs.dry_run != true

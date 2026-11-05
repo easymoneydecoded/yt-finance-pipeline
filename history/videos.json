@@ -1308,6 +1308,82 @@
         "avg_view_pct": 55.5,
         "subs_gained": 0
       }
+    },
+    {
+      "date": "2026-11-05",
+      "video_id": "W96818y3dXw",
+      "url": "https://youtu.be/W96818y3dXw",
+      "title": "Panic Selling vs Buying the Dip: The 61% VIX Trap",
+      "thumbnail_text": "61% FEAR SPIKE",
+      "topic_key": "vix spike market selloff reaction",
+      "entities": [
+        "CBOE",
+        "Nasdaq"
+      ],
+      "format": "contrarian take",
+      "title_style": "VERSUS",
+      "keywords": [
+        "VIX spike",
+        "market selloff",
+        "buying the dip",
+        "401k crash"
+      ],
+      "source_headlines": [
+        "[Mercado · yfinance] VIX: 26.88 (↑61.83% vs ayer) — ticker=^VIX",
+        "[Mercado · yfinance] Nasdaq 100: 26,915.44 (↓5.35% vs ayer) — ticker=^NDX"
+      ],
+      "source_urls": [],
+      "thumb_layout": "bignum",
+      "thumb_color": "yellow",
+      "thumb_pexels_id": 3191576,
+      "broll_pexels_ids": [
+        38557069,
+        39295632,
+        8480286,
+        38725030,
+        8439247,
+        6817204,
+        10407687,
+        31521186,
+        38358370,
+        39368742,
+        38592636,
+        38498179,
+        34645321,
+        3191576,
+        35905819,
+        26547005,
+        6963486,
+        6964246,
+        3929080,
+        34394896,
+        5466766,
+        7490451,
+        8480244,
+        38808546,
+        38858928,
+        8369961,
+        8724313,
+        9902316,
+        4318316,
+        39221980,
+        37301741,
+        5699996,
+        7947390,
+        7651693,
+        8298012,
+        35518213,
+        8426671,
+        7692917
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-06T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Did today's market selloff make you want to buy the dip or hold cash? Share your strategy below.",
+      "playlist": "Stock Market Explained",
+      "quality": 4.5,
+      "voice": "af_heart"
     }
   ]
 }

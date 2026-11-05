@@ -148,20 +148,9 @@ jobs:
       # impide que manana se repita el mismo tema (y guarda las metricas)
       - name: Guardar historial del canal en el repo
         if: always()
+        # repo_save.py fusiona con lo que otros workflows guardaron a la vez (antes: conflicto y se perdia)
         run: |
-          if git diff --quiet -- history/; then
-            echo "Historial sin cambios"
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add history/
-          git commit -m "Historial: $(date -u +%F)"
-          for i in 1 2 3; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            sleep 5
-          done
-          echo "No se pudo guardar el historial" && exit 1
+          python repo_save.py "Historial: $(date -u +%F)" history/
 
       - name: Aviso por Telegram
         if: always()

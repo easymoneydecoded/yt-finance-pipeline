@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-05T19:12:02+00:00",
-  "pending": 0,
+  "updated": "2026-11-05T20:58:18+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -704,6 +704,120 @@
         }
       },
       "youtube_title": "Will Privatizing Fannie Mae Raise Your Mortgage Rate?"
+    },
+    {
+      "id": "2026-11-05_s1",
+      "created": "2026-11-05T20:58:18+00:00",
+      "date": "2026-11-05",
+      "asset_id": 714790611,
+      "size": 11770982,
+      "title": "Why Panic Selling During a 61% VIX Spike Destroys Wealth",
+      "text": "Wall Street fear jumped sixty-one percent in twenty-four hours today. The volatility index spiked to twenty-six point eighty-eight as the Nasdaq plunged five point thirty-five percent down to twenty-six thousand nine hundred fifteen point forty-four. S and P five hundred holders lost three point seventy-three percent in a single session. According to Federal Reserve data, institutional funds use fear spikes to rebalance, while retail four-oh-one-k holders sell out at the worst possible bottom. Selling equities into extreme market terror converts paper volatility into permanent cash loss. Wall Street fear jumped sixty-one percent in twenty-four hours today.",
+      "parent_title": "Panic Selling vs Buying the Dip: The 61% VIX Trap",
+      "parent_video_id": "W96818y3dXw",
+      "parent_url": "https://youtu.be/W96818y3dXw",
+      "tags": [
+        "VIX spike",
+        "market selloff",
+        "buying the dip",
+        "401k crash",
+        "stock market panic",
+        "Nasdaq crash",
+        "S&P 500 drop",
+        "volatility index",
+        "retail investor mistake",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-05_s2",
+      "created": "2026-11-05T20:58:18+00:00",
+      "date": "2026-11-05",
+      "asset_id": 714790723,
+      "size": 12803956,
+      "title": "The Nasdaq Dropped 5.35% Today: What You Must Know",
+      "text": "Tech stocks just suffered a major single day plunge today. The Nasdaq dropped five point thirty-five percent to hit twenty-six thousand nine hundred fifteen point forty-four, while Bitcoin fell five point twenty-eight percent down to seventy-six thousand one hundred fifty-seven point seventy-one. Meanwhile, crude oil surged to ninety dollars and fifteen cents a barrel. Consumer sentiment data from September shows confidence sitting low at forty-eight point one. Liquidating retirement accounts during sudden market drops forces individual investors to miss recovery rallies. Tech stocks just suffered a major single day plunge today.",
+      "parent_title": "Panic Selling vs Buying the Dip: The 61% VIX Trap",
+      "parent_video_id": "W96818y3dXw",
+      "parent_url": "https://youtu.be/W96818y3dXw",
+      "tags": [
+        "VIX spike",
+        "market selloff",
+        "buying the dip",
+        "401k crash",
+        "stock market panic",
+        "Nasdaq crash",
+        "S&P 500 drop",
+        "volatility index",
+        "retail investor mistake",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-05_s3",
+      "created": "2026-11-05T20:58:18+00:00",
+      "date": "2026-11-05",
+      "asset_id": 714790808,
+      "size": 12119921,
+      "title": "Is Gold the Only Safe Haven as Markets Drop?",
+      "text": "Gold moved up while tech equities crashed five percent today. Gold prices rose zero point ninety percent to four thousand one hundred nine dollars and fifty cents as the Dow Jones dropped two point ninety-three percent to fifty-one thousand seven hundred ninety point eighty-two. At the same time, the ten-year Treasury yield fell to four point eighty-three percent. Federal data shows thirty-year mortgage rates sitting high at seven point eighteen percent. When equities tumble, holding a disciplined asset plan protects wealth far better than panic selling. Gold moved up while tech equities crashed five percent today.",
+      "parent_title": "Panic Selling vs Buying the Dip: The 61% VIX Trap",
+      "parent_video_id": "W96818y3dXw",
+      "parent_url": "https://youtu.be/W96818y3dXw",
+      "tags": [
+        "VIX spike",
+        "market selloff",
+        "buying the dip",
+        "401k crash",
+        "stock market panic",
+        "Nasdaq crash",
+        "S&P 500 drop",
+        "volatility index",
+        "retail investor mistake",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
