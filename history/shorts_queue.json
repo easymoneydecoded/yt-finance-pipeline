@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-05T21:29:00+00:00",
-  "pending": 2,
+  "updated": "2026-11-05T23:14:05+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -775,18 +775,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "Dx6VZ3-rKQA",
+          "at": "2026-11-05T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18018099410971403",
+          "at": "2026-11-05T23:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7704828743853246486",
+          "at": "2026-11-05T23:14+00:00"
         }
-      }
+      },
+      "youtube_title": "The Nasdaq Dropped 5.35% Today: What You Must Know"
     },
     {
       "id": "2026-11-05_s3",
