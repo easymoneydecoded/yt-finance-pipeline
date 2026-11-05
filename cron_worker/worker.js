@@ -19,7 +19,7 @@ function pick(cron, now) {
     case "10 15,19,23 * * *": return SOCIAL;
     case "35 9,13,17 * * *":  return ZIBU;
     case "50 3,6,11 * * *":   return hour === 3 ? (day >= 2 && day <= 6 ? RECAP : null) : MORNING;
-    case "20 16 * * 0,3":     return { repo: PIPE, workflow: "alerts.yml", inputs: { mode: day === 0 ? "reddit" : "midweek" } };
+    case "20 16 * * SUN,WED":     return { repo: PIPE, workflow: "alerts.yml", inputs: { mode: day === 0 ? "reddit" : "midweek" } };
   }
   return null;
 }
