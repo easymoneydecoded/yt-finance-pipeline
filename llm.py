@@ -39,9 +39,16 @@ class LLMError(RuntimeError):
     pass
 
 
+# Modelos de respaldo del free tier: cuando Gemini se satura (503 "high demand") no suelen caer todos a la vez.
+FALLBACK_MODELS = [m.strip() for m in os.getenv(
+    "GEMINI_FALLBACK_MODELS", "gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-3.5-flash-lite").split(",")]
+OVERLOAD_ROUNDS = [60, 120, 180, 300, 300, 300, 300]   # todos saturados: espera y otra ronda (~26 min en total)
+_dead: set[str] = set()        # modelos inexistentes o sin cuota diaria: no se reintentan en este run
+
+
 def _models(smart: bool) -> list[str]:
-    chain = [MODEL_SMART, MODEL_FAST] if smart else [MODEL_FAST]
-    return list(dict.fromkeys(m for m in chain if m))
+    chain = ([MODEL_SMART, MODEL_FAST] if smart else [MODEL_FAST]) + FALLBACK_MODELS
+    return [m for m in dict.fromkeys(m for m in chain if m) if m not in _dead]
 
 
 def _post(model: str, payload: dict, timeout: int) -> tuple[int, dict | str]:
@@ -77,12 +84,31 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
         payload["tools"] = tools
 
     last_err = ""
-    for model in _models(smart):
+    for ronda, wait in enumerate([0] + OVERLOAD_ROUNDS):
+        if wait:
+            if not _models(smart):
+                break
+            print(f"   ! Gemini saturado en todos los modelos: espero {wait}s (ronda {ronda + 1}/{len(OVERLOAD_ROUNDS) + 1})")
+            time.sleep(wait)
+        text, last_err, overloaded = _round(payload, smart, timeout, tools, last_err)
+        if text is not None:
+            return text
+        if not overloaded or tools:      # error que esperar no arregla (o busqueda web, que es opcional)
+            break
+    raise LLMError(f"Gemini fallo en todos los modelos: {last_err}")
+
+
+def _round(payload: dict, smart: bool, timeout: int, tools, last_err: str) -> tuple[str | None, str, bool]:
+    """Una pasada por todos los modelos. Devuelve (texto o None, ultimo error, si algun modelo estaba saturado)."""
+    overloaded = False
+    models = _models(smart)
+    for model in models:
         for attempt in range(1, ATTEMPTS_PER_MODEL + 1):
             try:
                 status, data = _post(model, payload, timeout)
             except requests.exceptions.RequestException as e:
                 last_err = f"red: {e}"
+                overloaded = True
                 time.sleep(15 * attempt)
                 continue
 
@@ -90,7 +116,7 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
                 try:
                     text = _extract_text(data)
                     if text.strip():
-                        return text
+                        return text, last_err, overloaded
                     last_err = "respuesta vacia"
                 except (KeyError, IndexError, TypeError):
                     last_err = f"respuesta sin texto: {str(data)[:200]}"
@@ -103,11 +129,15 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
             if status in (400, 403, 404) and attempt == 1:
                 # Modelo inexistente / no disponible en free tier: siguiente modelo
                 print(f"   . {model} no disponible ({status}), pruebo el siguiente modelo")
+                if status == 404:
+                    _dead.add(model)
                 break
             if status == 429:
                 # Cuota diaria agotada o funcion fuera del plan (limit 0): esperar no sirve
                 if "PerDay" in body or re.search(r'"?limit"?:\s*0(?!\d)', body) or tools:
                     print(f"   . {model} sin cuota para esta peticion, pruebo el siguiente modelo")
+                    if "PerDay" in body and not tools:
+                        _dead.add(model)
                     break
                 # Limite por minuto: esperar lo que pide la API
                 m = re.search(r'"retryDelay":\s*"(\d+)', body)
@@ -116,7 +146,8 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
                 time.sleep(wait)
                 continue
             if status in (500, 502, 503, 504):
-                if attempt >= OVERLOAD_ATTEMPTS and model != _models(smart)[-1]:
+                overloaded = True
+                if attempt >= OVERLOAD_ATTEMPTS:
                     print(f"   . {model} saturado ({status}), paso al siguiente modelo")
                     break
                 wait = 15 * attempt
@@ -124,7 +155,7 @@ def generate(prompt: str, *, smart: bool = False, json_mode: bool = True,
                 time.sleep(wait)
                 continue
             break
-    raise LLMError(f"Gemini fallo en todos los modelos: {last_err}")
+    return None, last_err, overloaded
 
 
 def parse_json(content: str):
