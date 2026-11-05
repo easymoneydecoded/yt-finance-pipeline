@@ -64,7 +64,7 @@ CATEGORY_ID      = "27"  # Education
 MADE_FOR_KIDS    = False
 
 PUBLISH_HOUR_UTC = int(os.getenv("PUBLISH_HOUR_UTC", "14"))
-LATE_CUTOFF_UTC  = 20                   # despues de esta hora, mejor esperar a manana
+LATE_CUTOFF_UTC  = 23                   # hasta las 18:00 de Nueva York se publica ya; despues, manana a las 14:00
 MIN_LEAD_MIN     = 20                   # YouTube necesita margen para procesar
 
 HASHTAGS = "#finance #investing #money"
@@ -77,8 +77,8 @@ def long_publish_time(now: datetime | None = None) -> datetime | None:
     """
     Hora de publicacion del video largo; None = publicar ya.
       - antes de las 14:00 UTC       -> programado a las 14:00 de hoy
-      - entre las 14:00 y las 20:00  -> ya (sigue siendo buena hora en EE. UU.)
-      - despues de las 20:00 UTC     -> programado a las 14:00 de manana
+      - entre las 14:00 y las 23:00  -> ya (sigue siendo buena hora en EE. UU.)
+      - despues de las 23:00 UTC     -> programado a las 14:00 de manana
     (GitHub puede retrasar las ejecuciones programadas cuando esta saturado)
     """
     now = now or datetime.now(timezone.utc)
