@@ -502,10 +502,24 @@ def scan() -> None:
     save_state(state)
 
 
+def recap_day() -> tuple[str, bool]:
+    """Dia del que habla el resumen nocturno. Devuelve (dia, forzado).
+    Antes de las 21:00 de Nueva York el dia de hoy aun no ha cerrado (la SEC acepta filings hasta las 22:00),
+    asi que toca el de ayer: si GitHub lanza el cron de las 03:40 UTC con horas de retraso, sigue saliendo el
+    dia correcto y no un dia vacio. RECAP_DAY=AAAA-MM-DD (input 'day' del workflow) fuerza un dia concreto
+    para recuperar uno perdido, aunque ya conste como publicado."""
+    forced = os.getenv("RECAP_DAY", "").strip()
+    if forced:
+        return datetime.fromisoformat(forced).date().isoformat(), True
+    now = datetime.now(ET_TZ)
+    day = now.date() if now.hour >= 21 else now.date() - timedelta(days=1)
+    return day.isoformat(), False
+
+
 def recap() -> None:
     state = load_state()
-    day = (datetime.now(ET_TZ) - timedelta(hours=4)).date().isoformat()
-    if day in state["recaps"] and not DRY_RUN:
+    day, forced = recap_day()
+    if day in state["recaps"] and not DRY_RUN and not forced:
         print(f"El resumen de {day} ya se publico")
         return
     events = [e for e in state["events"] if e["filed"] == day and alertable(e)]
@@ -514,7 +528,7 @@ def recap() -> None:
         return
     ok_free = send(FREE_CHAT, recap_text(day, events, premium=False))
     ok_premium = send(PREMIUM_CHAT, recap_text(day, events, premium=True))
-    if ok_free or ok_premium:
+    if (ok_free or ok_premium) and day not in state["recaps"]:
         state["recaps"].append(day)
     save_state(state)
 

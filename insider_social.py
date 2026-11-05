@@ -37,7 +37,7 @@ THREADS_TOPIC = "#Stocks"
 
 def day_and_buys() -> tuple[str, list[dict]]:
     state = ia.load_state()
-    day = (datetime.now(ia.ET_TZ) - timedelta(hours=4)).date().isoformat()
+    day, _ = ia.recap_day()           # el mismo dia que el resumen de Telegram (aunque GitHub llegue tarde)
     buys = sorted([e for e in state["events"] if e["filed"] == day and e["kind"] == "buy" and ia.alertable(e)],
                   key=ia.rank_key)
     return day, buys
@@ -209,7 +209,7 @@ def main() -> None:
     state = ia.load_state()
     day, buys = day_and_buys()
     done = state.setdefault("social", [])
-    if day in done and not ia.DRY_RUN:
+    if day in done and not ia.DRY_RUN and not os.getenv("RECAP_DAY"):
         print(f"El resumen de {day} ya se publico en redes")
         return
     if not buys:
@@ -243,7 +243,8 @@ def main() -> None:
         except Exception as e:
             print(f"   ! {name}: {e}")
     if ok:
-        done.append(day)
+        if day not in done:
+            done.append(day)
         state["social"] = done[-60:]
         ia.save_state(state)
 

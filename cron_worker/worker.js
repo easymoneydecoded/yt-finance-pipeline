@@ -5,9 +5,12 @@
 //   episodio, el workflow no hace nada. En los dos, el grupo de concurrencia evita ejecuciones a la vez.
 // - Domingo y miercoles a las 16:20 UTC, los posts de Reddit (alerts.yml): insider_reddit.py recuerda lo
 //   enviado cada semana (reddit_sent) y no lo repite si GitHub tambien lanzo su cron de las 16:07.
+// - Martes a sabado a las 03:50 UTC, el resumen nocturno (alerts.yml recap: Telegram + web + redes). El dia del
+//   resumen sale de la hora de Nueva York (recap_day) y queda marcado, asi que no se repite con el de GitHub.
 const JOBS = {
   "35 9 * * *": { repo: "easymoneydecoded/zibu-stories", workflow: "daily.yml", inputs: { auto: "true" } },
   "20 16 * * 0": { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "alerts.yml", inputs: { mode: "reddit" } },
+  "50 3 * * 2-6": { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "alerts.yml", inputs: { mode: "recap" } },
   "20 16 * * 3": { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "alerts.yml", inputs: { mode: "midweek" } },
   default: { repo: "easymoneydecoded/yt-finance-pipeline", workflow: "social.yml", inputs: undefined },
 };

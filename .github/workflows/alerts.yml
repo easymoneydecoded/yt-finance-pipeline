@@ -20,6 +20,10 @@ on:
         type: choice
         options: [scan, recap, teaser, site, reddit, midweek, weekly, check]
         default: scan
+      day:
+        description: 'Solo recap: dia del resumen (AAAA-MM-DD) para recuperar uno perdido. Vacio = el que toca'
+        type: string
+        default: ''
       dry_run:
         description: 'Modo prueba: escribe los mensajes en el log en vez de enviarlos'
         type: boolean
@@ -36,6 +40,7 @@ permissions:
 env:
   PYTHONUNBUFFERED: '1'
   DRY_RUN: ${{ inputs.dry_run == true }}
+  RECAP_DAY: ${{ inputs.day }}
 
 jobs:
   alerts:
