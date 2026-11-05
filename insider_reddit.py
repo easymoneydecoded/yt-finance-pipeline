@@ -25,9 +25,10 @@ import notify
 import insider_alerts as ia
 import insider_site as site
 
-# r/insiderData una semana si y otra no; los grandes piden karma (r/stocks borra al instante
-# los posts de cuentas nuevas, por eso no esta)
-SUBREDDITS = ["insiderData", "StockMarket", "insiderData", "ValueInvesting"]
+# r/insiderData una semana si y otra no; los grandes piden karma y antiguedad: r/stocks y r/ValueInvesting
+# borran al instante los posts de cuentas nuevas (r/ValueInvesting quito dos veces el del 5 nov). Volver a
+# probarlos cuando la cuenta tenga historial.
+SUBREDDITS = ["insiderData", "StockMarket", "insiderData", "SECWatch"]
 MAX_URL    = 7000     # por encima, el boton solo rellena el titulo (el texto va en el mensaje)
 
 
@@ -181,7 +182,7 @@ def main(preview: bool = False) -> None:
 # ---------------------------------------------------------------------------
 # Post del miercoles: una sola compra destacada (otro formato y otro subreddit que el del domingo)
 # ---------------------------------------------------------------------------
-MIDWEEK_SUBS = ["ValueInvesting", "StockMarket", "insiderData"]
+MIDWEEK_SUBS = ["insiderData", "SECWatch", "StockMarket"]
 MIN_CAP = 2e9   # "empresa conocida": se prefieren las de 2.000 M$ o mas de capitalizacion
 
 
