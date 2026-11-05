@@ -32,6 +32,7 @@ import csv
 import html
 import io
 import json
+import os
 import re
 import shutil
 import sys
@@ -46,6 +47,12 @@ import insider_alerts as ia
 SITE_URL   = "https://tickerpress.net"
 TELEGRAM   = "https://t.me/tickerpress_insiders"
 ETSY_SHOP  = "https://www.etsy.com/shop/NeatSheetsStudioShop"
+CONTACT    = "tickerpressyt@gmail.com"
+# AdSense: el ID de editor ("ca-pub-...") va en la variable de GitHub ADSENSE_CLIENT. Sin el, la web no lleva nada de
+# AdSense. Con el: etiqueta de verificacion en todas las paginas, ads.txt y anuncios automaticos SOLO en las fichas
+# (empresa, directivo, dia); la portada, las listas, About, Tools y las paginas legales quedan sin anuncios para no
+# restar altas al Telegram premium.
+ADSENSE    = os.getenv("ADSENSE_CLIENT", "").strip()
 TOOLS      = [  # plantillas de la tienda de Etsy que encajan con quien invierte (pagina /tools/)
     ("Net Worth Tracker", "4607296392", "Track every account, investment and debt month by month and watch your net worth grow."),
     ("Personal Finance Planner 2027", "4607213097", "Budget, expense tracker, debt payoff, savings goals and net worth in one file."),
@@ -483,9 +490,14 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:28px 0;color:var
 """
 
 
-def page(path: str, title: str, description: str, body: str, *, noindex: bool = False) -> None:
+def page(path: str, title: str, description: str, body: str, *, noindex: bool = False, ads: bool = False) -> None:
     canonical = f"{SITE_URL}/{path}" if path else f"{SITE_URL}/"
     robots = '<meta name="robots" content="noindex,follow">' if noindex else ""
+    if ADSENSE:
+        robots += f'\n<meta name="google-adsense-account" content="{esc(ADSENSE)}">'
+        if ads:
+            robots += ('\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='
+                       f'{esc(ADSENSE)}" crossorigin="anonymous"></script>')
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -508,7 +520,8 @@ def page(path: str, title: str, description: str, body: str, *, noindex: bool = 
 {ia.money(ia.SITE_MIN_BUY)} or more; indirect and private ones are tagged. For information only, <b>not financial advice</b>: insiders buy for many reasons
 and can be wrong. © {date.today().year} Ticker Press · <a href="/about/">Methodology</a> ·
 <a href="/tools/">Spreadsheet tools</a> ·
-<a href="{TELEGRAM}" rel="nofollow">Telegram</a></div></footer>
+<a href="{TELEGRAM}" rel="nofollow">Telegram</a> · <a href="/contact/">Contact</a> ·
+<a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></div></footer>
 </body></html>
 """
     out = DIST / path / "index.html" if path else DIST / "index.html"
@@ -621,7 +634,7 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
     desc = (f"{issuer} ({ticker}) insiders bought {ia.money(total)} of stock in the last 12 months. "
             f"See every insider purchase: who bought, how many shares, at what price.") if recent else \
            f"Every open-market insider purchase of {issuer} ({ticker}) stock, from SEC Form 4 filings."
-    page(f"stock/{slug(ticker)}/", title, desc, body, noindex=not indexable)
+    page(f"stock/{slug(ticker)}/", title, desc, body, noindex=not indexable, ads=True)
     return issuer, indexable
 
 
@@ -686,7 +699,7 @@ def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
     title = f"{short(name, 45)} Stock Purchases: Insider Buys (SEC Form 4) | Ticker Press"
     desc = (f"{name} bought {ia.money(total)} of stock in {len(bs)} open-market purchases "
             f"({', '.join(t for t, _ in stocks[:3])}). Every trade from SEC Form 4 filings.")
-    page(INSIDER_URLS[cik].strip("/") + "/", title, desc, body, noindex=not indexable)
+    page(INSIDER_URLS[cik].strip("/") + "/", title, desc, body, noindex=not indexable, ads=True)
     return indexable
 
 
@@ -699,6 +712,71 @@ def insider_table(rows: list[tuple[str, list[dict]]]) -> str:
     return ("<div class='tbl'><table><thead><tr><th>Insider</th><th>Stocks</th><th class='num'>Buys</th>"
             f"<th class='num'>Total</th><th class='num'>Since buy</th><th>Last filed</th></tr></thead>"
             f"<tbody>{out}</tbody></table></div>")
+
+
+def legal_pages(sitemap: list, today) -> None:
+    """Contacto, privacidad y terminos: AdSense (y cualquier visitante) espera encontrarlos."""
+    updated = "November 5, 2026"
+    mail = f'<a href="mailto:{CONTACT}">{CONTACT}</a>'
+    ads_text = ("""<h2>Advertising and cookies</h2>
+<p>We use Google AdSense to show ads on some pages. Google and its partners use cookies to serve ads based on your
+visits to this and other websites. Google's use of advertising cookies lets it and its partners serve ads based on
+those visits. You can opt out of personalised advertising in
+<a href="https://adssettings.google.com/" rel="nofollow">Google's Ads Settings</a>, and learn more at
+<a href="https://policies.google.com/technologies/partner-sites" rel="nofollow">How Google uses information from sites
+that use its services</a> and <a href="https://www.aboutads.info/choices/" rel="nofollow">aboutads.info</a>. Visitors
+from the European Economic Area, the UK and Switzerland are asked for consent before any personalised ads or
+advertising cookies are used.</p>""" if ADSENSE else
+                """<h2>Advertising and cookies</h2>
+<p>This site does not currently show ads or set advertising cookies. If that changes, this policy will be updated
+first, and visitors from the European Economic Area, the UK and Switzerland will be asked for consent.</p>""")
+
+    page("contact/", "Contact | Ticker Press", "How to contact Ticker Press.",
+         f"""<h1>Contact</h1><div class="prose">
+<p>Found a wrong number, a missing filing or a broken page? Have a question about the data, a partnership or
+advertising? Write to us at {mail}. We usually answer within a few days.</p>
+<p>For corrections, please include the stock ticker or the link to the page and, if you can, the SEC filing.</p>
+<p>Insider alerts: <a href="{TELEGRAM}" rel="nofollow">Telegram</a> · How the data works:
+<a href="/about/">About &amp; methodology</a></p></div>""")
+
+    page("privacy/", "Privacy Policy | Ticker Press", "How Ticker Press handles data and cookies.",
+         f"""<h1>Privacy Policy</h1><div class="prose">
+<p><i>Last updated: {updated}</i></p>
+<p>Ticker Press (tickerpress.net) is a free website about insider buying in US stocks. This policy explains what
+information is collected when you visit it.</p>
+<h2>What we collect</h2>
+<p>We have no user accounts, forms or newsletters on this site, and we do not ask for your name or email. If you write
+to us by email, we use your message only to answer it.</p>
+<h2>Analytics and hosting</h2>
+<p>The site is hosted on Cloudflare, which processes technical data such as your IP address to deliver pages and
+protect the site. We use Cloudflare Web Analytics to count visits; it does not use cookies and does not track you
+across websites.</p>
+{ads_text}
+<h2>Third-party links</h2>
+<p>Pages link to the SEC, Telegram, Etsy and other sites. Their own privacy policies apply when you visit them.</p>
+<h2>Your rights</h2>
+<p>Depending on where you live (for example under the GDPR or the CCPA) you may ask about, correct or delete data
+related to you. Contact us at {mail}.</p>
+<h2>Changes</h2>
+<p>We may update this policy; the date above shows the latest version.</p></div>""")
+
+    page("terms/", "Terms of Use & Disclaimer | Ticker Press", "Terms of use and financial disclaimer of Ticker Press.",
+         f"""<h1>Terms of Use &amp; Disclaimer</h1><div class="prose">
+<p><i>Last updated: {updated}</i></p>
+<h2>Not financial advice</h2>
+<p>Everything on Ticker Press is for information and education only. Nothing here is investment, tax or legal advice
+or a recommendation to buy or sell any security. Insiders buy shares for many reasons and can be wrong; past
+performance does not predict future results. Do your own research and consider a licensed adviser before investing.</p>
+<h2>Accuracy of the data</h2>
+<p>Data comes from public SEC Form 4 filings and public market prices, processed automatically. Filings can be amended
+and prices can be delayed or wrong, so we cannot guarantee that every figure is complete, current or correct. Always
+check the original SEC filing linked on each page.</p>
+<h2>Use of the site</h2>
+<p>You may read and share our pages and link to them. Please do not copy the site in bulk or scrape it in a way that
+harms its availability. The site is provided "as is", without warranties, and we are not liable for losses arising
+from its use.</p>
+<h2>Contact</h2><p>{mail}</p></div>""")
+    sitemap += [("contact/", today.isoformat()), ("privacy/", today.isoformat()), ("terms/", today.isoformat())]
 
 
 def build() -> None:
@@ -767,7 +845,7 @@ def build() -> None:
                 f"({ia.money(bs[0]['value'])}).</p><p>{nav}</p>{buys_table(bs)}{cta()}")
         page(f"day/{d}/", f"Insider Buying {fmt_date(d)}: {len(bs)} Insider Purchases | Ticker Press",
              f"All {len(bs)} insider stock purchases filed with the SEC on {fmt_date(d)}. "
-             f"Biggest: {bs[0]['ticker']} {ia.money(bs[0]['value'])}.", body)
+             f"Biggest: {bs[0]['ticker']} {ia.money(bs[0]['value'])}.", body, ads=True)
         sitemap.append((f"day/{d}/", d))
 
     # Cluster buys
@@ -881,6 +959,8 @@ Alerts: <a href="{TELEGRAM}" rel="nofollow">Telegram</a></p></div>""")
          f"<p><a href='{ETSY_SHOP}' rel='nofollow'>See all 15 templates in our Etsy shop →</a></p>{cta()}")
     sitemap.append(("tools/", today.isoformat()))
 
+    legal_pages(sitemap, today)
+
     page("404/", "Page not found | Ticker Press", "Page not found.",
          "<h1>Page not found</h1><p class='lead'>Try the <a href='/stocks/'>stock directory</a> or the "
          "<a href='/'>latest insider buys</a>.</p>", noindex=True)
@@ -891,6 +971,9 @@ Alerts: <a href="{TELEGRAM}" rel="nofollow">Telegram</a></p></div>""")
     (DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns='
                                       f'"http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>', encoding="utf-8")
     (DIST / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8")
+    if ADSENSE:   # vendedor autorizado de los anuncios (AdSense lo pide en la raiz del dominio)
+        pub = ADSENSE.removeprefix("ca-")
+        (DIST / "ads.txt").write_text(f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n", encoding="utf-8")
     n_pages = sum(1 for _ in DIST.rglob("*.html"))
     print(f"   . web generada en {DIST}/: {n_pages} paginas, {len(sitemap)} en el sitemap, "
           f"{len(names)} acciones ({sum(1 for p, _ in sitemap if p.startswith('stock/'))} indexables)")
