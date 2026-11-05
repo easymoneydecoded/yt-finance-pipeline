@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-05T13:14:52+00:00",
+  "updated": "2026-11-05T15:17:09+00:00",
   "n_videos": 36,
   "videos": [
     {
@@ -73,11 +73,13 @@
       ],
       "shorts_titles": [
         "Bill Ackman's 10-Fold Housing Bet Explained",
-        "How the 388 Billion Dollar Mortgage Trap Works"
+        "How the 388 Billion Dollar Mortgage Trap Works",
+        "Will Privatizing Fannie Mae Raise Your Mortgage Rate?"
       ],
       "shorts_ids": [
         "IP0RrxieQMI",
-        "g5Oj6I9mq1U"
+        "g5Oj6I9mq1U",
+        "vNP8Nfd9UtE"
       ],
       "publish_at": "2026-11-04T17:26+00:00",
       "shorts_publish_at": [],
@@ -90,12 +92,14 @@
       "cta_done": [
         "IP0RrxieQMI",
         "g5Oj6I9mq1U",
-        "ty8LYtV03U4"
+        "ty8LYtV03U4",
+        "vNP8Nfd9UtE"
       ],
       "tpl_done": [
         "IP0RrxieQMI",
         "g5Oj6I9mq1U",
-        "ty8LYtV03U4"
+        "ty8LYtV03U4",
+        "vNP8Nfd9UtE"
       ],
       "stats": {
         "views": 1,

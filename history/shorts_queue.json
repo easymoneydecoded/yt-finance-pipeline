@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-04T23:15:10+00:00",
+  "updated": "2026-11-05T15:17:08+00:00",
   "pending": 1,
   "items": [
     {
@@ -684,18 +684,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "vNP8Nfd9UtE",
+          "at": "2026-11-05T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7704705972010321942",
+          "at": "2026-11-05T15:17+00:00"
         }
-      }
+      },
+      "youtube_title": "Will Privatizing Fannie Mae Raise Your Mortgage Rate?"
     }
   ]
 }
