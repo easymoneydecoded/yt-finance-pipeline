@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T19:15:17+00:00",
+  "updated": "2026-11-06T23:17:09+00:00",
   "n_videos": 38,
   "videos": [
     {
@@ -67,10 +67,12 @@
         10914941
       ],
       "shorts_titles": [
-        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 1"
+        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 1",
+        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 2"
       ],
       "shorts_ids": [
-        "y4Ea2VeShpo"
+        "y4Ea2VeShpo",
+        "rVkg7TLNbYY"
       ],
       "publish_at": "2026-11-06T14:00+00:00",
       "shorts_publish_at": [],
@@ -89,10 +91,12 @@
       "shorts_commented": [],
       "cta_done": [
         "gTSfJ1eMl_M",
+        "rVkg7TLNbYY",
         "y4Ea2VeShpo"
       ],
       "tpl_done": [
         "gTSfJ1eMl_M",
+        "rVkg7TLNbYY",
         "y4Ea2VeShpo"
       ]
     },
