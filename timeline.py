@@ -392,7 +392,7 @@ def build_long_subs(words: list[dict], out: Path, total: float = 0.0) -> Path:
 
 
 HOOK_SECONDS = 2.5   # TikTok: la mayoria se iba en el segundo 1 (media de 2,5 s vistos de 52)
-CTA_SECONDS = 2.5
+CTA_SECONDS = 3.5   # coincide con la frase final "Follow for a new market story every day."
 
 
 def build_short_captions(words: list[dict], out: Path, hook: str = "", total: float = 0.0,

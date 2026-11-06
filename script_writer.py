@@ -311,7 +311,8 @@ Each Short is a separate 40-55 second vertical video (95-150 words) about ONE st
 - "hook_text": 2-5 words shown huge on screen during the first 2 seconds: the most striking number or
   claim (e.g. "$6.3B STOLEN", "BANKS WIN, YOU LOSE"). Not the title.
 - One idea, one payoff. Last sentence loops back into the first so it rewatches naturally.
-- Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" (same types/rules).
+- Its own "title" and 2-3 "visuals" (same types/rules).
+{short_title_rules}
 
 === YOUTUBE METADATA ===
 - youtube_title: 40-60 chars about TODAY'S TOPIC, naming its specific subject.
@@ -456,7 +457,8 @@ this video script. Each Short covers ONE striking fact from the story.
   claim (e.g. "$6.3B STOLEN", "BANKS WIN, YOU LOSE"). Not the title.
 - One idea, one payoff. The last sentence loops back into the first so it rewatches naturally.
 - Every number must come from the fact sheet. Written for voice-over (no emojis, no parentheses).
-- Its own "title" (<= 60 chars, specific, no hashtags) and 2-3 "visuals" using ONLY these types:
+{short_title_rules}
+- Its own "title" and 2-3 "visuals" using ONLY these types:
   {{"type": "stat", "anchor": "3-6 exact words from the text", "value": "$5B", "label": "...", "direction": "up"}}
   {{"type": "chart", "anchor": "...", "ticker": "JPM", "period": "1y", "label": "..."}}
   {{"type": "headline", "anchor": "...", "source": "CNBC", "text": "a real headline from the fact sheet"}}
@@ -926,14 +928,41 @@ def fix_opening(text: str) -> str:
     return fixed[:1].upper() + fixed[1:] if fixed != text and fixed else text
 
 
+# Titulos de los Shorts: en el canal los concretos y en segunda persona retienen 55-73 %; los abstractos sacados
+# del nombre de una seccion ("The Anatomy of the Breach", "The First Year Pace") se quedaban en 22-51 % (nov-2026).
+SHORT_TITLE_RULES = """- "title" (40-70 chars, no hashtags) is what makes a scrolling viewer stop. Make it CONCRETE: name the
+  company, person or number, and either speak to the viewer ("you", "your money") or promise a clear answer
+  ("Why...", "How..."). Good: "How Wall Street banks made $52B on AI without building it",
+  "Your high-yield savings account is making you poorer", "The Fed just warned AI is coming for office jobs".
+  NEVER an abstract label or chapter name like "The Anatomy of the Breach" or "The First Year Pace"."""
+# Llamada a seguir/suscribirse al final de cada Short (el mismo video va a YouTube, Instagram y TikTok)
+SHORT_CTA = "Follow for a new market story every day."
+SCRIPT_WRITER_PROMPT = SCRIPT_WRITER_PROMPT.replace("{short_title_rules}", SHORT_TITLE_RULES)
+SHORTS_PROMPT = SHORTS_PROMPT.replace("{short_title_rules}", SHORT_TITLE_RULES)
+_CONCRETE = re.compile(r"\d|\$|%|\byou(r|'re)?\b|^(why|how|what|when|who)\b", re.I)
+
+
+def short_title(title: str, text: str) -> str:
+    """El titulo del Short si es concreto; si no, la primera frase del Short (el gancho, con su cifra)."""
+    title = title.strip().strip('"')
+    if title and _CONCRETE.search(title) and len(title) >= 25:
+        return title[:90]
+    first = re.split(r"(?<=[.!?])\s", text.strip(), maxsplit=1)[0].rstrip(".!? ")
+    if len(first) > 75:
+        first = first[:75].rsplit(" ", 1)[0]
+    return first or title[:90]
+
+
 def clean_shorts(raw: dict) -> list[dict]:
     out = []
     for sh in raw.get("shorts", []) or []:
         text = fix_opening(str(sh.get("text", "")).strip())
         if count_words(text) < SHORT_WORDS[0] * 0.6:
             continue
+        if SHORT_CTA.lower() not in text.lower():
+            text = text.rstrip() + " " + SHORT_CTA
         out.append({
-            "title":     str(sh.get("title", "")).strip()[:90],
+            "title":     short_title(str(sh.get("title", "")), text),
             "hook_text": str(sh.get("hook_text", "")).strip()[:40],
             "text":      text,
             "visuals":   [v for v in sh.get("visuals", []) or [] if isinstance(v, dict)],
