@@ -1,0 +1,36 @@
+name: Channel Report (solo lectura)
+
+# Informe de estadisticas del canal para analizarlas (channel_report.py). No publica ni cambia nada:
+# solo lee YouTube Analytics y deja data/channel_report.json como artefacto.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Dias hacia atras'
+        default: '56'
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install google-api-python-client google-auth python-dotenv requests
+      - name: Informe
+        env:
+          YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          REPORT_DAYS:           ${{ inputs.days }}
+        run: python channel_report.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: channel-report
+          path: data/channel_report.json
+          retention-days: 7
