@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T15:13:21+00:00",
+  "updated": "2026-11-06T19:15:17+00:00",
   "n_videos": 38,
   "videos": [
     {
@@ -66,8 +66,12 @@
         3822778,
         10914941
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 1"
+      ],
+      "shorts_ids": [
+        "y4Ea2VeShpo"
+      ],
       "publish_at": "2026-11-06T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you moving capital into safe havens like gold, or are you buying the dip in equities right now?",
@@ -84,10 +88,12 @@
       "comment_id": "UgyWaeWwcPxofKdBKVV4AaABAg",
       "shorts_commented": [],
       "cta_done": [
-        "gTSfJ1eMl_M"
+        "gTSfJ1eMl_M",
+        "y4Ea2VeShpo"
       ],
       "tpl_done": [
-        "gTSfJ1eMl_M"
+        "gTSfJ1eMl_M",
+        "y4Ea2VeShpo"
       ]
     },
     {

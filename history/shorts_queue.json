@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-06T15:13:20+00:00",
-  "pending": 3,
+  "updated": "2026-11-06T19:15:16+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -867,18 +867,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "y4Ea2VeShpo",
+          "at": "2026-11-06T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18131185261700482",
+          "at": "2026-11-06T19:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705138375283542038",
+          "at": "2026-11-06T19:15+00:00"
         }
-      }
+      },
+      "youtube_title": "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 1"
     },
     {
       "id": "2026-11-06_s2",
