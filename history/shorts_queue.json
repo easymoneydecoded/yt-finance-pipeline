@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-05T23:14:05+00:00",
-  "pending": 1,
+  "updated": "2026-11-06T07:12:49+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -817,6 +817,126 @@
         "volatility index",
         "retail investor mistake",
         "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-06_s1",
+      "created": "2026-11-06T07:12:45+00:00",
+      "date": "2026-11-06",
+      "asset_id": 716269769,
+      "size": 7336390,
+      "title": "Gold Hits Record $4,058 As Markets Crash",
+      "text": "Gold just crossed four thousand fifty eight dollars an ounce as institutional investors rush for cover. While the S&P 500 tumbled to 7,353.73 and the Nasdaq 100 dropped to 26,629.81, big money fled straight into precious metals. When the VIX spikes to 28.18, paper assets lose to physical stores of value every single time.",
+      "parent_title": "Gold Just Hit $4,058: Why Safe Havens Are Winning",
+      "parent_video_id": "gTSfJ1eMl_M",
+      "parent_url": "https://youtu.be/gTSfJ1eMl_M",
+      "tags": [
+        "gold price record high",
+        "safe haven assets 2026",
+        "treasury yields drop",
+        "precious metals investing",
+        "market turbulence",
+        "VIX volatility index",
+        "institutional investors",
+        "S&P 500 drop",
+        "Nasdaq 100 drop",
+        "inflation CPI YoY",
+        "Fed funds rate",
+        "gold GC=F"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-06_s2",
+      "created": "2026-11-06T07:12:47+00:00",
+      "date": "2026-11-06",
+      "asset_id": 716269835,
+      "size": 24370314,
+      "title": "Gold Crushes Records At $4,058",
+      "text": "Gold just crossed four thousand fifty eight dollars an ounce as institutional investors rush for cover from market turbulence. According to real time data from Mercado yfinance, gold has officially reached 4,058.20 dollars an ounce, cementing its status as the ultimate monetary shelter. Even with a minor daily dip of 1.34 percent, the broader multi month trend represents a historic financial milestone for precious metals investors worldwide. Institutional balance sheets are aggressively locking in tangible, counterparty free value while fiat currencies face mounting structural pressure. Smart money is voting with physical bullion because paper promises are losing their credibility in an increasingly volatile global economy. You now see why institutional capital is abandoning risk assets and bidding gold up to 4,058.20 dollars an ounce as gold just crossed four thousand fifty eight dollars an ounce.",
+      "parent_title": "Gold Just Hit $4,058: Why Safe Havens Are Winning",
+      "parent_video_id": "gTSfJ1eMl_M",
+      "parent_url": "https://youtu.be/gTSfJ1eMl_M",
+      "tags": [
+        "gold price record high",
+        "safe haven assets 2026",
+        "treasury yields drop",
+        "precious metals investing",
+        "market turbulence",
+        "VIX volatility index",
+        "institutional investors",
+        "S&P 500 drop",
+        "Nasdaq 100 drop",
+        "inflation CPI YoY",
+        "Fed funds rate",
+        "gold GC=F"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-06_s3",
+      "created": "2026-11-06T07:12:49+00:00",
+      "date": "2026-11-06",
+      "asset_id": 716269899,
+      "size": 21638598,
+      "title": "VIX Panic Index Spikes 69 Percent",
+      "text": "Wall Street fear just exploded upward by an astonishing 69.66 percent in a single day of trading. The VIX volatility index landed firmly at 28.18 as options markets priced in extreme tail risk across global exchanges. When the primary fear gauge of the financial system climbs this fast, portfolio managers stop caring about earnings growth and pivot entirely to capital preservation. According to comprehensive market data, this panic was triggered as the S&P 500 dropped a staggering 4.36 percent in a single punishing session. Risk assets across the entire financial spectrum are being forcefully liquidated to fund this massive flight to safety, driving the VIX volatility index up an astonishing 69.66 percent.",
+      "parent_title": "Gold Just Hit $4,058: Why Safe Havens Are Winning",
+      "parent_video_id": "gTSfJ1eMl_M",
+      "parent_url": "https://youtu.be/gTSfJ1eMl_M",
+      "tags": [
+        "gold price record high",
+        "safe haven assets 2026",
+        "treasury yields drop",
+        "precious metals investing",
+        "market turbulence",
+        "VIX volatility index",
+        "institutional investors",
+        "S&P 500 drop",
+        "Nasdaq 100 drop",
+        "inflation CPI YoY",
+        "Fed funds rate",
+        "gold GC=F"
       ],
       "platforms": {
         "youtube": {
