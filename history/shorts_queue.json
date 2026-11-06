@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-06T07:12:49+00:00",
-  "pending": 4,
+  "updated": "2026-11-06T15:13:20+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -820,18 +820,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "sOfldnHuGdQ",
+          "at": "2026-11-06T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18086642075330250",
+          "at": "2026-11-06T15:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "solo-telegram",
+          "at": "2026-11-06T15:13+00:00"
         }
-      }
+      },
+      "youtube_title": "Is Gold the Only Safe Haven as Markets Drop?"
     },
     {
       "id": "2026-11-06_s1",

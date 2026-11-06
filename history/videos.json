@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T11:52:46+00:00",
+  "updated": "2026-11-06T15:13:21+00:00",
   "n_videos": 38,
   "videos": [
     {
@@ -80,7 +80,15 @@
         "comments": 0,
         "updated": "2026-11-06T11:52:46+00:00",
         "source": "api"
-      }
+      },
+      "comment_id": "UgyWaeWwcPxofKdBKVV4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "gTSfJ1eMl_M"
+      ],
+      "tpl_done": [
+        "gTSfJ1eMl_M"
+      ]
     },
     {
       "date": "2026-11-05",
@@ -151,11 +159,13 @@
       ],
       "shorts_titles": [
         "Why Panic Selling During a 61% VIX Spike Destroys Wealth",
-        "The Nasdaq Dropped 5.35% Today: What You Must Know"
+        "The Nasdaq Dropped 5.35% Today: What You Must Know",
+        "Is Gold the Only Safe Haven as Markets Drop?"
       ],
       "shorts_ids": [
         "TeVj6LIGcn0",
-        "Dx6VZ3-rKQA"
+        "Dx6VZ3-rKQA",
+        "sOfldnHuGdQ"
       ],
       "publish_at": "2026-11-05T21:00+00:00",
       "shorts_publish_at": [],
@@ -166,12 +176,14 @@
       "cta_done": [
         "Dx6VZ3-rKQA",
         "TeVj6LIGcn0",
-        "W96818y3dXw"
+        "W96818y3dXw",
+        "sOfldnHuGdQ"
       ],
       "tpl_done": [
         "Dx6VZ3-rKQA",
         "TeVj6LIGcn0",
-        "W96818y3dXw"
+        "W96818y3dXw",
+        "sOfldnHuGdQ"
       ],
       "comment_id": "UgxMNuGlhW5EQhVeJJd4AaABAg",
       "shorts_commented": [],
