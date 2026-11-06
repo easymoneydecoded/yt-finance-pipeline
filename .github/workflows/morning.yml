@@ -11,6 +11,10 @@ on:
     - cron: '47 8 * * *'
   workflow_dispatch:
     inputs:
+      force:
+        description: 'Generar y subir aunque hoy ya haya video'
+        type: boolean
+        default: false
       dry_run:
         description: 'Modo prueba: genera todo pero NO sube a YouTube (descarga los videos del artefacto)'
         type: boolean
@@ -44,7 +48,8 @@ jobs:
       - id: check
         run: |
           SKIP=$(python3 -c "import content_history as ch, datetime; t=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'); print('true' if ch.already_uploaded_on(t) else 'false')")
-          if [ "${{ github.event_name }}" != "schedule" ]; then SKIP=false; fi
+          # Los respaldos de Cloudflare tambien llegan como workflow_dispatch: solo se fuerza con force=true (o en prueba)
+          if [ "${{ inputs.force }}" = "true" ] || [ "${{ inputs.dry_run }}" = "true" ]; then SKIP=false; fi
           echo "Ya publicado hoy: $SKIP"
           echo "skip=$SKIP" >> "$GITHUB_OUTPUT"
 
