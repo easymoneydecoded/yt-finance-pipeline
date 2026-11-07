@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-07T19:26:13+00:00",
-  "pending": 2,
+  "updated": "2026-11-07T23:03:08+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1055,18 +1055,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "D3PNeD-93MQ",
+          "at": "2026-11-07T23:00+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18045166592838516",
+          "at": "2026-11-07T23:00+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705568233402877955",
+          "at": "2026-11-07T23:03+00:00"
         }
-      }
+      },
+      "youtube_title": "Nvidia Credit Default Swaps Just Surged 76%"
     },
     {
       "id": "2026-11-07_s3",
