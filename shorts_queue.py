@@ -85,7 +85,7 @@ def caption_instagram(item: dict) -> str:
         "Full breakdown with all the data on YouTube: Ticker Press (link in bio).",
         "📲 Free daily insider-buying alerts on Telegram: @tickerpress_insiders",
         "Education, not financial advice.",
-        " ".join(_hashtags(item.get("tags", []), 12)),
+        " ".join(_hashtags(item.get("tags", []), 5)),   # Instagram: maximo 5 hashtags por publicacion (2026)
     ])[:2200]
 
 
