@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T23:03:08+00:00",
+  "updated": "2026-11-07T23:14:26+00:00",
   "n_videos": 39,
   "videos": [
     {
@@ -73,11 +73,13 @@
       ],
       "shorts_titles": [
         "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street",
-        "Nvidia Credit Default Swaps Just Surged 76%"
+        "Nvidia Credit Default Swaps Just Surged 76%",
+        "How State Moratoriums Threaten 45% of US Data Centers"
       ],
       "shorts_ids": [
         "BXzQHCp23_E",
-        "D3PNeD-93MQ"
+        "D3PNeD-93MQ",
+        "UJxW-dVmw9g"
       ],
       "publish_at": "2026-11-07T14:00+00:00",
       "shorts_publish_at": [],
@@ -90,11 +92,13 @@
       "cta_done": [
         "BXzQHCp23_E",
         "D3PNeD-93MQ",
+        "UJxW-dVmw9g",
         "yB6wNKA2cVE"
       ],
       "tpl_done": [
         "BXzQHCp23_E",
         "D3PNeD-93MQ",
+        "UJxW-dVmw9g",
         "yB6wNKA2cVE"
       ]
     },
