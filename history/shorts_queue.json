@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-07T03:12:42+00:00",
-  "pending": 1,
+  "updated": "2026-11-07T07:27:33+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -959,6 +959,126 @@
         "inflation CPI YoY",
         "Fed funds rate",
         "gold GC=F"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-07_s1",
+      "created": "2026-11-07T07:27:29+00:00",
+      "date": "2026-11-07",
+      "asset_id": 719973556,
+      "size": 14846290,
+      "title": "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street",
+      "text": "When corporate bonds start paying sixteen percent interest, smart money runs for the exits. According to CNBC, neocloud CoreWeave is seeing its 2032 bond yield top sixteen percent. Deutsche Bank reports that its five-year credit default swaps spiked above twelve hundred eighty-nine basis points. Credit markets are sending a clear warning that data center financing is getting dangerously expensive. Watch your tech exposure closely before year end. Follow for a new market story every day.",
+      "parent_title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
+      "parent_video_id": "yB6wNKA2cVE",
+      "parent_url": "https://youtu.be/yB6wNKA2cVE",
+      "tags": [
+        "CoreWeave bond yield",
+        "AI debt market",
+        "data center financing",
+        "AI credit risk",
+        "corporate bonds 2026",
+        "AI infrastructure capex",
+        "Nvidia credit default swap",
+        "hyperscaler debt",
+        "tech stock risk",
+        "credit stress",
+        "Wall Street analysis",
+        "bond market warning"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-07_s2",
+      "created": "2026-11-07T07:27:31+00:00",
+      "date": "2026-11-07",
+      "asset_id": 719973651,
+      "size": 11233782,
+      "title": "Nvidia Credit Default Swaps Just Surged 76%",
+      "text": "Even the healthiest balance sheets on Wall Street are seeing insurance costs spike. CNBC reports that credit default swaps on Nvidia debt jumped seventy-six percent in the last month. Broadcom swaps gained forty-nine percent, while Amazon climbed forty-four percent. Markets want more protection against default as data center debt issuance surges past two hundred ninety-six billion dollars this year. Follow for a new market story every day.",
+      "parent_title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
+      "parent_video_id": "yB6wNKA2cVE",
+      "parent_url": "https://youtu.be/yB6wNKA2cVE",
+      "tags": [
+        "CoreWeave bond yield",
+        "AI debt market",
+        "data center financing",
+        "AI credit risk",
+        "corporate bonds 2026",
+        "AI infrastructure capex",
+        "Nvidia credit default swap",
+        "hyperscaler debt",
+        "tech stock risk",
+        "credit stress",
+        "Wall Street analysis",
+        "bond market warning"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-07_s3",
+      "created": "2026-11-07T07:27:33+00:00",
+      "date": "2026-11-07",
+      "asset_id": 719973726,
+      "size": 14622818,
+      "title": "How State Moratoriums Threaten 45% of US Data Centers",
+      "text": "Political shifts might slam the brakes on the AI infrastructure boom. Goldman Sachs warns that incoming Democratic governors in states like Texas, Ohio, and Georgia could impose moratoriums impacting forty-five percent of planned U.S. capacity. With Goldman forecasting four hundred forty billion dollars of hyperscaler debt issuance next year, local roadblocks threaten the cash flows needed to pay back these massive loans. Follow for a new market story every day.",
+      "parent_title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
+      "parent_video_id": "yB6wNKA2cVE",
+      "parent_url": "https://youtu.be/yB6wNKA2cVE",
+      "tags": [
+        "CoreWeave bond yield",
+        "AI debt market",
+        "data center financing",
+        "AI credit risk",
+        "corporate bonds 2026",
+        "AI infrastructure capex",
+        "Nvidia credit default swap",
+        "hyperscaler debt",
+        "tech stock risk",
+        "credit stress",
+        "Wall Street analysis",
+        "bond market warning"
       ],
       "platforms": {
         "youtube": {

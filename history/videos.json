@@ -1,7 +1,85 @@
 {
-  "updated": "2026-11-06T23:17:09+00:00",
-  "n_videos": 38,
+  "updated": "2026-11-07T07:27:33+00:00",
+  "n_videos": 39,
   "videos": [
+    {
+      "date": "2026-11-07",
+      "video_id": "yB6wNKA2cVE",
+      "url": "https://youtu.be/yB6wNKA2cVE",
+      "title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
+      "thumbnail_text": "16% AI DEBT",
+      "topic_key": "coreweave bond yield 16 percent ai debt",
+      "entities": [
+        "CoreWeave"
+      ],
+      "format": "news breakdown",
+      "title_style": "TIMEFRAME WARNING",
+      "keywords": [
+        "CoreWeave bond yield",
+        "AI debt market",
+        "data center financing",
+        "AI credit risk"
+      ],
+      "source_headlines": [
+        "The AI ‘credit card’ is getting costlier as CoreWeave bond yield tops 16%",
+        "Data centers run on debt. That was a problem for bonds this year — and it’s only going to get worse."
+      ],
+      "source_urls": [
+        "https://www.cnbc.com/2026/11/06/coreweave-bond-yield-tops-16percent-as-ai-credit-stress-rises.html",
+        "https://www.marketwatch.com/story/data-centers-run-on-debt-that-was-a-problem-for-bonds-this-year-and-its-only-going-to-get-worse-09c03be6?mod=mw_rss_topstories"
+      ],
+      "thumb_layout": "bottom",
+      "thumb_color": "orange",
+      "thumb_pexels_id": 3147349,
+      "broll_pexels_ids": [
+        5734035,
+        8275795,
+        4223775,
+        4524880,
+        5028622,
+        7140937,
+        7648407,
+        38642316,
+        12819878,
+        37165641,
+        8480475,
+        8480238,
+        39020626,
+        38711953,
+        4708372,
+        3147349,
+        5814581,
+        4987955,
+        6799669,
+        38267971,
+        38395151,
+        6698257,
+        4408071,
+        31830532,
+        6952135,
+        6952134,
+        30914511,
+        30915833,
+        12245077,
+        6266286,
+        7688065,
+        7688068,
+        30282103,
+        38588308,
+        35054136,
+        4873111,
+        7685212,
+        7579335
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-07T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Would you keep holding tech stocks knowing data center borrowing costs just hit sixteen percent?",
+      "playlist": "Stock Market Explained",
+      "quality": 8.3,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-06",
       "video_id": "gTSfJ1eMl_M",
@@ -83,9 +161,10 @@
       "stats": {
         "views": 0,
         "likes": 0,
-        "comments": 0,
-        "updated": "2026-11-06T11:52:46+00:00",
-        "source": "api"
+        "comments": 1,
+        "updated": "2026-11-07T06:52:50+00:00",
+        "source": "api",
+        "shorts_views": 159
       },
       "comment_id": "UgyWaeWwcPxofKdBKVV4AaABAg",
       "shorts_commented": [],
@@ -201,9 +280,9 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
-        "shorts_views": 133
+        "shorts_views": 191
       }
     },
     {
@@ -306,12 +385,15 @@
         "vNP8Nfd9UtE"
       ],
       "stats": {
-        "views": 3,
+        "views": 6,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
-        "shorts_views": 100
+        "shorts_views": 104,
+        "avg_view_sec": 52.0,
+        "avg_view_pct": 13.1,
+        "subs_gained": 0
       }
     },
     {
@@ -409,9 +491,12 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
-        "shorts_views": 83
+        "shorts_views": 83,
+        "avg_view_sec": 307.0,
+        "avg_view_pct": 97.0,
+        "subs_gained": 0
       }
     },
     {
@@ -521,7 +606,7 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "shorts_views": 178
       }
@@ -630,11 +715,11 @@
         "views": 4,
         "likes": 0,
         "comments": 21,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "shorts_views": 177,
-        "avg_view_sec": 118.0,
-        "avg_view_pct": 24.6,
+        "avg_view_sec": 59.0,
+        "avg_view_pct": 12.4,
         "subs_gained": 0
       }
     },
@@ -733,7 +818,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "shorts_views": 207,
         "avg_view_sec": 145.0,
@@ -839,9 +924,9 @@
         "views": 4,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
-        "shorts_views": 215,
+        "shorts_views": 216,
         "avg_view_sec": 92.0,
         "avg_view_pct": 21.9,
         "subs_gained": 0
@@ -869,7 +954,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -890,7 +975,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -911,7 +996,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -932,7 +1017,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -951,7 +1036,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -972,7 +1057,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -994,7 +1079,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1015,7 +1100,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1036,13 +1121,13 @@
       ],
       "seed": true,
       "stats": {
-        "views": 46,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "views": 47,
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
-        "avg_view_sec": 227.0,
-        "avg_view_pct": 46.2,
+        "avg_view_sec": 224.0,
+        "avg_view_pct": 45.7,
         "subs_gained": 1
       }
     },
@@ -1060,7 +1145,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1082,7 +1167,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1105,7 +1190,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1128,7 +1213,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1151,7 +1236,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1174,7 +1259,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1196,7 +1281,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1218,7 +1303,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1240,7 +1325,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1262,7 +1347,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1284,7 +1369,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1307,7 +1392,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1329,7 +1414,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1351,7 +1436,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1373,7 +1458,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1395,7 +1480,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1417,7 +1502,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1439,7 +1524,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1460,7 +1545,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1482,7 +1567,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1504,7 +1589,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-06T11:52:46+00:00",
+        "updated": "2026-11-07T06:52:50+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
