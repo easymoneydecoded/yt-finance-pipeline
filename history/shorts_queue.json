@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-07T15:16:55+00:00",
-  "pending": 4,
+  "updated": "2026-11-07T19:18:39+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -936,6 +936,53 @@
       "youtube_title": "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 2"
     },
     {
+      "id": "2026-11-07_s1",
+      "created": "2026-11-07T07:27:29+00:00",
+      "date": "2026-11-07",
+      "asset_id": 719973556,
+      "size": 14846290,
+      "title": "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street",
+      "text": "When corporate bonds start paying sixteen percent interest, smart money runs for the exits. According to CNBC, neocloud CoreWeave is seeing its 2032 bond yield top sixteen percent. Deutsche Bank reports that its five-year credit default swaps spiked above twelve hundred eighty-nine basis points. Credit markets are sending a clear warning that data center financing is getting dangerously expensive. Watch your tech exposure closely before year end. Follow for a new market story every day.",
+      "parent_title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
+      "parent_video_id": "yB6wNKA2cVE",
+      "parent_url": "https://youtu.be/yB6wNKA2cVE",
+      "tags": [
+        "CoreWeave bond yield",
+        "AI debt market",
+        "data center financing",
+        "AI credit risk",
+        "corporate bonds 2026",
+        "AI infrastructure capex",
+        "Nvidia credit default swap",
+        "hyperscaler debt",
+        "tech stock risk",
+        "credit stress",
+        "Wall Street analysis",
+        "bond market warning"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "done",
+          "attempts": 0,
+          "id": "BXzQHCp23_E",
+          "at": "2026-11-07T19:14+00:00"
+        },
+        "instagram": {
+          "status": "done",
+          "attempts": 0,
+          "id": "18344563855277999",
+          "at": "2026-11-07T19:16+00:00"
+        },
+        "tiktok": {
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705510357774878742",
+          "at": "2026-11-07T19:18+00:00"
+        }
+      },
+      "youtube_title": "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street"
+    },
+    {
       "id": "2026-11-06_s3",
       "created": "2026-11-06T07:12:49+00:00",
       "date": "2026-11-06",
@@ -969,7 +1016,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -980,46 +1027,6 @@
         }
       },
       "youtube_title": "VIX Panic Index Spikes 69 Percent"
-    },
-    {
-      "id": "2026-11-07_s1",
-      "created": "2026-11-07T07:27:29+00:00",
-      "date": "2026-11-07",
-      "asset_id": 719973556,
-      "size": 14846290,
-      "title": "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street",
-      "text": "When corporate bonds start paying sixteen percent interest, smart money runs for the exits. According to CNBC, neocloud CoreWeave is seeing its 2032 bond yield top sixteen percent. Deutsche Bank reports that its five-year credit default swaps spiked above twelve hundred eighty-nine basis points. Credit markets are sending a clear warning that data center financing is getting dangerously expensive. Watch your tech exposure closely before year end. Follow for a new market story every day.",
-      "parent_title": "Before 2027, Check Your Tech Stocks for This 16% Debt Trap",
-      "parent_video_id": "yB6wNKA2cVE",
-      "parent_url": "https://youtu.be/yB6wNKA2cVE",
-      "tags": [
-        "CoreWeave bond yield",
-        "AI debt market",
-        "data center financing",
-        "AI credit risk",
-        "corporate bonds 2026",
-        "AI infrastructure capex",
-        "Nvidia credit default swap",
-        "hyperscaler debt",
-        "tech stock risk",
-        "credit stress",
-        "Wall Street analysis",
-        "bond market warning"
-      ],
-      "platforms": {
-        "youtube": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "instagram": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "tiktok": {
-          "status": "pending",
-          "attempts": 0
-        }
-      }
     },
     {
       "id": "2026-11-07_s2",

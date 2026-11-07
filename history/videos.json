@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T15:16:57+00:00",
+  "updated": "2026-11-07T19:18:40+00:00",
   "n_videos": 39,
   "videos": [
     {
@@ -71,8 +71,12 @@
         7685212,
         7579335
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why CoreWeave's 16% Bond Yield Is Spooking Wall Street"
+      ],
+      "shorts_ids": [
+        "BXzQHCp23_E"
+      ],
       "publish_at": "2026-11-07T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Would you keep holding tech stocks knowing data center borrowing costs just hit sixteen percent?",
@@ -82,9 +86,11 @@
       "comment_id": "UgyNj4WLdHHXb0IiQe54AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "BXzQHCp23_E",
         "yB6wNKA2cVE"
       ],
       "tpl_done": [
+        "BXzQHCp23_E",
         "yB6wNKA2cVE"
       ]
     },
