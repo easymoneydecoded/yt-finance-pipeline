@@ -58,6 +58,10 @@ TOOLS      = [  # plantillas de la tienda de Etsy que encajan con quien invierte
     ("Personal Finance Planner 2027", "4607213097", "Budget, expense tracker, debt payoff, savings goals and net worth in one file."),
     ("Debt Payoff Planner", "4607253469", "Snowball or avalanche: see your debt-free date and how much interest you save."),
     ("Savings Challenge & Sinking Funds", "4607292782", "52-week challenge, 100 envelope challenge and sinking funds to build your cash."),
+    ("Simple Monthly Budget 2027", "4607274270", "The no-fuss budget: plan each month, log spending and see where your money goes."),
+    ("Bill Tracker 2027", "4607293834", "Every bill, due date and payment in one place, so nothing slips through."),
+    ("Couples Budget 2027", "4607295114", "Shared expenses split fairly, with one budget for the household."),
+    ("Small Business Income & Expense Tracker", "4607297438", "Income, expenses, profit and loss for freelancers and side hustles."),
 ]
 DATA_FILE  = Path("site_data/insider_buys.json")
 CHECKS     = Path("site_data/price_checks.json")   # resultado de ia.plausible() por Form 4
