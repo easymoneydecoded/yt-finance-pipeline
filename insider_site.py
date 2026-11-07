@@ -95,11 +95,12 @@ def load_buys() -> dict[str, dict]:
         rows = json.loads(DATA_FILE.read_text(encoding="utf-8"))["buys"]
     except (OSError, json.JSONDecodeError, KeyError):
         return {}
-    return {b["acc"]: b for b in rows if ia.plausible(b)}
+    rows = ia.merge_duplicates([b for b in rows if ia.plausible(b)])   # misma compra de un fondo y su consejero
+    return {b["acc"]: b for b in rows}
 
 
 def save_buys(buys: dict[str, dict]) -> None:
-    rows = sorted(buys.values(), key=lambda b: (b["filed"], b["acc"]), reverse=True)
+    rows = sorted(ia.merge_duplicates(list(buys.values())), key=lambda b: (b["filed"], b["acc"]), reverse=True)
     DATA_FILE.parent.mkdir(exist_ok=True)
     CHECKS.write_text(json.dumps(ia.PRICE_CHECKS, sort_keys=True, indent=0), encoding="utf-8")
     DATA_FILE.write_text(json.dumps({"updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -446,7 +447,8 @@ def sec_url(b: dict) -> str:
 
 
 def person(b: dict) -> str:
-    return ia.smart_title(b["owner"]) + (f" +{b['joint']}" if b["joint"] else "")
+    n = (b.get("joint") or 0) + len(b.get("co", []))
+    return ia.smart_title(b["owner"]) + (f" +{n}" if n else "")
 
 
 INSIDER_URLS: dict[str, str] = {}  # owner_cik -> /insider/<slug>/ (lo rellena build())

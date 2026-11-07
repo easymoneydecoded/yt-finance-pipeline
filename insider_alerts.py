@@ -263,7 +263,64 @@ def is_offering(texts) -> bool:
 
 
 def alertable(e: dict) -> bool:
-    return e["value"] >= (MIN_BUY_USD if e["kind"] == "buy" else MIN_SELL_USD)
+    return not e.get("dup") and e["value"] >= (MIN_BUY_USD if e["kind"] == "buy" else MIN_SELL_USD)
+
+
+# ---------------------------------------------------------------------------
+# La misma compra declarada dos veces
+# ---------------------------------------------------------------------------
+# Un fondo y el consejero que lo representa (o una sociedad y su dueno) presentan cada uno su Form 4 por LAS MISMAS
+# acciones: misma empresa, fecha, acciones y precio. Contarlas dos veces inflaba totales y rankings (ASPE 4-nov,
+# ETRA 5-nov; 1.300 M$ en el historico). Solo se fusionan si uno de los declarantes es una entidad: dos personas
+# distintas que compran lo mismo (p. ej. consejeros en una ampliacion) son compras distintas.
+ENTITY_RE = re.compile(r"\b(LLC|L\.?P|LP|LLP|FUNDS?|PARTNERS|CAPITAL|ADVISORS|ADVISERS|MANAGEMENT|HOLDINGS?|INC|"
+                       r"LTD|LIMITED|TRUST|GROUP|VENTURES?|CORP|CORPORATION|GMBH|AG|BV|NV|PLC|INVESTMENTS?)\b\.?", re.I)
+
+
+def dup_key(b: dict) -> tuple:
+    return (b.get("ticker"), b.get("trade_date"), b.get("shares"), round(float(b.get("price") or 0), 4))
+
+
+def is_entity(name: str) -> bool:
+    return bool(ENTITY_RE.search(name or ""))
+
+
+def same_buy_groups(rows: list[dict]) -> list[list[dict]]:
+    """Grupos (de 2 o mas) que son la misma compra declarada por varios, en el orden de entrada."""
+    groups: dict[tuple, list[dict]] = {}
+    for b in rows:
+        if b.get("kind", "buy") == "buy" and b.get("shares"):
+            groups.setdefault(dup_key(b), []).append(b)
+    return [g for g in groups.values()
+            if len({x.get("owner_cik") or x.get("owner") for x in g}) > 1 and any(is_entity(x["owner"]) for x in g)]
+
+
+def mark_duplicates(events: list[dict]) -> int:
+    """Alertas: el primer aviso se queda (puede que ya se enviara); los demas se marcan 'dup' y no avisan ni cuentan."""
+    n = 0
+    for g in same_buy_groups([e for e in events if not e.get("dup")] + [e for e in events if e.get("dup")]):
+        keep = g[0]
+        for other in g[1:]:
+            if not other.get("dup"):
+                other["dup"] = True
+                n += 1
+            keep["co"] = sorted(set(keep.get("co", [])) | {other["owner"]})
+    return n
+
+
+def merge_duplicates(rows: list[dict]) -> list[dict]:
+    """Web: deja una sola fila por compra (la de la persona si la hay) y los demas como declarantes conjuntos.
+    Idempotente: si la SEC vuelve a traer la fila sobrante, se fusiona igual sin contar dos veces."""
+    drop = set()
+    for g in same_buy_groups(rows):
+        g = sorted(g, key=lambda x: (is_entity(x["owner"]), x.get("acc") or ""))
+        keep = g[0]
+        for other in g[1:]:
+            keep["co"] = sorted(set(keep.get("co", [])) | {other["owner"]} | set(other.get("co", [])))
+            if not keep.get("via") and is_entity(other["owner"]):
+                keep["via"] = smart_title(other["owner"])
+            drop.add(id(other))
+    return [b for b in rows if id(b) not in drop]
 
 
 def parse_filing(filing: dict, min_buy: float = SITE_MIN_BUY) -> list[dict]:
@@ -365,7 +422,8 @@ def nice_date(iso: str) -> str:
 def owner_name(e: dict) -> str:
     # La SEC escribe "APELLIDO NOMBRE": se deja tal cual pero en formato titulo
     name = smart_title(e["owner"])
-    return name + (f" (+{e['joint']} joint filers)" if e["joint"] else "")
+    n = (e.get("joint") or 0) + len(e.get("co", []))
+    return name + (f" (+{n} joint filers)" if n else "")
 
 
 def is_new_position(e: dict) -> bool:
@@ -489,7 +547,8 @@ def scan() -> None:
         state["seen"].append(f["acc"])
         state["events"].extend(events)
         found += sum(alertable(e) for e in events)
-    print(f"Avisos nuevos: {found}")
+    dups = mark_duplicates(state["events"])          # antes de avisar: la misma compra no se avisa dos veces
+    print(f"Avisos nuevos: {found}" + (f" ({dups} eran la misma compra declarada por otro: no se avisan)" if dups else ""))
 
     retry_since = (datetime.now(timezone.utc) - timedelta(hours=RETRY_HOURS)).isoformat()
     pending = [e for e in state["events"]
