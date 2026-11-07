@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T07:27:33+00:00",
+  "updated": "2026-11-07T15:16:55+00:00",
   "pending": 4,
   "items": [
     {
@@ -962,18 +962,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "dMECNA2xE5U",
+          "at": "2026-11-07T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705448000042633238",
+          "at": "2026-11-07T15:16+00:00"
         }
-      }
+      },
+      "youtube_title": "VIX Panic Index Spikes 69 Percent"
     },
     {
       "id": "2026-11-07_s1",

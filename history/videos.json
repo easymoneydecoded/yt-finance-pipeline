@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T07:27:33+00:00",
+  "updated": "2026-11-07T15:16:57+00:00",
   "n_videos": 39,
   "videos": [
     {
@@ -78,7 +78,15 @@
       "pinned_comment": "Would you keep holding tech stocks knowing data center borrowing costs just hit sixteen percent?",
       "playlist": "Stock Market Explained",
       "quality": 8.3,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyNj4WLdHHXb0IiQe54AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "yB6wNKA2cVE"
+      ],
+      "tpl_done": [
+        "yB6wNKA2cVE"
+      ]
     },
     {
       "date": "2026-11-06",
@@ -146,11 +154,13 @@
       ],
       "shorts_titles": [
         "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 1",
-        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 2"
+        "Gold Just Hit $4,058: Why Safe Havens Are Winning - Part 2",
+        "VIX Panic Index Spikes 69 Percent"
       ],
       "shorts_ids": [
         "y4Ea2VeShpo",
-        "rVkg7TLNbYY"
+        "rVkg7TLNbYY",
+        "dMECNA2xE5U"
       ],
       "publish_at": "2026-11-06T14:00+00:00",
       "shorts_publish_at": [],
@@ -169,11 +179,13 @@
       "comment_id": "UgyWaeWwcPxofKdBKVV4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "dMECNA2xE5U",
         "gTSfJ1eMl_M",
         "rVkg7TLNbYY",
         "y4Ea2VeShpo"
       ],
       "tpl_done": [
+        "dMECNA2xE5U",
         "gTSfJ1eMl_M",
         "rVkg7TLNbYY",
         "y4Ea2VeShpo"
