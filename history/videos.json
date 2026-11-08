@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08T07:20:36+00:00",
+  "updated": "2026-11-08T15:16:58+00:00",
   "n_videos": 40,
   "videos": [
     {
@@ -67,14 +67,28 @@
         7947512,
         26988536
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why Did Institutions Dump 12% of Chip Stocks?"
+      ],
+      "shorts_ids": [
+        "AuvD48UpMd8"
+      ],
       "publish_at": "2026-11-08T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you adjusting your tech exposure based on these institutional moves or holding your current position?",
       "playlist": "Stock Market Explained",
       "quality": 8.1,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyGaZ3V-cdq89J5MMd4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "AuvD48UpMd8",
+        "bn75cLm9vuY"
+      ],
+      "tpl_done": [
+        "AuvD48UpMd8",
+        "bn75cLm9vuY"
+      ]
     },
     {
       "date": "2026-11-07",
