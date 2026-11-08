@@ -143,7 +143,7 @@ def build_post(start: date, end: date, week: list[dict]) -> tuple[str, str]:
     lines += ["Insiders sell for many reasons, but they usually buy for one. Curious which of these you'd look into "
               "and which look like noise.", "",
               "Data straight from SEC EDGAR. I keep the full list by stock (with how each buy has done since) at "
-              "tickerpress.net, and I post the day's buys on a free Telegram channel, both linked in my profile. "
+              "tickerpress.net (linked in my profile). "
               "Not financial advice."]
     return title, "\n".join(lines)
 
@@ -241,7 +241,7 @@ def build_midweek(b: dict, cap, close, high, rows: list[dict]) -> tuple[str, str
         lines.append("- It was pre-scheduled under a 10b5-1 plan, which is usually a weaker signal.")
     lines += ["", f"Source: [SEC filing]({site.sec_url(b)})", "",
               "Insiders sell for many reasons but usually buy for one. Does this change how you look at the stock?", "",
-              "I track every insider buy (full list by stock and a free daily Telegram channel, linked in my profile). "
+              "I track every insider buy, with the full list by stock at tickerpress.net (linked in my profile). "
               "Not financial advice."]
     return title, "\n".join(lines)
 
