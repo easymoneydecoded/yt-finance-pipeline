@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-08T15:16:57+00:00",
-  "pending": 3,
+  "updated": "2026-11-08T19:17:41+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1123,6 +1123,51 @@
       "youtube_title": "How State Moratoriums Threaten 45% of US Data Centers"
     },
     {
+      "id": "2026-11-08_s2",
+      "created": "2026-11-08T07:20:35+00:00",
+      "date": "2026-11-08",
+      "asset_id": 723224066,
+      "size": 14763171,
+      "title": "How Smart Money Trades Midterm Elections",
+      "text": "When Democrats swept the House and Senate, institutional funds executed immediate portfolio reallocations, sending the Nasdaq down over five percent in a single session to close more than 11 percent below its peak. But chart analyst Frank Cappelleri from CappThesis examined 13 midterm election cycles since 1974 and revealed that the Nasdaq was higher twelve months after the election in 12 out of 13 cycles. In 2018, the index rallied after election day, suffered a sharp December selloff, yet finished about 15 percent higher a year later. Short-term political panic creates steep swings, but institutional history shows midterm cycles consistently end in recovery. Follow for a new market story every day.",
+      "parent_title": "Is Your Tech Portfolio Exposed to This Institutional Insider Dump?",
+      "parent_video_id": "bn75cLm9vuY",
+      "parent_url": "https://youtu.be/bn75cLm9vuY",
+      "tags": [
+        "institutional tech stock plays",
+        "insider semiconductor trading strategy",
+        "nasdaq correction institutional positioning",
+        "tech stock correction strategy 2026",
+        "stock market institutional flows",
+        "semiconductor stock crash analysis",
+        "vix volatility index trading",
+        "fed funds rate stock market impact",
+        "portfolio defense strategy",
+        "market correction vs bear market"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "done",
+          "attempts": 0,
+          "id": "ePr4iz-IqiQ",
+          "at": "2026-11-08T19:14+00:00"
+        },
+        "instagram": {
+          "status": "done",
+          "attempts": 0,
+          "id": "18074579768782187",
+          "at": "2026-11-08T19:15+00:00"
+        },
+        "tiktok": {
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705881190519080982",
+          "at": "2026-11-08T19:17+00:00"
+        }
+      },
+      "youtube_title": "How Smart Money Trades Midterm Elections"
+    },
+    {
       "id": "2026-11-08_s1",
       "created": "2026-11-08T07:20:33+00:00",
       "date": "2026-11-08",
@@ -1154,7 +1199,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -1165,44 +1210,6 @@
         }
       },
       "youtube_title": "Why Did Institutions Dump 12% of Chip Stocks?"
-    },
-    {
-      "id": "2026-11-08_s2",
-      "created": "2026-11-08T07:20:35+00:00",
-      "date": "2026-11-08",
-      "asset_id": 723224066,
-      "size": 14763171,
-      "title": "How Smart Money Trades Midterm Elections",
-      "text": "When Democrats swept the House and Senate, institutional funds executed immediate portfolio reallocations, sending the Nasdaq down over five percent in a single session to close more than 11 percent below its peak. But chart analyst Frank Cappelleri from CappThesis examined 13 midterm election cycles since 1974 and revealed that the Nasdaq was higher twelve months after the election in 12 out of 13 cycles. In 2018, the index rallied after election day, suffered a sharp December selloff, yet finished about 15 percent higher a year later. Short-term political panic creates steep swings, but institutional history shows midterm cycles consistently end in recovery. Follow for a new market story every day.",
-      "parent_title": "Is Your Tech Portfolio Exposed to This Institutional Insider Dump?",
-      "parent_video_id": "bn75cLm9vuY",
-      "parent_url": "https://youtu.be/bn75cLm9vuY",
-      "tags": [
-        "institutional tech stock plays",
-        "insider semiconductor trading strategy",
-        "nasdaq correction institutional positioning",
-        "tech stock correction strategy 2026",
-        "stock market institutional flows",
-        "semiconductor stock crash analysis",
-        "vix volatility index trading",
-        "fed funds rate stock market impact",
-        "portfolio defense strategy",
-        "market correction vs bear market"
-      ],
-      "platforms": {
-        "youtube": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "instagram": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "tiktok": {
-          "status": "pending",
-          "attempts": 0
-        }
-      }
     },
     {
       "id": "2026-11-08_s3",
