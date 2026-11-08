@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-07T23:14:25+00:00",
-  "pending": 0,
+  "updated": "2026-11-08T07:20:36+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1121,6 +1121,120 @@
         }
       },
       "youtube_title": "How State Moratoriums Threaten 45% of US Data Centers"
+    },
+    {
+      "id": "2026-11-08_s1",
+      "created": "2026-11-08T07:20:33+00:00",
+      "date": "2026-11-08",
+      "asset_id": 723224022,
+      "size": 15385457,
+      "title": "Why Did Institutions Dump 12% of Chip Stocks?",
+      "text": "While retail investors panicked, institutional desks triggered a 12 percent drop in the iShares Semiconductor ETF on Thursday—its worst single trading day since March 2020. The selloff followed Texas governor candidate Gina Hinojosa winning her election on a platform to halt data center construction. That state regulatory shock sent immediate institutional liquidations through artificial intelligence trades, dragging the Nasdaq more than 11 percent below its record high. CNBC reported that historic corrections over the past decade usually see rough selling continue for thirty days, but three months later, the Nasdaq has averaged a 9.41 percent recovery gain from the bottom. Follow for a new market story every day.",
+      "parent_title": "Is Your Tech Portfolio Exposed to This Institutional Insider Dump?",
+      "parent_video_id": "bn75cLm9vuY",
+      "parent_url": "https://youtu.be/bn75cLm9vuY",
+      "tags": [
+        "institutional tech stock plays",
+        "insider semiconductor trading strategy",
+        "nasdaq correction institutional positioning",
+        "tech stock correction strategy 2026",
+        "stock market institutional flows",
+        "semiconductor stock crash analysis",
+        "vix volatility index trading",
+        "fed funds rate stock market impact",
+        "portfolio defense strategy",
+        "market correction vs bear market"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-08_s2",
+      "created": "2026-11-08T07:20:35+00:00",
+      "date": "2026-11-08",
+      "asset_id": 723224066,
+      "size": 14763171,
+      "title": "How Smart Money Trades Midterm Elections",
+      "text": "When Democrats swept the House and Senate, institutional funds executed immediate portfolio reallocations, sending the Nasdaq down over five percent in a single session to close more than 11 percent below its peak. But chart analyst Frank Cappelleri from CappThesis examined 13 midterm election cycles since 1974 and revealed that the Nasdaq was higher twelve months after the election in 12 out of 13 cycles. In 2018, the index rallied after election day, suffered a sharp December selloff, yet finished about 15 percent higher a year later. Short-term political panic creates steep swings, but institutional history shows midterm cycles consistently end in recovery. Follow for a new market story every day.",
+      "parent_title": "Is Your Tech Portfolio Exposed to This Institutional Insider Dump?",
+      "parent_video_id": "bn75cLm9vuY",
+      "parent_url": "https://youtu.be/bn75cLm9vuY",
+      "tags": [
+        "institutional tech stock plays",
+        "insider semiconductor trading strategy",
+        "nasdaq correction institutional positioning",
+        "tech stock correction strategy 2026",
+        "stock market institutional flows",
+        "semiconductor stock crash analysis",
+        "vix volatility index trading",
+        "fed funds rate stock market impact",
+        "portfolio defense strategy",
+        "market correction vs bear market"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-08_s3",
+      "created": "2026-11-08T07:20:36+00:00",
+      "date": "2026-11-08",
+      "asset_id": 723224118,
+      "size": 13012436,
+      "title": "What Do Institutional Desks Do After an 11% Drop?",
+      "text": "Institutional desks treat a 10 percent drop as a standard correction boundary, and the Nasdaq just closed more than 11 percent below its peak. CNBC data spanning ten correction episodes over the last decade shows smart money selling often continues for one month. However, after six months, the Nasdaq was back in rally mode for every single correction except January 2022. On average, the index gained 9.41 percent after three months and 17.03 percent after six months. While 2022 lost an extra 18.3 percent over six months, the vast majority of institutional selloffs reward patient capital. Follow for a new market story every day.",
+      "parent_title": "Is Your Tech Portfolio Exposed to This Institutional Insider Dump?",
+      "parent_video_id": "bn75cLm9vuY",
+      "parent_url": "https://youtu.be/bn75cLm9vuY",
+      "tags": [
+        "institutional tech stock plays",
+        "insider semiconductor trading strategy",
+        "nasdaq correction institutional positioning",
+        "tech stock correction strategy 2026",
+        "stock market institutional flows",
+        "semiconductor stock crash analysis",
+        "vix volatility index trading",
+        "fed funds rate stock market impact",
+        "portfolio defense strategy",
+        "market correction vs bear market"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
