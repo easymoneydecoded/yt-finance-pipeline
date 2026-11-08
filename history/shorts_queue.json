@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-08T19:37:35+00:00",
-  "pending": 1,
+  "updated": "2026-11-08T23:15:36+00:00",
+  "pending": 0,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1236,18 +1236,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "ufr4rvCghd4",
+          "at": "2026-11-08T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18091010870269516",
+          "at": "2026-11-08T23:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7705941940893927446",
+          "at": "2026-11-08T23:15+00:00"
         }
-      }
+      },
+      "youtube_title": "What Do Institutional Desks Do After an 11% Drop?"
     }
   ]
 }
