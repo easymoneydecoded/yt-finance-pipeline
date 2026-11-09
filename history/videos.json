@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-09T15:15:34+00:00",
+  "updated": "2026-11-09T19:14:13+00:00",
   "n_videos": 41,
   "videos": [
     {
@@ -71,10 +71,12 @@
         8440642
       ],
       "shorts_titles": [
-        "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 1"
+        "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 1",
+        "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 2"
       ],
       "shorts_ids": [
-        "lrjIol0iU0k"
+        "lrjIol0iU0k",
+        "s3q_Oo7-uTM"
       ],
       "publish_at": "2026-11-09T14:00+00:00",
       "shorts_publish_at": [],
@@ -86,11 +88,13 @@
       "shorts_commented": [],
       "cta_done": [
         "1O5PNiL8dhs",
-        "lrjIol0iU0k"
+        "lrjIol0iU0k",
+        "s3q_Oo7-uTM"
       ],
       "tpl_done": [
         "1O5PNiL8dhs",
-        "lrjIol0iU0k"
+        "lrjIol0iU0k",
+        "s3q_Oo7-uTM"
       ]
     },
     {
