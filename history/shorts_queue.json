@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-08T23:15:36+00:00",
-  "pending": 0,
+  "updated": "2026-11-09T07:23:24+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1255,6 +1255,120 @@
         }
       },
       "youtube_title": "What Do Institutional Desks Do After an 11% Drop?"
+    },
+    {
+      "id": "2026-11-09_s1",
+      "created": "2026-11-09T07:23:20+00:00",
+      "date": "2026-11-09",
+      "asset_id": 726602893,
+      "size": 16500342,
+      "title": "Warren Buffett vs Wall Street: The $9.6B Buyback Secret",
+      "text": "Berkshire Hathaway just deployed 9.6 billion dollars buying back its own stock in a single quarter. That is more than double the 4.5 billion dollars repurchased in the previous quarter. According to CNBC, this surge happened even though operating profits fell 5.8 percent to 12.705 billion dollars. While insurance underwriting dropped 43 percent, management saw their own stock as the best bargain on the market. Total buybacks for 2026 have now hit 14.4 billion dollars. When smart money accelerates buybacks into falling earnings, they are playing the long game. Follow for a new market story every day.",
+      "parent_title": "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness",
+      "parent_video_id": "1O5PNiL8dhs",
+      "parent_url": "https://youtu.be/1O5PNiL8dhs",
+      "tags": [
+        "Warren Buffett vs Wall Street",
+        "Berkshire Hathaway buybacks",
+        "Warren Buffett cash hoard",
+        "BRK earnings Q3",
+        "Buffett defensive market strategy",
+        "Berkshire Hathaway Q3 earnings",
+        "Greg Abel Berkshire",
+        "Berkshire operating earnings",
+        "stock market rotation",
+        "Warren Buffett stock buybacks"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-09_s2",
+      "created": "2026-11-09T07:23:22+00:00",
+      "date": "2026-11-09",
+      "asset_id": 726602957,
+      "size": 14637939,
+      "title": "Warren Buffett vs Wall Street: Inside the $377B Cash Hoard",
+      "text": "Berkshire Hathaway's total cash balance just expanded to 377.435 billion dollars in the third quarter. That is up 3 percent from 365.514 billion dollars in the second quarter. But according to CNBC reports, excluding utility cash and T-bill payables leaves net cash at 352.3 billion dollars. Even after deploying 9.6 billion dollars into share buybacks, their top stock holdings remained unchanged with Apple, Alphabet, and Bank of America leading the portfolio. Holding over 350 billion dollars in clean cash allows Berkshire to survive any market shock. Follow for a new market story every day.",
+      "parent_title": "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness",
+      "parent_video_id": "1O5PNiL8dhs",
+      "parent_url": "https://youtu.be/1O5PNiL8dhs",
+      "tags": [
+        "Warren Buffett vs Wall Street",
+        "Berkshire Hathaway buybacks",
+        "Warren Buffett cash hoard",
+        "BRK earnings Q3",
+        "Buffett defensive market strategy",
+        "Berkshire Hathaway Q3 earnings",
+        "Greg Abel Berkshire",
+        "Berkshire operating earnings",
+        "stock market rotation",
+        "Warren Buffett stock buybacks"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-09_s3",
+      "created": "2026-11-09T07:23:24+00:00",
+      "date": "2026-11-09",
+      "asset_id": 726603026,
+      "size": 11845778,
+      "title": "Warren Buffett vs Wall Street: How Berkshire Beats the S&P 500",
+      "text": "Berkshire Hathaway Class A shares jumped over 12 percent in the past month while the S&P 500 dropped 5.5 percent. CNBC data shows Berkshire is up 13 percent year to date, comfortably beating the broader market's 7.8 percent gain. Even though overall quarterly earnings fell 28 percent to 22.112 billion dollars, investors ran to Berkshire's cash flow stability. With 10 Year Treasury yields at 4.86 percent, market capital is leaving risky tech stocks and returning to fundamental cash value. Follow for a new market story every day.",
+      "parent_title": "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness",
+      "parent_video_id": "1O5PNiL8dhs",
+      "parent_url": "https://youtu.be/1O5PNiL8dhs",
+      "tags": [
+        "Warren Buffett vs Wall Street",
+        "Berkshire Hathaway buybacks",
+        "Warren Buffett cash hoard",
+        "BRK earnings Q3",
+        "Buffett defensive market strategy",
+        "Berkshire Hathaway Q3 earnings",
+        "Greg Abel Berkshire",
+        "Berkshire operating earnings",
+        "stock market rotation",
+        "Warren Buffett stock buybacks"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
