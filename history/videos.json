@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-09T07:23:24+00:00",
+  "updated": "2026-11-09T15:15:34+00:00",
   "n_videos": 41,
   "videos": [
     {
@@ -70,14 +70,28 @@
         7679393,
         8440642
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 1"
+      ],
+      "shorts_ids": [
+        "lrjIol0iU0k"
+      ],
       "publish_at": "2026-11-09T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Warren Buffett just deployed $9.6 billion into buybacks while profits fell 28 percent. Are you holding more cash right now or buying market dips?",
       "playlist": "Stock Market Explained",
       "quality": 8.3,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgzJE1H6nyapq3R4X1h4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "1O5PNiL8dhs",
+        "lrjIol0iU0k"
+      ],
+      "tpl_done": [
+        "1O5PNiL8dhs",
+        "lrjIol0iU0k"
+      ]
     },
     {
       "date": "2026-11-08",
