@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-09T19:14:12+00:00",
-  "pending": 1,
+  "updated": "2026-11-09T23:14:24+00:00",
+  "pending": 0,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1371,18 +1371,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "gx6FRRNIO88",
+          "at": "2026-11-09T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18132156295699265",
+          "at": "2026-11-09T23:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7706313187767453698",
+          "at": "2026-11-09T23:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 3"
     }
   ]
 }
