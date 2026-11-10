@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-09T23:14:24+00:00",
-  "pending": 0,
+  "updated": "2026-11-10T07:48:18+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1390,6 +1390,126 @@
         }
       },
       "youtube_title": "Warren Buffett vs Wall Street: How $9.6B Buybacks Expose Market Weakness - Part 3"
+    },
+    {
+      "id": "2026-11-10_s1",
+      "created": "2026-11-10T07:48:14+00:00",
+      "date": "2026-11-10",
+      "asset_id": 730575279,
+      "size": 16352819,
+      "title": "Why Short Sellers Are Targeting Nvidia Chip Routing",
+      "text": "Short sellers claim the biggest AI trade on the planet has a massive leak nobody is talking about. Culper Research is doubling down on allegations of illicit chip routing that bypass federal export controls. With the Nasdaq 100 trading at 27,907.63, institutional desks are quietly hedging against regulatory shocks. Check your tech holdings for export exposure before the probe widens. Short sellers claim the biggest AI trade on the planet has a massive leak nobody is talking about. Follow for a new market story every day.",
+      "parent_title": "Culper Research Just Exposed This Hidden Nvidia Chip Leak",
+      "parent_video_id": "Qn731-EmEMU",
+      "parent_url": "https://youtu.be/Qn731-EmEMU",
+      "tags": [
+        "Nvidia chip short seller",
+        "Culper Research Nvidia scandal",
+        "AI chip export controls",
+        "tech stock risk 2026",
+        "Nasdaq 100",
+        "Nvidia export ban",
+        "short seller report",
+        "AI hardware compliance",
+        "tech portfolio risk",
+        "semiconductor routing probe",
+        "Wall Street short interest",
+        "market regulatory exposure"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-10_s2",
+      "created": "2026-11-10T07:48:16+00:00",
+      "date": "2026-11-10",
+      "asset_id": 730575359,
+      "size": 13729369,
+      "title": "How Export Controls Threaten Your Tech Portfolio",
+      "text": "As the 10-year Treasury yield climbs to 4.86, capital is becoming too expensive to park in high-risk names with unresolved regulatory overhangs. Compliance failures in semiconductor routing expose tech giants to sudden enforcement actions. Markets are beginning to price in the fallout while the VIX sits at 19.92. Verify your risk exposure today. As the 10-year Treasury yield climbs to 4.86, capital is becoming too expensive to park in high-risk names. Follow for a new market story every day.",
+      "parent_title": "Culper Research Just Exposed This Hidden Nvidia Chip Leak",
+      "parent_video_id": "Qn731-EmEMU",
+      "parent_url": "https://youtu.be/Qn731-EmEMU",
+      "tags": [
+        "Nvidia chip short seller",
+        "Culper Research Nvidia scandal",
+        "AI chip export controls",
+        "tech stock risk 2026",
+        "Nasdaq 100",
+        "Nvidia export ban",
+        "short seller report",
+        "AI hardware compliance",
+        "tech portfolio risk",
+        "semiconductor routing probe",
+        "Wall Street short interest",
+        "market regulatory exposure"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-10_s3",
+      "created": "2026-11-10T07:48:18+00:00",
+      "date": "2026-11-10",
+      "asset_id": 730575462,
+      "size": 14637283,
+      "title": "What the VIX Is Telling You About Tech Stocks",
+      "text": "With the VIX resting at 19.92, implied volatility remains low enough for institutional players to buy downside protection cheaply. Culper Research claims secondary distribution networks are routing advanced processors past export controls. When enforcement steps in, the valuation multiple compression will hit unprotected portfolios. With the VIX resting at 19.92, implied volatility remains low enough for protection. Follow for a new market story every day.",
+      "parent_title": "Culper Research Just Exposed This Hidden Nvidia Chip Leak",
+      "parent_video_id": "Qn731-EmEMU",
+      "parent_url": "https://youtu.be/Qn731-EmEMU",
+      "tags": [
+        "Nvidia chip short seller",
+        "Culper Research Nvidia scandal",
+        "AI chip export controls",
+        "tech stock risk 2026",
+        "Nasdaq 100",
+        "Nvidia export ban",
+        "short seller report",
+        "AI hardware compliance",
+        "tech portfolio risk",
+        "semiconductor routing probe",
+        "Wall Street short interest",
+        "market regulatory exposure"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
