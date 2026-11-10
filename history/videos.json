@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T19:12:10+00:00",
+  "updated": "2026-11-10T23:14:07+00:00",
   "n_videos": 42,
   "videos": [
     {
@@ -71,11 +71,13 @@
       ],
       "shorts_titles": [
         "Why Short Sellers Are Targeting Nvidia Chip Routing",
-        "How Export Controls Threaten Your Tech Portfolio"
+        "How Export Controls Threaten Your Tech Portfolio",
+        "What the VIX Is Telling You About Tech Stocks"
       ],
       "shorts_ids": [
         "z_8oRXd28mQ",
-        "Vx3as9MKT3I"
+        "Vx3as9MKT3I",
+        "FliWPIaOzWs"
       ],
       "publish_at": "2026-11-10T14:00+00:00",
       "shorts_publish_at": [],
@@ -86,11 +88,13 @@
       "comment_id": "UgwuWGfFS46s7Z8K8Ax4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "FliWPIaOzWs",
         "Qn731-EmEMU",
         "Vx3as9MKT3I",
         "z_8oRXd28mQ"
       ],
       "tpl_done": [
+        "FliWPIaOzWs",
         "Qn731-EmEMU",
         "Vx3as9MKT3I",
         "z_8oRXd28mQ"
