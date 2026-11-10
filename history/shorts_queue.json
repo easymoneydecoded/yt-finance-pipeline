@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-10T07:48:18+00:00",
-  "pending": 3,
+  "updated": "2026-11-10T15:15:18+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1418,18 +1418,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "z_8oRXd28mQ",
+          "at": "2026-11-10T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17922319725240118",
+          "at": "2026-11-10T15:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7706561002846717974",
+          "at": "2026-11-10T15:15+00:00"
         }
-      }
+      },
+      "youtube_title": "Why Short Sellers Are Targeting Nvidia Chip Routing"
     },
     {
       "id": "2026-11-10_s2",

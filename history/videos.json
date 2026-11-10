@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T07:48:18+00:00",
+  "updated": "2026-11-10T15:15:19+00:00",
   "n_videos": 42,
   "videos": [
     {
@@ -69,14 +69,28 @@
         38711950,
         29233577
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why Short Sellers Are Targeting Nvidia Chip Routing"
+      ],
+      "shorts_ids": [
+        "z_8oRXd28mQ"
+      ],
       "publish_at": "2026-11-10T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Do you think export control loopholes will trigger a major tech correction, or is the market right to ignore the short sellers?",
       "playlist": "Stock Market Explained",
       "quality": 7.9,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgwuWGfFS46s7Z8K8Ax4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "Qn731-EmEMU",
+        "z_8oRXd28mQ"
+      ],
+      "tpl_done": [
+        "Qn731-EmEMU",
+        "z_8oRXd28mQ"
+      ]
     },
     {
       "date": "2026-11-09",
