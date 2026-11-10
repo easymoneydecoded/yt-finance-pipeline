@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-10T15:15:18+00:00",
-  "pending": 2,
+  "updated": "2026-11-10T19:12:09+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1465,18 +1465,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "Vx3as9MKT3I",
+          "at": "2026-11-10T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18054249989602646",
+          "at": "2026-11-10T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "solo-telegram",
+          "at": "2026-11-10T19:12+00:00"
         }
-      }
+      },
+      "youtube_title": "How Export Controls Threaten Your Tech Portfolio"
     },
     {
       "id": "2026-11-10_s3",
