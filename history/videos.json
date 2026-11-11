@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T19:14:15+00:00",
+  "updated": "2026-11-11T23:14:22+00:00",
   "n_videos": 43,
   "videos": [
     {
@@ -72,11 +72,13 @@
       ],
       "shorts_titles": [
         "Alibaba Just Filed To List Its Nvidia Chip Rival - Part 1",
-        "Inside Alibaba's New Zhenwu V900 AI Chip"
+        "Inside Alibaba's New Zhenwu V900 AI Chip",
+        "Why Baidu and Alibaba Are Taking Opposite Paths"
       ],
       "shorts_ids": [
         "rz_wI__Arrs",
-        "zu1GWa_1c1I"
+        "zu1GWa_1c1I",
+        "9zjLswWjxFE"
       ],
       "publish_at": "2026-11-11T14:00+00:00",
       "shorts_publish_at": [],
@@ -87,11 +89,13 @@
       "comment_id": "UgyetoYlm4_s_yIiC7V4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "9zjLswWjxFE",
         "mr-EPOBoIdk",
         "rz_wI__Arrs",
         "zu1GWa_1c1I"
       ],
       "tpl_done": [
+        "9zjLswWjxFE",
         "mr-EPOBoIdk",
         "rz_wI__Arrs",
         "zu1GWa_1c1I"
