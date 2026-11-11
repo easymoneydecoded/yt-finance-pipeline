@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-11T15:14:26+00:00",
-  "pending": 2,
+  "updated": "2026-11-11T19:14:15+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1602,18 +1602,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zu1GWa_1c1I",
+          "at": "2026-11-11T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18116617982032861",
+          "at": "2026-11-11T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7706993529800837142",
+          "at": "2026-11-11T19:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Inside Alibaba's New Zhenwu V900 AI Chip"
     },
     {
       "id": "2026-11-11_s3",
