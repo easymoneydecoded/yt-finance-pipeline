@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-10T23:14:06+00:00",
-  "pending": 0,
+  "updated": "2026-11-11T08:00:06+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1531,6 +1531,120 @@
         }
       },
       "youtube_title": "What the VIX Is Telling You About Tech Stocks"
+    },
+    {
+      "id": "2026-11-11_s1",
+      "created": "2026-11-11T08:00:01+00:00",
+      "date": "2026-11-11",
+      "asset_id": 734666330,
+      "size": 13220458,
+      "title": "Alibaba just filed confidentially to list its Nvidia chip rival T-Head on",
+      "text": "Alibaba just filed confidentially to list its Nvidia chip rival T-Head on the Hong Kong Stock Exchange. While Wall Street ignores the move, Alibaba is pushing forward with its homegrown semiconductor strategy despite a 29% year-to-date stock drop. As U.S. export restrictions tighten, Chinese tech giants are spinning off captive hardware units. Watch how this domestic contender changes global chip competition, and subscribe for more deep dives into market shifts. Follow for a new market story every day.",
+      "parent_title": "Alibaba Just Filed To List Its Nvidia Chip Rival",
+      "parent_video_id": "mr-EPOBoIdk",
+      "parent_url": "https://youtu.be/mr-EPOBoIdk",
+      "tags": [
+        "Alibaba T-Head",
+        "Nvidia chip rival",
+        "Hong Kong stock exchange",
+        "semiconductor market share",
+        "Alibaba stock",
+        "NVDA stock",
+        "Chinese tech stocks",
+        "Alibaba AI chip",
+        "semiconductor news",
+        "Wall Street analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-11_s2",
+      "created": "2026-11-11T08:00:04+00:00",
+      "date": "2026-11-11",
+      "asset_id": 734666365,
+      "size": 16772372,
+      "title": "Inside Alibaba's New Zhenwu V900 AI Chip",
+      "text": "Alibaba's new Zhenwu V900 AI chip delivers three times the performance of its predecessor, the Zhenwu M890. Developed by semiconductor subsidiary T-Head, this homegrown processor is designed to bypass tightening U.S. restrictions. With Alibaba filing confidentially on Sept. 11 to list T-Head in Hong Kong, the race for domestic semiconductor dominance is heating up. Check your tech portfolio for international chip exposure today, and subscribe to stay ahead of Wall Street. Follow for a new market story every day.",
+      "parent_title": "Alibaba Just Filed To List Its Nvidia Chip Rival",
+      "parent_video_id": "mr-EPOBoIdk",
+      "parent_url": "https://youtu.be/mr-EPOBoIdk",
+      "tags": [
+        "Alibaba T-Head",
+        "Nvidia chip rival",
+        "Hong Kong stock exchange",
+        "semiconductor market share",
+        "Alibaba stock",
+        "NVDA stock",
+        "Chinese tech stocks",
+        "Alibaba AI chip",
+        "semiconductor news",
+        "Wall Street analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-11_s3",
+      "created": "2026-11-11T08:00:06+00:00",
+      "date": "2026-11-11",
+      "asset_id": 734666437,
+      "size": 11933945,
+      "title": "Why Baidu and Alibaba Are Taking Opposite Paths",
+      "text": "While Baidu has reportedly delayed the listing of its AI chip entity Kunlunxin amid rising regulatory scrutiny, Alibaba is charging ahead. Alibaba filed confidentially on Sept. 11 to spin off its semiconductor subsidiary T-Head on the Hong Kong Stock Exchange. Chinese financial regulators have increased their scrutiny on tech IPOs, making Alibaba's move a high-stakes gamble. Track your international tech exposure closely, and subscribe for the financial analysis Wall Street misses. Follow for a new market story every day.",
+      "parent_title": "Alibaba Just Filed To List Its Nvidia Chip Rival",
+      "parent_video_id": "mr-EPOBoIdk",
+      "parent_url": "https://youtu.be/mr-EPOBoIdk",
+      "tags": [
+        "Alibaba T-Head",
+        "Nvidia chip rival",
+        "Hong Kong stock exchange",
+        "semiconductor market share",
+        "Alibaba stock",
+        "NVDA stock",
+        "Chinese tech stocks",
+        "Alibaba AI chip",
+        "semiconductor news",
+        "Wall Street analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
