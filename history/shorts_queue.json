@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-11T08:00:06+00:00",
-  "pending": 3,
+  "updated": "2026-11-11T15:14:26+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1557,18 +1557,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "rz_wI__Arrs",
+          "at": "2026-11-11T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18415920358090938",
+          "at": "2026-11-11T15:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7706931774475601942",
+          "at": "2026-11-11T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Alibaba Just Filed To List Its Nvidia Chip Rival - Part 1"
     },
     {
       "id": "2026-11-11_s2",

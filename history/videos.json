@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T08:00:06+00:00",
+  "updated": "2026-11-11T15:14:27+00:00",
   "n_videos": 43,
   "videos": [
     {
@@ -70,14 +70,28 @@
         10391545,
         2231801
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Alibaba Just Filed To List Its Nvidia Chip Rival - Part 1"
+      ],
+      "shorts_ids": [
+        "rz_wI__Arrs"
+      ],
       "publish_at": "2026-11-11T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Would you buy shares in a domestic Chinese chip rival to Nvidia, or is the regulatory risk too high?",
       "playlist": "Stock Market Explained",
       "quality": 7.4,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyetoYlm4_s_yIiC7V4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "mr-EPOBoIdk",
+        "rz_wI__Arrs"
+      ],
+      "tpl_done": [
+        "mr-EPOBoIdk",
+        "rz_wI__Arrs"
+      ]
     },
     {
       "date": "2026-11-10",
