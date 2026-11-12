@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T15:17:04+00:00",
+  "updated": "2026-11-12T19:17:07+00:00",
   "n_videos": 44,
   "videos": [
     {
@@ -73,10 +73,12 @@
         34953966
       ],
       "shorts_titles": [
-        "How Nvidia's 8% Crash Hits Your Index Fund"
+        "How Nvidia's 8% Crash Hits Your Index Fund",
+        "Why Nvidia's Board Met Late Wednesday Night"
       ],
       "shorts_ids": [
-        "i5hj5ehTf6I"
+        "i5hj5ehTf6I",
+        "isOg9OnxnLY"
       ],
       "publish_at": "2026-11-12T14:00+00:00",
       "shorts_publish_at": [],
@@ -88,11 +90,13 @@
       "shorts_commented": [],
       "cta_done": [
         "gwBpno_-myk",
-        "i5hj5ehTf6I"
+        "i5hj5ehTf6I",
+        "isOg9OnxnLY"
       ],
       "tpl_done": [
         "gwBpno_-myk",
-        "i5hj5ehTf6I"
+        "i5hj5ehTf6I",
+        "isOg9OnxnLY"
       ]
     },
     {
