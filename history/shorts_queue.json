@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T21:55:22+00:00",
+  "updated": "2026-11-12T23:17:03+00:00",
   "pending": 1,
   "items": [
     {
@@ -1783,18 +1783,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "_GW_mxR0r-s",
+          "at": "2026-11-12T23:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7707427141906057238",
+          "at": "2026-11-12T23:17+00:00"
         }
-      }
+      },
+      "youtube_title": "How Key Person Risk Can Threaten Your Portfolio"
     }
   ]
 }
