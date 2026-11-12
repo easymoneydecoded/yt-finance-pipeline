@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-11T23:14:21+00:00",
-  "pending": 0,
+  "updated": "2026-11-12T07:26:19+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1666,6 +1666,120 @@
         }
       },
       "youtube_title": "Why Baidu and Alibaba Are Taking Opposite Paths"
+    },
+    {
+      "id": "2026-11-12_s1",
+      "created": "2026-11-12T07:26:15+00:00",
+      "date": "2026-11-12",
+      "asset_id": 738505065,
+      "size": 12803414,
+      "title": "How Nvidia's 8% Crash Hits Your Index Fund",
+      "text": "Nvidia stock plunged eight percent in after-hours trading after board talks leaked. According to MarketWatch, the board of directors met late Wednesday to determine CEO Jensen Huang's fate. That sudden drop dragged down Nasdaq futures overnight, exposing a major flaw in passive index funds. Most investors believe index funds provide safety through diversification, but weighted benchmark tracking concentrates heavy risk into single tech giants. When executive turmoil hits the leader of the AI trade, index funds pass that key person risk straight into your portfolio. That is why Nvidia stock plunged eight percent in after-hours trading after board talks leaked. Follow for a new market story every day.",
+      "parent_title": "Nvidia Board Moves To Remove CEO Jensen Huang",
+      "parent_video_id": "gwBpno_-myk",
+      "parent_url": "https://youtu.be/gwBpno_-myk",
+      "tags": [
+        "nvidia stock crash",
+        "jensen huang removed",
+        "nvidia board",
+        "nasdaq futures drop",
+        "nvidia news",
+        "tech stock selloff",
+        "index fund risk",
+        "market concentration",
+        "semiconductor stocks",
+        "nasdaq 100 analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-12_s2",
+      "created": "2026-11-12T07:26:16+00:00",
+      "date": "2026-11-12",
+      "asset_id": 738505136,
+      "size": 10099405,
+      "title": "Why Nvidia's Board Met Late Wednesday Night",
+      "text": "A late-night board meeting just triggered an eight percent stock drop. MarketWatch reports that Nvidia directors met late Wednesday to determine whether to remove CEO Jensen Huang. For retail investors holding tech indexes, this executive shock exposes key person risk at the highest level. When institutional traders caught word of the meeting, automated sell programs instantly hit semiconductor shares and dragged down Nasdaq futures. A single leadership change can disrupt long-term chip supply commitments and hardware roadmaps across the tech sector. That is why a late-night board meeting just triggered an eight percent stock drop. Follow for a new market story every day.",
+      "parent_title": "Nvidia Board Moves To Remove CEO Jensen Huang",
+      "parent_video_id": "gwBpno_-myk",
+      "parent_url": "https://youtu.be/gwBpno_-myk",
+      "tags": [
+        "nvidia stock crash",
+        "jensen huang removed",
+        "nvidia board",
+        "nasdaq futures drop",
+        "nvidia news",
+        "tech stock selloff",
+        "index fund risk",
+        "market concentration",
+        "semiconductor stocks",
+        "nasdaq 100 analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-12_s3",
+      "created": "2026-11-12T07:26:19+00:00",
+      "date": "2026-11-12",
+      "asset_id": 738505208,
+      "size": 12834502,
+      "title": "How Key Person Risk Can Threaten Your Portfolio",
+      "text": "Nvidia shares plummeted eight percent as board members met on Wednesday. According to MarketWatch reports, directors convened late in the evening to prepare the potential removal of CEO Jensen Huang. When one executive represents the core strategy of a multi-trillion dollar market move, any boardroom conflict ripples through broad indices like the Nasdaq 100, which had closed at 28,374.25 earlier that day. High market concentration means retail portfolios carry hidden corporate governance risk without even realizing it. That is why Nvidia shares plummeted eight percent as board members met on Wednesday. Follow for a new market story every day.",
+      "parent_title": "Nvidia Board Moves To Remove CEO Jensen Huang",
+      "parent_video_id": "gwBpno_-myk",
+      "parent_url": "https://youtu.be/gwBpno_-myk",
+      "tags": [
+        "nvidia stock crash",
+        "jensen huang removed",
+        "nvidia board",
+        "nasdaq futures drop",
+        "nvidia news",
+        "tech stock selloff",
+        "index fund risk",
+        "market concentration",
+        "semiconductor stocks",
+        "nasdaq 100 analysis"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
