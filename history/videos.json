@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T07:26:19+00:00",
+  "updated": "2026-11-12T15:17:04+00:00",
   "n_videos": 44,
   "videos": [
     {
@@ -72,14 +72,28 @@
         35124446,
         34953966
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "How Nvidia's 8% Crash Hits Your Index Fund"
+      ],
+      "shorts_ids": [
+        "i5hj5ehTf6I"
+      ],
       "publish_at": "2026-11-12T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Does potential executive turnover at top tech companies make you want to trim your index fund exposure, or are you holding through the chaos?",
       "playlist": "Stock Market Explained",
       "quality": 8.7,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugw3C5Zdh98EgHkj1Bp4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "gwBpno_-myk",
+        "i5hj5ehTf6I"
+      ],
+      "tpl_done": [
+        "gwBpno_-myk",
+        "i5hj5ehTf6I"
+      ]
     },
     {
       "date": "2026-11-11",

@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-12T07:26:19+00:00",
-  "pending": 3,
+  "updated": "2026-11-12T15:17:03+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1692,18 +1692,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "i5hj5ehTf6I",
+          "at": "2026-11-12T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17925200613225231",
+          "at": "2026-11-12T15:14+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7707303528209336342",
+          "at": "2026-11-12T15:17+00:00"
         }
-      }
+      },
+      "youtube_title": "How Nvidia's 8% Crash Hits Your Index Fund"
     },
     {
       "id": "2026-11-12_s2",
