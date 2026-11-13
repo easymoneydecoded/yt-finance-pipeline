@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T08:09:20+00:00",
+  "updated": "2026-11-13T15:17:01+00:00",
   "n_videos": 45,
   "videos": [
     {
@@ -69,14 +69,28 @@
         14609097,
         35402332
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Your home loan just got hit with a severe penalty"
+      ],
+      "shorts_ids": [
+        "KbzDUCyshNk"
+      ],
       "publish_at": "2026-11-13T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "With 30-year mortgage rates hitting 7.11% and 10-year Treasury yields at 5.10%, are you locking in fixed rates or delaying big purchases?",
       "playlist": "Savings, Rates & Banks",
       "quality": 4.5,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugy0XIqAQMnGZd7CTat4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "KbzDUCyshNk",
+        "Oi548Ol8UfY"
+      ],
+      "tpl_done": [
+        "KbzDUCyshNk",
+        "Oi548Ol8UfY"
+      ]
     },
     {
       "date": "2026-11-12",
