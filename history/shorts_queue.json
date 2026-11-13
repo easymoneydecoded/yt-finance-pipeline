@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-13T15:16:59+00:00",
-  "pending": 3,
+  "updated": "2026-11-13T19:14:57+00:00",
+  "pending": 1,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1833,9 +1833,11 @@
           "at": "2026-11-13T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
+          "status": "done",
           "attempts": 1,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}",
+          "id": "18089829935298487",
+          "at": "2026-11-13T19:11+00:00"
         },
         "tiktok": {
           "status": "done",
@@ -1871,18 +1873,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "twC4Otr3vHk",
+          "at": "2026-11-13T19:12+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18042177818841782",
+          "at": "2026-11-13T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7707735849513011222",
+          "at": "2026-11-13T19:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Fed Chair Warsh is quietly breaking the bond market"
     },
     {
       "id": "2026-11-13_s3",
