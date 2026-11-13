@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-13T03:37:54+00:00",
-  "pending": 0,
+  "updated": "2026-11-13T08:09:20+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -1801,6 +1801,120 @@
         }
       },
       "youtube_title": "How Key Person Risk Can Threaten Your Portfolio"
+    },
+    {
+      "id": "2026-11-13_s1",
+      "created": "2026-11-13T08:09:18+00:00",
+      "date": "2026-11-13",
+      "asset_id": 742835276,
+      "size": 6980414,
+      "title": "Your home loan just got hit with a severe penalty",
+      "text": "Your home loan just got hit with a severe penalty. With the ten year yield spiking to five point one zero percent, thirty year mortgage rates pushed directly up to seven point one one percent as of November 12 2026. MarketWatch reports that Fed Chair Warsh's quiet style of communicating interest-rate policy has led to more volatile markets. Check your loan terms immediately before interest rates surge even higher. Follow for a new market story every day.",
+      "parent_title": "Fed Chair Warsh: The 5.10% Bond Surge That Resets Your Debt",
+      "parent_video_id": "Oi548Ol8UfY",
+      "parent_url": "https://youtu.be/Oi548Ol8UfY",
+      "tags": [
+        "fed chair warsh",
+        "bond yields surge 2026",
+        "10 year treasury yield",
+        "mortgage rates 7.11",
+        "federal reserve rate decisions",
+        "interest rate hikes 2026",
+        "treasury bond shock",
+        "bitcoin crash bond yields",
+        "housing market rates",
+        "stock market volatility VIX"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-13_s2",
+      "created": "2026-11-13T08:09:19+00:00",
+      "date": "2026-11-13",
+      "asset_id": 742835353,
+      "size": 8448195,
+      "title": "Fed Chair Warsh is quietly breaking the bond market",
+      "text": "Fed Chair Warsh is quietly breaking the bond market. Even with the Fed Funds Rate sitting at three point eight eight percent, ten year Treasury yields surged to five point one zero percent today. MarketWatch reports Warsh's quiet communication style is sparking wild volatility while CPI inflation sits at three hundred thirty seven point four seven six. Audit your credit card rates right now before lenders pass these spikes to you. Follow for a new market story every day.",
+      "parent_title": "Fed Chair Warsh: The 5.10% Bond Surge That Resets Your Debt",
+      "parent_video_id": "Oi548Ol8UfY",
+      "parent_url": "https://youtu.be/Oi548Ol8UfY",
+      "tags": [
+        "fed chair warsh",
+        "bond yields surge 2026",
+        "10 year treasury yield",
+        "mortgage rates 7.11",
+        "federal reserve rate decisions",
+        "interest rate hikes 2026",
+        "treasury bond shock",
+        "bitcoin crash bond yields",
+        "housing market rates",
+        "stock market volatility VIX"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-13_s3",
+      "created": "2026-11-13T08:09:20+00:00",
+      "date": "2026-11-13",
+      "asset_id": 742835455,
+      "size": 10843974,
+      "title": "Stop ignoring the bond market because crypto just lost billions in a",
+      "text": "Stop ignoring the bond market because crypto just lost billions in a single day. As Treasury yields jumped to five point one zero percent today, Bitcoin plunged six point nine four percent down to sixty eight thousand eight hundred thirty two point zero nine dollars. Ethereum dropped six point one six percent to nineteen hundred twenty nine point thirty one dollars. When government bonds pay five point one percent risk-free, money flees speculative assets instantly. Follow for a new market story every day.",
+      "parent_title": "Fed Chair Warsh: The 5.10% Bond Surge That Resets Your Debt",
+      "parent_video_id": "Oi548Ol8UfY",
+      "parent_url": "https://youtu.be/Oi548Ol8UfY",
+      "tags": [
+        "fed chair warsh",
+        "bond yields surge 2026",
+        "10 year treasury yield",
+        "mortgage rates 7.11",
+        "federal reserve rate decisions",
+        "interest rate hikes 2026",
+        "treasury bond shock",
+        "bitcoin crash bond yields",
+        "housing market rates",
+        "stock market volatility VIX"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
