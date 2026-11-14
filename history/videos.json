@@ -1,7 +1,83 @@
 {
-  "updated": "2026-11-13T23:17:02+00:00",
-  "n_videos": 45,
+  "updated": "2026-11-14T07:48:33+00:00",
+  "n_videos": 46,
   "videos": [
+    {
+      "date": "2026-11-14",
+      "video_id": "T4lakAuo9CQ",
+      "url": "https://youtu.be/T4lakAuo9CQ",
+      "title": "6.5% PPI: Why Wholesale Inflation Just Broke Fed Targets",
+      "thumbnail_text": "6.5% PPI SHOCK",
+      "topic_key": "wholesale prices inflation 4 year high ppi",
+      "entities": [
+        "Federal Reserve"
+      ],
+      "format": "data deep-dive",
+      "title_style": "NUMBER-FIRST",
+      "keywords": [
+        "wholesale prices inflation",
+        "PPI index annual rate",
+        "consumer purchasing power",
+        "inflation data 2026"
+      ],
+      "source_headlines": [
+        "Wholesale prices rose 0.3% in October, putting annual rate at 6.5%, the highest in nearly four years"
+      ],
+      "source_urls": [
+        "https://www.cnbc.com/2026/11/13/ppi-inflation-report-october-2026.html"
+      ],
+      "thumb_layout": "chart",
+      "thumb_color": "cyan",
+      "thumb_pexels_id": 32243653,
+      "broll_pexels_ids": [
+        5836824,
+        30163656,
+        38736271,
+        38875223,
+        29824279,
+        29814585,
+        7710745,
+        5981291,
+        32332174,
+        37703920,
+        7578632,
+        38055933,
+        35771214,
+        7687760,
+        38859051,
+        7579941,
+        32794255,
+        6618038,
+        26796995,
+        4221536,
+        32243653,
+        32243654,
+        6571503,
+        31885444,
+        36375963,
+        11736687,
+        6994416,
+        4169878,
+        7319522,
+        7317045,
+        8103037,
+        6952022,
+        38808545,
+        30445101,
+        6964248,
+        5981290,
+        5981294,
+        5981350
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-14T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Are you actually seeing wholesale price hikes hit your local grocery store yet, or is it getting worse elsewhere?",
+      "playlist": "Inflation & The Economy",
+      "quality": 8.1,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-13",
       "video_id": "Oi548Ol8UfY",
@@ -98,7 +174,15 @@
         "KbzDUCyshNk",
         "Oi548Ol8UfY",
         "twC4Otr3vHk"
-      ]
+      ],
+      "stats": {
+        "views": 4,
+        "likes": 0,
+        "comments": 1,
+        "updated": "2026-11-14T06:52:56+00:00",
+        "source": "api",
+        "shorts_views": 150
+      }
     },
     {
       "date": "2026-11-12",
@@ -201,12 +285,12 @@
         "isOg9OnxnLY"
       ],
       "stats": {
-        "views": 0,
+        "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 76
+        "shorts_views": 85
       }
     },
     {
@@ -308,12 +392,15 @@
         "zu1GWa_1c1I"
       ],
       "stats": {
-        "views": 52,
+        "views": 83,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 232
+        "shorts_views": 256,
+        "avg_view_sec": 117.0,
+        "avg_view_pct": 27.9,
+        "subs_gained": 0
       }
     },
     {
@@ -414,14 +501,14 @@
         "z_8oRXd28mQ"
       ],
       "stats": {
-        "views": 294,
+        "views": 383,
         "likes": 1,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 128,
-        "avg_view_sec": 103.0,
-        "avg_view_pct": 23.1,
+        "shorts_views": 127,
+        "avg_view_sec": 89.0,
+        "avg_view_pct": 20.0,
         "subs_gained": 0
       }
     },
@@ -527,7 +614,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 126,
         "avg_view_sec": 0.0,
@@ -634,11 +721,11 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 107,
-        "avg_view_sec": 12.0,
-        "avg_view_pct": 2.5,
+        "avg_view_sec": 17.0,
+        "avg_view_pct": 3.6,
         "subs_gained": 0
       }
     },
@@ -745,7 +832,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 703,
         "avg_view_sec": 8.0,
@@ -837,9 +924,9 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 363
+        "shorts_views": 364
       },
       "comment_id": "UgyWaeWwcPxofKdBKVV4AaABAg",
       "shorts_commented": [],
@@ -957,7 +1044,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 220,
         "avg_view_sec": 0.0,
@@ -1068,9 +1155,9 @@
         "views": 8,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 107,
+        "shorts_views": 109,
         "avg_view_sec": 142.0,
         "avg_view_pct": 35.5,
         "subs_gained": 0
@@ -1171,7 +1258,7 @@
         "views": 4,
         "likes": 1,
         "comments": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 85,
         "avg_view_sec": 165.0,
@@ -1286,7 +1373,7 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 178
       }
@@ -1395,9 +1482,9 @@
         "views": 4,
         "likes": 0,
         "comments": 21,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
-        "shorts_views": 191,
+        "shorts_views": 192,
         "avg_view_sec": 59.0,
         "avg_view_pct": 12.4,
         "subs_gained": 0
@@ -1498,7 +1585,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 207,
         "avg_view_sec": 145.0,
@@ -1604,7 +1691,7 @@
         "views": 4,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "shorts_views": 216,
         "avg_view_sec": 92.0,
@@ -1634,7 +1721,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1655,7 +1742,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1676,7 +1763,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1697,7 +1784,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -1716,7 +1803,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1737,7 +1824,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1759,7 +1846,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1780,7 +1867,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1801,8 +1888,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 48,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "views": 51,
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -1825,7 +1912,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1847,7 +1934,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1870,7 +1957,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1893,7 +1980,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1916,7 +2003,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -1939,7 +2026,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1961,7 +2048,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1983,7 +2070,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2005,7 +2092,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2027,7 +2114,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2049,7 +2136,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2072,7 +2159,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2094,7 +2181,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2116,7 +2203,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2138,7 +2225,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2160,7 +2247,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2182,7 +2269,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2204,7 +2291,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2225,7 +2312,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2247,7 +2334,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2269,7 +2356,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-13T06:52:40+00:00",
+        "updated": "2026-11-14T06:52:56+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
