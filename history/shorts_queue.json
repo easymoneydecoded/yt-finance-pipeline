@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T15:17:10+00:00",
+  "updated": "2026-11-14T19:20:24+00:00",
   "pending": 3,
   "items": [
     {
@@ -1972,7 +1972,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -2011,18 +2011,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "_G3p3XwZkhk",
+          "at": "2026-11-14T19:14+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708108336264300566",
+          "at": "2026-11-14T19:20+00:00"
         }
-      }
+      },
+      "youtube_title": "The Goods Index Surge"
     },
     {
       "id": "2026-11-14_s3",

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T15:17:11+00:00",
+  "updated": "2026-11-14T19:20:25+00:00",
   "n_videos": 46,
   "videos": [
     {
@@ -70,10 +70,12 @@
         5981350
       ],
       "shorts_titles": [
-        "The Six Point Five Percent Shock"
+        "The Six Point Five Percent Shock",
+        "The Goods Index Surge"
       ],
       "shorts_ids": [
-        "n_TJVFUOtOg"
+        "n_TJVFUOtOg",
+        "_G3p3XwZkhk"
       ],
       "publish_at": "2026-11-14T14:00+00:00",
       "shorts_publish_at": [],
@@ -85,10 +87,12 @@
       "shorts_commented": [],
       "cta_done": [
         "T4lakAuo9CQ",
+        "_G3p3XwZkhk",
         "n_TJVFUOtOg"
       ],
       "tpl_done": [
         "T4lakAuo9CQ",
+        "_G3p3XwZkhk",
         "n_TJVFUOtOg"
       ]
     },
