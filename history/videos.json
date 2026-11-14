@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T19:20:25+00:00",
+  "updated": "2026-11-14T23:17:28+00:00",
   "n_videos": 46,
   "videos": [
     {
@@ -71,11 +71,13 @@
       ],
       "shorts_titles": [
         "The Six Point Five Percent Shock",
-        "The Goods Index Surge"
+        "The Goods Index Surge",
+        "Freight and Transportation Bottlenecks"
       ],
       "shorts_ids": [
         "n_TJVFUOtOg",
-        "_G3p3XwZkhk"
+        "_G3p3XwZkhk",
+        "SOr_gE7Juus"
       ],
       "publish_at": "2026-11-14T14:00+00:00",
       "shorts_publish_at": [],
@@ -86,11 +88,13 @@
       "comment_id": "UgwJ3AKKgATuXEV52MZ4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "SOr_gE7Juus",
         "T4lakAuo9CQ",
         "_G3p3XwZkhk",
         "n_TJVFUOtOg"
       ],
       "tpl_done": [
+        "SOr_gE7Juus",
         "T4lakAuo9CQ",
         "_G3p3XwZkhk",
         "n_TJVFUOtOg"
