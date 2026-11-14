@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T07:48:33+00:00",
+  "updated": "2026-11-14T15:17:11+00:00",
   "n_videos": 46,
   "videos": [
     {
@@ -69,14 +69,28 @@
         5981294,
         5981350
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "The Six Point Five Percent Shock"
+      ],
+      "shorts_ids": [
+        "n_TJVFUOtOg"
+      ],
       "publish_at": "2026-11-14T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you actually seeing wholesale price hikes hit your local grocery store yet, or is it getting worse elsewhere?",
       "playlist": "Inflation & The Economy",
       "quality": 8.1,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgwJ3AKKgATuXEV52MZ4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "T4lakAuo9CQ",
+        "n_TJVFUOtOg"
+      ],
+      "tpl_done": [
+        "T4lakAuo9CQ",
+        "n_TJVFUOtOg"
+      ]
     },
     {
       "date": "2026-11-13",

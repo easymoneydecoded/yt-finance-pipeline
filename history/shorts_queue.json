@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T07:48:33+00:00",
+  "updated": "2026-11-14T15:17:10+00:00",
   "pending": 3,
   "items": [
     {
@@ -1965,18 +1965,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "n_TJVFUOtOg",
+          "at": "2026-11-14T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708045570744731670",
+          "at": "2026-11-14T15:17+00:00"
         }
-      }
+      },
+      "youtube_title": "The Six Point Five Percent Shock"
     },
     {
       "id": "2026-11-14_s2",
