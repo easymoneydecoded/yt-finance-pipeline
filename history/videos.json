@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T19:20:24+00:00",
+  "updated": "2026-11-15T23:16:59+00:00",
   "n_videos": 47,
   "videos": [
     {
@@ -70,11 +70,13 @@
       ],
       "shorts_titles": [
         "7.11% Mortgage Rates Just Shattered Home Buying",
-        "How the 10-Year Bond Yield Hijacked Your House"
+        "How the 10-Year Bond Yield Hijacked Your House",
+        "Why Housing Affordability Is Broken Right Now"
       ],
       "shorts_ids": [
         "6Py-J93Tilw",
-        "kBRMPTjCvGg"
+        "kBRMPTjCvGg",
+        "6fllBW2dRrs"
       ],
       "publish_at": "2026-11-15T14:00+00:00",
       "shorts_publish_at": [],
@@ -86,11 +88,13 @@
       "shorts_commented": [],
       "cta_done": [
         "6Py-J93Tilw",
+        "6fllBW2dRrs",
         "kBRMPTjCvGg",
         "umPnAOnxn88"
       ],
       "tpl_done": [
         "6Py-J93Tilw",
+        "6fllBW2dRrs",
         "kBRMPTjCvGg",
         "umPnAOnxn88"
       ]
