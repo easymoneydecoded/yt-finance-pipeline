@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-15T03:05:51+00:00",
-  "pending": 0,
+  "updated": "2026-11-15T07:16:46+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2075,6 +2075,114 @@
         }
       },
       "youtube_title": "Freight and Transportation Bottlenecks"
+    },
+    {
+      "id": "2026-11-15_s1",
+      "created": "2026-11-15T07:16:42+00:00",
+      "date": "2026-11-15",
+      "asset_id": 750181711,
+      "size": 11706815,
+      "title": "7.11% Mortgage Rates Just Shattered Home Buying",
+      "text": "Mortgage rates just reached 7.11 percent according to Federal Reserve data from November 12, 2026. That spike is driven directly by the 10-year Treasury yield hitting 5.15 percent. When government borrowing costs rise, banks automatically charge home buyers more to protect their margins. With consumer sentiment sitting down at 48.1, high interest expenses are taking a huge bite out of household budgets. Before signing any contract, make sure you can afford the home at 7.11 percent indefinitely, because mortgage rates just reached 7.11 percent. Follow for a new market story every day.",
+      "parent_title": "7.11% Mortgages Just Broke the Housing Market Forever",
+      "parent_video_id": "umPnAOnxn88",
+      "parent_url": "https://youtu.be/umPnAOnxn88",
+      "tags": [
+        "mortgage rates 2026",
+        "7 percent mortgage math",
+        "FRED mortgage data",
+        "housing market affordability",
+        "10 year treasury yield housing",
+        "mortgage rate breakdown 2026",
+        "fed funds rate housing impact",
+        "us real estate market update"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-15_s2",
+      "created": "2026-11-15T07:16:44+00:00",
+      "date": "2026-11-15",
+      "asset_id": 750181785,
+      "size": 9474012,
+      "title": "How the 10-Year Bond Yield Hijacked Your House",
+      "text": "The 10-year Treasury yield surged to 5.15 percent, jumping 1.00 percent in a single day. That one number controls what you pay for housing. Lenders benchmark 30-year fixed loans against government bonds, pushing current mortgage rates up to 7.11 percent. Even with the Fed Funds rate at 3.88 percent, bond yields dictate your real monthly bill. If yields stay high, your house payment stays high. That is why the 10-year Treasury yield surged to 5.15 percent. Follow for a new market story every day.",
+      "parent_title": "7.11% Mortgages Just Broke the Housing Market Forever",
+      "parent_video_id": "umPnAOnxn88",
+      "parent_url": "https://youtu.be/umPnAOnxn88",
+      "tags": [
+        "mortgage rates 2026",
+        "7 percent mortgage math",
+        "FRED mortgage data",
+        "housing market affordability",
+        "10 year treasury yield housing",
+        "mortgage rate breakdown 2026",
+        "fed funds rate housing impact",
+        "us real estate market update"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-15_s3",
+      "created": "2026-11-15T07:16:46+00:00",
+      "date": "2026-11-15",
+      "asset_id": 750181857,
+      "size": 10870174,
+      "title": "Why Housing Affordability Is Broken Right Now",
+      "text": "Consumer sentiment sits at a low 48.1 while 30-year mortgage rates hold at 7.11 percent according to FRED data. Meanwhile, unemployment sits at 4.1 percent, meaning people have jobs but lack purchasing power. When interest expenses consume over half your monthly housing check, building home equity takes decades longer. Relying on quick rate cuts to refinance is a major gamble in this high-yield environment, which explains why consumer sentiment sits at a low 48.1. Follow for a new market story every day.",
+      "parent_title": "7.11% Mortgages Just Broke the Housing Market Forever",
+      "parent_video_id": "umPnAOnxn88",
+      "parent_url": "https://youtu.be/umPnAOnxn88",
+      "tags": [
+        "mortgage rates 2026",
+        "7 percent mortgage math",
+        "FRED mortgage data",
+        "housing market affordability",
+        "10 year treasury yield housing",
+        "mortgage rate breakdown 2026",
+        "fed funds rate housing impact",
+        "us real estate market update"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
