@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T15:17:01+00:00",
+  "updated": "2026-11-15T19:20:23+00:00",
   "pending": 3,
   "items": [
     {
@@ -2106,7 +2106,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -2141,18 +2141,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "kBRMPTjCvGg",
+          "at": "2026-11-15T19:14+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708479502619478039",
+          "at": "2026-11-15T19:20+00:00"
         }
-      }
+      },
+      "youtube_title": "How the 10-Year Bond Yield Hijacked Your House"
     },
     {
       "id": "2026-11-15_s3",
