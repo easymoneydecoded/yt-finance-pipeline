@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T07:16:46+00:00",
+  "updated": "2026-11-15T15:17:01+00:00",
   "pending": 3,
   "items": [
     {
@@ -2099,18 +2099,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "6Py-J93Tilw",
+          "at": "2026-11-15T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708416700094908438",
+          "at": "2026-11-15T15:16+00:00"
         }
-      }
+      },
+      "youtube_title": "7.11% Mortgage Rates Just Shattered Home Buying"
     },
     {
       "id": "2026-11-15_s2",

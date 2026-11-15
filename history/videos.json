@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T07:16:46+00:00",
+  "updated": "2026-11-15T15:17:04+00:00",
   "n_videos": 47,
   "videos": [
     {
@@ -68,14 +68,28 @@
         8963678,
         6474358
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "7.11% Mortgage Rates Just Shattered Home Buying"
+      ],
+      "shorts_ids": [
+        "6Py-J93Tilw"
+      ],
       "publish_at": "2026-11-15T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are 7.11 percent mortgage rates forcing you to rent longer or rethink your housing plans?",
       "playlist": "Housing & Mortgages",
       "quality": 8.4,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugx2cMviD8vPXXGphEB4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "6Py-J93Tilw",
+        "umPnAOnxn88"
+      ],
+      "tpl_done": [
+        "6Py-J93Tilw",
+        "umPnAOnxn88"
+      ]
     },
     {
       "date": "2026-11-14",
