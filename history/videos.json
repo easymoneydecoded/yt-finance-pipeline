@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T19:20:39+00:00",
+  "updated": "2026-11-16T23:22:46+00:00",
   "n_videos": 48,
   "videos": [
     {
@@ -69,11 +69,13 @@
       ],
       "shorts_titles": [
         "Check Your 401k Before Tomorrow's Market Open",
-        "Stop Buying Gold Until You See 5.15% Yields"
+        "Stop Buying Gold Until You See 5.15% Yields",
+        "7.11% Mortgage Rates Are Trashing Retirement Accounts"
       ],
       "shorts_ids": [
         "9rTfrH5hx78",
-        "YRjxA-kGKrk"
+        "YRjxA-kGKrk",
+        "GF9k3KsdZHM"
       ],
       "publish_at": "2026-11-16T14:00+00:00",
       "shorts_publish_at": [],
@@ -85,11 +87,13 @@
       "shorts_commented": [],
       "cta_done": [
         "9rTfrH5hx78",
+        "GF9k3KsdZHM",
         "YRjxA-kGKrk",
         "pyWllZRS_5Y"
       ],
       "tpl_done": [
         "9rTfrH5hx78",
+        "GF9k3KsdZHM",
         "YRjxA-kGKrk",
         "pyWllZRS_5Y"
       ]

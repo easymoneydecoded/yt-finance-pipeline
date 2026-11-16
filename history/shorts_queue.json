@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-16T19:20:39+00:00",
-  "pending": 3,
+  "updated": "2026-11-16T23:22:45+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2237,8 +2237,8 @@
           "at": "2026-11-16T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 2,
+          "status": "failed",
+          "attempts": 3,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -2282,7 +2282,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -2319,18 +2319,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "GF9k3KsdZHM",
+          "at": "2026-11-16T23:18+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708913298112055318",
+          "at": "2026-11-16T23:22+00:00"
         }
-      }
+      },
+      "youtube_title": "7.11% Mortgage Rates Are Trashing Retirement Accounts"
     }
   ]
 }
