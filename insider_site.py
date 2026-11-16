@@ -43,6 +43,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import insider_alerts as ia
+import insider_guides
 
 SITE_URL   = "https://tickerpress.net"
 TELEGRAM   = "https://t.me/tickerpress_insiders"
@@ -74,11 +75,15 @@ DAILY_IDX  = "https://www.sec.gov/Archives/edgar/daily-index/{y}/QTR{q}/form.{d}
 FIELDS = ("acc", "ticker", "issuer", "issuer_cik", "owner", "owner_cik", "joint", "role", "shares",
           "value", "price", "after", "stake_change", "trade_date", "filed", "plan",
           "indirect", "via", "offering")   # indirecta (fondo, fideicomiso, familia) y colocacion privada u oferta
-INDEX_MIN_BUYS  = 2          # una accion se indexa con 2+ compras...
-INDEX_MIN_VALUE = 100_000    # ...o con una compra de 100.000 $ o mas
+# Indexacion (2026-11-16, para AdSense): en Google y con anuncios solo las paginas con sustancia
+INDEX_MIN_BUYS  = 3          # una accion se indexa con 3+ compras que sumen 250.000 $...
+INDEX_MIN_TOTAL = 250_000
+INDEX_MIN_VALUE = 1_000_000  # ...o con 1 millon de $ o mas en total
 INSIDER_MIN_BUYS    = 2          # un insider (persona o fondo) tiene pagina con 2+ compras...
-INSIDER_INDEX_BUYS  = 3          # ...y se indexa con 3+ compras...
-INSIDER_INDEX_VALUE = 1_000_000  # ...o con 1 millon de $ o mas en total
+INSIDER_INDEX_BUYS  = 4          # ...y se indexa con 4+ compras que sumen 500.000 $...
+INSIDER_INDEX_TOTAL = 500_000
+INSIDER_INDEX_VALUE = 2_000_000  # ...o con 2 millones de $ o mas en total
+DAY_INDEX_BUYS  = 10         # un dia se indexa con 10+ compras
 LATEST_DAYS     = 7
 CLUSTER_DAYS    = 30
 
@@ -519,12 +524,13 @@ def page(path: str, title: str, description: str, body: str, *, noindex: bool = 
 <link rel="stylesheet" href="/style.css">
 </head><body>
 <header><div class="wrap"><a class="logo" href="/">TICKER<b>PRESS</b></a>
-<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/insiders/">Top insiders</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
+<nav><a href="/">Latest buys</a><a href="/cluster-buys/">Cluster buys</a><a href="/stocks/">All stocks</a><a href="/insiders/">Top insiders</a><a href="/guides/">Guides</a><a href="/tools/">Tools</a><a href="/about/">About</a></nav>
 <a class="btn" href="{TELEGRAM}" rel="nofollow">Free alerts</a></div></header>
 <main class="wrap">{body}</main>
 <footer><div class="wrap">Data from SEC Form 4 filings (EDGAR). Purchases reported with transaction code P of
 {ia.money(ia.SITE_MIN_BUY)} or more; indirect and private ones are tagged. For information only, <b>not financial advice</b>: insiders buy for many reasons
 and can be wrong. © {date.today().year} Ticker Press · <a href="/about/">Methodology</a> ·
+<a href="/guides/">Guides</a> ·
 <a href="/tools/">Spreadsheet tools</a> ·
 <a href="{TELEGRAM}" rel="nofollow">Telegram</a> · <a href="/contact/">Contact</a> ·
 <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></div></footer>
@@ -533,6 +539,54 @@ and can be wrong. © {date.today().year} Ticker Press · <a href="/about/">Metho
     out = DIST / path / "index.html" if path else DIST / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc, encoding="utf-8")
+
+
+GUIDE_HINT = ("<p><small>New to insider data? Read <a href='/guides/how-to-read-form-4/'>how to read a Form 4</a> "
+              "and <a href='/guides/why-insider-buying-matters/'>which insider buys matter</a>.</small></p>")
+
+
+def guide_example(rows: list[dict], today: date) -> str:
+    """Ejemplo real para la guia del Form 4: la mayor compra directa de un directivo en los ultimos 7 dias."""
+    week = (today - timedelta(days=7)).isoformat()
+    pool = [b for b in rows if b["filed"] >= week and not b.get("indirect") and not b.get("offering")
+            and not b["plan"] and b.get("after")] or [b for b in rows if b.get("after")]
+    officers = [b for b in pool if re.search(r"CEO|CFO|Chief|President|Officer", b["role"], re.I)]
+    b = max(officers or pool, key=lambda x: x["value"])
+    stake = ("It was a new position for the insider." if b["stake_change"] is None else
+             f"That increased the holding by about {b['stake_change']:.0f}%, which is the “Stake” figure in "
+             f"our tables.")
+    return (f"<p>On {fmt_date(b['trade_date'] or b['filed'])}, {esc(person(b))}, {esc(b['role'])} of "
+            f"{esc(b['issuer'])} ({esc(b['ticker'])}), bought shares on the open market. The Form 4 was filed on "
+            f"{fmt_date(b['filed'])}. In Table I it reads like this:</p><ul>"
+            f"<li><b>Transaction code:</b> P (open market or private purchase)</li>"
+            f"<li><b>Amount:</b> {b['shares']:,} shares, marked (A) for acquired, at ${b['price']:,.2f} per share "
+            f"(about {ia.money(b['value'])} in total)</li>"
+            f"<li><b>Owned after the transaction:</b> {int(b['after']):,} shares</li>"
+            f"<li><b>Ownership form:</b> D (direct)</li></ul>"
+            f"<p>{stake} You can open <a href=\"{sec_url(b)}\" rel=\"nofollow\">the original filing on EDGAR</a> and "
+            f"compare it with <a href=\"/stock/{slug(b['ticker'])}/\">our {esc(b['ticker'])} page</a>.</p>")
+
+
+def guide_pages(rows: list[dict], today: date, sitemap: list) -> None:
+    """Seccion /guides/: texto propio que explica como leer los datos (insider_guides.py)."""
+    fill = {"example": guide_example(rows, today), "cluster_days": CLUSTER_DAYS}
+    cards = []
+    for gslug, title, desc, content in insider_guides.GUIDES:
+        others = "".join(f"<li><a href=\"/guides/{s}/\">{esc(t)}</a></li>"
+                         for s, t, _, _ in insider_guides.GUIDES if s != gslug)
+        body = (f"<h1>{esc(title)}</h1><p class=\"lead\">{esc(desc)}</p><div class=\"prose\">"
+                f"<p><small>By Ticker Press · Updated {insider_guides.UPDATED}</small></p>"
+                f"{content.format(**fill)}<h2>More guides</h2><ul>{others}</ul></div>{cta()}")
+        page(f"guides/{gslug}/", f"{title} | Ticker Press", desc, body, ads=True)
+        sitemap.append((f"guides/{gslug}/", today.isoformat()))
+        cards.append(f"<div class=\"stat\"><b><a href=\"/guides/{gslug}/\">{esc(title)}</a></b>"
+                     f"<p style=\"color:var(--muted);margin:6px 0 0\">{esc(desc)}</p></div>")
+    page("guides/", "Insider Trading Guides: How to Read Insider Data | Ticker Press",
+         "Plain-English guides to SEC Form 4, insider buying signals, cluster buys and 10b5-1 trading plans.",
+         "<h1>Guides</h1><p class=\"lead\">How to read the insider data on this site: what a Form 4 says, which "
+         "purchases matter and which ones tell you little.</p><div class=\"stats\">" + "".join(cards) + "</div>"
+         + cta())
+    sitemap.append(("guides/", today.isoformat()))
 
 
 def cta(text: str = "Get insider buys on Telegram") -> str:
@@ -601,7 +655,8 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
     recent = [b for b in bs if b["filed"] >= year_ago]
     total, insiders = sum(b["value"] for b in recent), {b["owner_cik"] for b in recent}
     top = max(bs, key=lambda b: b["value"])
-    indexable = len(bs) >= INDEX_MIN_BUYS or top["value"] >= INDEX_MIN_VALUE
+    all_total = sum(b["value"] for b in bs)
+    indexable = (len(bs) >= INDEX_MIN_BUYS and all_total >= INDEX_MIN_TOTAL) or all_total >= INDEX_MIN_VALUE
 
     if recent:
         summary = (f"In the last 12 months, {len(insiders)} insider{'s' if len(insiders) != 1 else ''} of {esc(issuer)} "
@@ -633,14 +688,14 @@ def stock_page(ticker: str, bs: list[dict], today: date) -> tuple[str, bool]:
             f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div>"
             + (f"<div class='stat'><span>Since last insider buy</span><b>{pct(last_ret)}</b></div>"
                if last_ret is not None else "") + "</div>"
-            f"<div class='prose'><p>{summary}</p></div>"
+            f"<div class='prose'><p>{summary}</p>{GUIDE_HINT}</div>"
             f"{cta(f'Get the next {ticker} insider buy on Telegram')}"
             f"<h2>All {esc(ticker)} insider purchases</h2>{buys_table(bs, ticker_col=False)}")
     title = f"{ticker} Insider Buying: {issuer} Insider Purchases (SEC Form 4) | Ticker Press"
     desc = (f"{issuer} ({ticker}) insiders bought {ia.money(total)} of stock in the last 12 months. "
             f"See every insider purchase: who bought, how many shares, at what price.") if recent else \
            f"Every open-market insider purchase of {issuer} ({ticker}) stock, from SEC Form 4 filings."
-    page(f"stock/{slug(ticker)}/", title, desc, body, noindex=not indexable, ads=True)
+    page(f"stock/{slug(ticker)}/", title, desc, body, noindex=not indexable, ads=indexable)
     return issuer, indexable
 
 
@@ -657,7 +712,8 @@ def insider_urls(by_owner: dict[str, list[dict]]) -> dict[str, str]:
 
 
 def insider_indexable(bs: list[dict]) -> bool:
-    return len(bs) >= INSIDER_INDEX_BUYS or sum(b["value"] for b in bs) >= INSIDER_INDEX_VALUE
+    total = sum(b["value"] for b in bs)
+    return (len(bs) >= INSIDER_INDEX_BUYS and total >= INSIDER_INDEX_TOTAL) or total >= INSIDER_INDEX_VALUE
 
 
 def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
@@ -695,7 +751,7 @@ def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
             f"<div class='stat'><span>Last purchase filed</span><b>{fmt_date(last['filed'])}</b></div>"
             + (f"<div class='stat'><span>Return on these buys</span><b>{pct(ret)}</b></div>" if ret is not None else "")
             + "</div>"
-            f"<div class='prose'><p>{summary}</p></div>"
+            f"<div class='prose'><p>{summary}</p>{GUIDE_HINT}</div>"
             f"<h2>Companies {esc(short(name, 40))} bought</h2><div class='tbl'><table><thead><tr><th>Ticker</th>"
             f"<th>Company</th><th>Role</th><th class='num'>Buys</th><th class='num'>Total</th>"
             f"<th class='num'>Since buy</th><th>Last filed</th>"
@@ -705,7 +761,7 @@ def insider_page(cik: str, bs: list[dict], names: dict[str, str]) -> bool:
     title = f"{short(name, 45)} Stock Purchases: Insider Buys (SEC Form 4) | Ticker Press"
     desc = (f"{name} bought {ia.money(total)} of stock in {len(bs)} open-market purchases "
             f"({', '.join(t for t, _ in stocks[:3])}). Every trade from SEC Form 4 filings.")
-    page(INSIDER_URLS[cik].strip("/") + "/", title, desc, body, noindex=not indexable, ads=True)
+    page(INSIDER_URLS[cik].strip("/") + "/", title, desc, body, noindex=not indexable, ads=indexable)
     return indexable
 
 
@@ -851,8 +907,10 @@ def build() -> None:
                 f"({ia.money(bs[0]['value'])}).</p><p>{nav}</p>{buys_table(bs)}{cta()}")
         page(f"day/{d}/", f"Insider Buying {fmt_date(d)}: {len(bs)} Insider Purchases | Ticker Press",
              f"All {len(bs)} insider stock purchases filed with the SEC on {fmt_date(d)}. "
-             f"Biggest: {bs[0]['ticker']} {ia.money(bs[0]['value'])}.", body, ads=True)
-        sitemap.append((f"day/{d}/", d))
+             f"Biggest: {bs[0]['ticker']} {ia.money(bs[0]['value'])}.", body,
+             noindex=len(bs) < DAY_INDEX_BUYS, ads=len(bs) >= DAY_INDEX_BUYS)
+        if len(bs) >= DAY_INDEX_BUYS:
+            sitemap.append((f"day/{d}/", d))
 
     # Cluster buys
     cs = clusters(rows, today)
@@ -898,7 +956,8 @@ def build() -> None:
     body = (f"<h1>What are insiders buying?</h1>"
             f"<p class='lead'>When CEOs, CFOs and directors buy their own company's stock on the open market, "
             f"they bet their own money. Every one of those trades is reported to the SEC on Form 4. "
-            f"Here is every insider purchase, updated daily.</p>"
+            f"Here is every insider purchase, updated daily. New to this? Start with "
+            f"<a href='/guides/how-to-read-form-4/'>how to read a Form 4</a>.</p>"
             f"<div class='stats'><div class='stat'><span>Insider buys, last 7 days</span><b>{len(latest)}</b></div>"
             f"<div class='stat'><span>Value, last 7 days</span><b>{ia.money(sum(b['value'] for b in latest))}</b></div>"
             f"<div class='stat'><span>Cluster buys (30d)</span><b>{len(cs)}</b></div>"
@@ -965,6 +1024,7 @@ Alerts: <a href="{TELEGRAM}" rel="nofollow">Telegram</a></p></div>""")
          f"<p><a href='{ETSY_SHOP}' rel='nofollow'>See all 15 templates in our Etsy shop →</a></p>{cta()}")
     sitemap.append(("tools/", today.isoformat()))
 
+    guide_pages(rows, today, sitemap)
     legal_pages(sitemap, today)
 
     page("404/", "Page not found | Ticker Press", "Page not found.",
