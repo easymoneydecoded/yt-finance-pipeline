@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-16T03:06:15+00:00",
-  "pending": 0,
+  "updated": "2026-11-16T07:28:54+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2205,6 +2205,120 @@
         }
       },
       "youtube_title": "Why Housing Affordability Is Broken Right Now"
+    },
+    {
+      "id": "2026-11-16_s1",
+      "created": "2026-11-16T07:28:51+00:00",
+      "date": "2026-11-16",
+      "asset_id": 753902467,
+      "size": 12432774,
+      "title": "Check Your 401k Before Tomorrow's Market Open",
+      "text": "Check your retirement account right now before Wall Street algorithmically liquidates your positions. Ten-year Treasury yields just slammed into 5.15 percent, triggering instant institutional dumping across equities. The Nasdaq 100 fell 1.22 percent in a single session to 27,943.74 as big money fled to risk-free sovereign debt. With Fed Funds at 3.88 percent as of November 12, 2026, long-term yields are demanding a brutal valuation reset. Don't let your target-date fund become institutional exit liquidity. Follow for a new market story every day.",
+      "parent_title": "5.15% Risk-Free Treasuries vs 401k Stocks: Wall Street's Sudden Liquidation",
+      "parent_video_id": "pyWllZRS_5Y",
+      "parent_url": "https://youtu.be/pyWllZRS_5Y",
+      "tags": [
+        "10Y Treasury yield 5.15",
+        "5.15 percent bond yield",
+        "401k liquidation",
+        "target date fund crash",
+        "Treasury yield surge 2026",
+        "stock market repricing",
+        "Fed funds rate 3.88",
+        "30 year mortgage rate 7.11",
+        "retirement portfolio crisis",
+        "institutional selling"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-16_s2",
+      "created": "2026-11-16T07:28:53+00:00",
+      "date": "2026-11-16",
+      "asset_id": 753902540,
+      "size": 11941066,
+      "title": "Stop Buying Gold Until You See 5.15% Yields",
+      "text": "Stop buying gold as a safe haven until you see what Treasury yields just did to institutional desks. With ten-year Treasuries paying 5.15 percent guaranteed, holding non-yielding metals carries a devastating opportunity cost. Gold fell 1.09 percent yesterday down to 3,844.10 as capital flooded into US sovereign bonds. Meanwhile, the euro slipped 0.30 percent against the dollar to 1.10. When risk-free paper pays over five percent, traditional hedges get dumped immediately. Follow for a new market story every day.",
+      "parent_title": "5.15% Risk-Free Treasuries vs 401k Stocks: Wall Street's Sudden Liquidation",
+      "parent_video_id": "pyWllZRS_5Y",
+      "parent_url": "https://youtu.be/pyWllZRS_5Y",
+      "tags": [
+        "10Y Treasury yield 5.15",
+        "5.15 percent bond yield",
+        "401k liquidation",
+        "target date fund crash",
+        "Treasury yield surge 2026",
+        "stock market repricing",
+        "Fed funds rate 3.88",
+        "30 year mortgage rate 7.11",
+        "retirement portfolio crisis",
+        "institutional selling"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-16_s3",
+      "created": "2026-11-16T07:28:54+00:00",
+      "date": "2026-11-16",
+      "asset_id": 753902591,
+      "size": 14148608,
+      "title": "7.11% Mortgage Rates Are Trashing Retirement Accounts",
+      "text": "If you think 7.11 percent mortgage rates only hurt home buyers, your 401k is walking blind into a disaster. Official Fed data from November 12, 2026, sets mortgage rates at 7.11 percent, driving consumer sentiment down to 48.1 as of September 1. High debt service costs are squeezing corporate profit margins across the board, pulling the S&P 500 down 0.40 percent to 7,561.67. Expensive credit is crushing both housing and corporate balance sheets—audit your stock risk today. Follow for a new market story every day.",
+      "parent_title": "5.15% Risk-Free Treasuries vs 401k Stocks: Wall Street's Sudden Liquidation",
+      "parent_video_id": "pyWllZRS_5Y",
+      "parent_url": "https://youtu.be/pyWllZRS_5Y",
+      "tags": [
+        "10Y Treasury yield 5.15",
+        "5.15 percent bond yield",
+        "401k liquidation",
+        "target date fund crash",
+        "Treasury yield surge 2026",
+        "stock market repricing",
+        "Fed funds rate 3.88",
+        "30 year mortgage rate 7.11",
+        "retirement portfolio crisis",
+        "institutional selling"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
