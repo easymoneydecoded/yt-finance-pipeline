@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T23:50:36+00:00",
+  "updated": "2026-11-16T23:54:39+00:00",
   "pending": 1,
   "items": [
     {
@@ -2283,7 +2283,7 @@
         "instagram": {
           "status": "failed",
           "attempts": 3,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "descarga: 404 Client Error: Not Found for url: https://api.github.com/repos/easymoneydecoded/yt-finance-pipeline/releases/assets/753902540"
         },
         "tiktok": {
           "status": "done",
