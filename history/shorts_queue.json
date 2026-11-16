@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T23:16:59+00:00",
+  "updated": "2026-11-16T02:45:16+00:00",
   "pending": 1,
   "items": [
     {
@@ -2192,7 +2192,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
