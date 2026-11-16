@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T07:28:54+00:00",
+  "updated": "2026-11-16T15:17:06+00:00",
   "pending": 3,
   "items": [
     {
@@ -2231,18 +2231,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "9rTfrH5hx78",
+          "at": "2026-11-16T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7708787705635915798",
+          "at": "2026-11-16T15:17+00:00"
         }
-      }
+      },
+      "youtube_title": "Check Your 401k Before Tomorrow's Market Open"
     },
     {
       "id": "2026-11-16_s2",

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T07:28:54+00:00",
+  "updated": "2026-11-16T15:17:07+00:00",
   "n_videos": 48,
   "videos": [
     {
@@ -67,14 +67,28 @@
         7578633,
         8523701
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Check Your 401k Before Tomorrow's Market Open"
+      ],
+      "shorts_ids": [
+        "9rTfrH5hx78"
+      ],
       "publish_at": "2026-11-16T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you letting your 401k sit in passive target-date funds while 10-year yields guarantee 5.15% risk-free?",
       "playlist": "Retirement & Your 401k",
       "quality": 7.5,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgzJA6PiXJlgP_87gGJ4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "9rTfrH5hx78",
+        "pyWllZRS_5Y"
+      ],
+      "tpl_done": [
+        "9rTfrH5hx78",
+        "pyWllZRS_5Y"
+      ]
     },
     {
       "date": "2026-11-15",
