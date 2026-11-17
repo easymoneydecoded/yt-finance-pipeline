@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T07:43:24+00:00",
+  "updated": "2026-11-17T15:15:34+00:00",
   "n_videos": 49,
   "videos": [
     {
@@ -67,14 +67,28 @@
         7579959,
         38656963
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap - Part 1"
+      ],
+      "shorts_ids": [
+        "1dyey1yd-Qs"
+      ],
       "publish_at": "2026-11-17T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you buying this tech dip in the Nasdaq-100, or are you waiting for support levels to break first?",
       "playlist": "Stock Market Explained",
       "quality": 8.4,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyNN_9IpADWo3a8TRl4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "1dyey1yd-Qs",
+        "S38F4pGXPLs"
+      ],
+      "tpl_done": [
+        "1dyey1yd-Qs",
+        "S38F4pGXPLs"
+      ]
     },
     {
       "date": "2026-11-16",
