@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-17T00:11:23+00:00",
-  "pending": 0,
+  "updated": "2026-11-17T07:43:24+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2339,6 +2339,126 @@
         }
       },
       "youtube_title": "7.11% Mortgage Rates Are Trashing Retirement Accounts"
+    },
+    {
+      "id": "2026-11-17_s1",
+      "created": "2026-11-17T07:43:21+00:00",
+      "date": "2026-11-17",
+      "asset_id": 758117122,
+      "size": 15365499,
+      "title": "Nasdaq-100 Liquidity Trap: Why 27,197 Is a Dangerous Institutional Level",
+      "text": "Smart money is dumping tech as the Nasdaq-100 crashes down to 27,197.15, leaving retail buyers holding a toxic bag. At the same time, the VIX volatility index spiked 18.70 percent to 22.91 as fear swept through Wall Street trading desks. When volatility jumps this fast, institutional desks rebalance out of risk assets immediately. Check your portfolio support levels before the next opening bell hits. Smart money is dumping tech as the Nasdaq-100 crashes down to 27,197.15. Follow for a new market story every day.",
+      "parent_title": "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap",
+      "parent_video_id": "S38F4pGXPLs",
+      "parent_url": "https://youtu.be/S38F4pGXPLs",
+      "tags": [
+        "Nasdaq 100 bottom charts",
+        "Nasdaq technical analysis 2026",
+        "S&P 500 support levels",
+        "VIX volatility market drop",
+        "Nasdaq 100 index today",
+        "stock market correction 2026",
+        "tech stocks drop analysis",
+        "Wall Street institutional positioning",
+        "S&P 500 7416",
+        "VIX 22.91 spike",
+        "Nasdaq 27197",
+        "trading support levels"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-17_s2",
+      "created": "2026-11-17T07:43:23+00:00",
+      "date": "2026-11-17",
+      "asset_id": 758117191,
+      "size": 17289633,
+      "title": "CBOE Volatility Surge: 22.91 VIX Exposes Major Margin Pressures",
+      "text": "Options desks are panicking as the VIX volatility index surges 18.70 percent to 22.91, exposing extreme leverage across prime brokerage accounts. Mercado yfinance data shows the S&P 500 sliding 1.92 percent down to 7,416.59 while tech stocks took heavy losses. Institutional investors are scrambling to hedge their positions as risk-off sentiment takes over. Keep your eyes on these exact support levels before making your next trade. Options desks are panicking as the VIX volatility index surges 18.70 percent to 22.91. Follow for a new market story every day.",
+      "parent_title": "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap",
+      "parent_video_id": "S38F4pGXPLs",
+      "parent_url": "https://youtu.be/S38F4pGXPLs",
+      "tags": [
+        "Nasdaq 100 bottom charts",
+        "Nasdaq technical analysis 2026",
+        "S&P 500 support levels",
+        "VIX volatility market drop",
+        "Nasdaq 100 index today",
+        "stock market correction 2026",
+        "tech stocks drop analysis",
+        "Wall Street institutional positioning",
+        "S&P 500 7416",
+        "VIX 22.91 spike",
+        "Nasdaq 27197",
+        "trading support levels"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-17_s3",
+      "created": "2026-11-17T07:43:24+00:00",
+      "date": "2026-11-17",
+      "asset_id": 758117284,
+      "size": 13297032,
+      "title": "Gold Vaults to $3,876: Institutional Desks Abandon Growth for Hard Assets",
+      "text": "Wall Street is ditching growth stocks for hard assets as gold climbs 0.62 percent to reach 3,876.80 dollars per ounce today. Smart money is rotating away from high-beta equities and into hard safe havens as the 10-year Treasury yield hovers at 5.12 percent. When gold and volatility rise while stocks drop, institutional capital is signaling defensive positioning. Check your asset allocation before the trend accelerates. Wall Street is ditching growth stocks for hard assets as gold climbs 0.62 percent to reach 3,876.80 dollars per ounce today. Follow for a new market story every day.",
+      "parent_title": "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap",
+      "parent_video_id": "S38F4pGXPLs",
+      "parent_url": "https://youtu.be/S38F4pGXPLs",
+      "tags": [
+        "Nasdaq 100 bottom charts",
+        "Nasdaq technical analysis 2026",
+        "S&P 500 support levels",
+        "VIX volatility market drop",
+        "Nasdaq 100 index today",
+        "stock market correction 2026",
+        "tech stocks drop analysis",
+        "Wall Street institutional positioning",
+        "S&P 500 7416",
+        "VIX 22.91 spike",
+        "Nasdaq 27197",
+        "trading support levels"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }

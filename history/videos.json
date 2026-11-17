@@ -1,7 +1,81 @@
 {
-  "updated": "2026-11-16T23:22:46+00:00",
-  "n_videos": 48,
+  "updated": "2026-11-17T07:43:24+00:00",
+  "n_videos": 49,
   "videos": [
+    {
+      "date": "2026-11-17",
+      "video_id": "S38F4pGXPLs",
+      "url": "https://youtu.be/S38F4pGXPLs",
+      "title": "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap",
+      "thumbnail_text": "27,197 LIQUIDITY TRAP",
+      "topic_key": "nasdaq 100 market bottom technical charts",
+      "entities": [],
+      "format": "if you have $X today scenario",
+      "title_style": "NAME-FIRST",
+      "keywords": [
+        "Nasdaq 100 bottom charts",
+        "Nasdaq technical analysis 2026",
+        "S&P 500 support levels",
+        "VIX volatility market drop"
+      ],
+      "source_headlines": [
+        "Is a bottom in for the Nasdaq-100? Charts to watch — Frank Cappelleri of CappThesis looks at several charts to help answer that question.",
+        "Nasdaq 100: 27,197.15 (↓2.67% vs ayer)",
+        "VIX: 22.91 (↑18.70% vs ayer)"
+      ],
+      "source_urls": [],
+      "thumb_layout": "center",
+      "thumb_color": "pink",
+      "thumb_pexels_id": 8141806,
+      "broll_pexels_ids": [
+        38771102,
+        38698441,
+        8480243,
+        30380306,
+        38736275,
+        38725031,
+        6282367,
+        39558578,
+        36418699,
+        38412250,
+        38358368,
+        8141806,
+        38344623,
+        38358367,
+        5849642,
+        36024520,
+        5834295,
+        5545112,
+        38569998,
+        38440687,
+        5726497,
+        6172816,
+        29188251,
+        29188241,
+        1797245,
+        27616566,
+        38168753,
+        38797293,
+        15196739,
+        8369980,
+        38963082,
+        38771101,
+        36081711,
+        36016698,
+        8480479,
+        8480483,
+        7579959,
+        38656963
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-17T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Are you buying this tech dip in the Nasdaq-100, or are you waiting for support levels to break first?",
+      "playlist": "Stock Market Explained",
+      "quality": 8.4,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-16",
       "video_id": "pyWllZRS_5Y",
@@ -96,7 +170,15 @@
         "GF9k3KsdZHM",
         "YRjxA-kGKrk",
         "pyWllZRS_5Y"
-      ]
+      ],
+      "stats": {
+        "views": 0,
+        "likes": 0,
+        "comments": 1,
+        "updated": "2026-11-17T06:52:44+00:00",
+        "source": "api",
+        "shorts_views": 1
+      }
     },
     {
       "date": "2026-11-15",
@@ -198,9 +280,9 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
-        "shorts_views": 103
+        "shorts_views": 106
       }
     },
     {
@@ -304,9 +386,12 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
-        "shorts_views": 113
+        "shorts_views": 113,
+        "avg_view_sec": 166.0,
+        "avg_view_pct": 38.9,
+        "subs_gained": 0
       }
     },
     {
@@ -410,7 +495,7 @@
         "views": 4,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 190,
         "avg_view_sec": 0.0,
@@ -522,9 +607,9 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
-        "shorts_views": 90,
+        "shorts_views": 89,
         "avg_view_sec": 0.0,
         "avg_view_pct": 0.0,
         "subs_gained": 0
@@ -629,14 +714,14 @@
         "zu1GWa_1c1I"
       ],
       "stats": {
-        "views": 107,
+        "views": 111,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
-        "shorts_views": 252,
-        "avg_view_sec": 115.0,
-        "avg_view_pct": 27.4,
+        "shorts_views": 256,
+        "avg_view_sec": 108.0,
+        "avg_view_pct": 25.7,
         "subs_gained": 0
       }
     },
@@ -738,14 +823,14 @@
         "z_8oRXd28mQ"
       ],
       "stats": {
-        "views": 444,
+        "views": 468,
         "likes": 2,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
-        "shorts_views": 129,
+        "shorts_views": 130,
         "avg_view_sec": 97.0,
-        "avg_view_pct": 21.7,
+        "avg_view_pct": 21.8,
         "subs_gained": 4
       }
     },
@@ -851,7 +936,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 126,
         "avg_view_sec": 0.0,
@@ -958,7 +1043,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 107,
         "avg_view_sec": 17.0,
@@ -1069,7 +1154,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 705,
         "avg_view_sec": 8.0,
@@ -1161,7 +1246,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 364
       },
@@ -1281,7 +1366,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 220,
         "avg_view_sec": 0.0,
@@ -1392,7 +1477,7 @@
         "views": 8,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 109,
         "avg_view_sec": 142.0,
@@ -1495,7 +1580,7 @@
         "views": 6,
         "likes": 1,
         "comments": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 85,
         "avg_view_sec": 165.0,
@@ -1610,7 +1695,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 178
       }
@@ -1716,10 +1801,10 @@
         "yvEjsYcUjEQ"
       ],
       "stats": {
-        "views": 4,
+        "views": 5,
         "likes": 0,
         "comments": 21,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 193,
         "avg_view_sec": 59.0,
@@ -1822,7 +1907,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 207,
         "avg_view_sec": 145.0,
@@ -1928,7 +2013,7 @@
         "views": 5,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "shorts_views": 216,
         "avg_view_sec": 92.0,
@@ -1958,7 +2043,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -1979,7 +2064,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2000,7 +2085,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2021,7 +2106,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -2040,7 +2125,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2061,7 +2146,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2083,7 +2168,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2104,7 +2189,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2125,8 +2210,8 @@
       ],
       "seed": true,
       "stats": {
-        "views": 52,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "views": 53,
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -2149,7 +2234,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2171,7 +2256,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2194,7 +2279,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2217,7 +2302,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2240,7 +2325,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2263,7 +2348,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2285,7 +2370,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2307,7 +2392,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2329,7 +2414,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2351,7 +2436,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2373,7 +2458,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2396,7 +2481,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2418,7 +2503,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2440,7 +2525,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2462,7 +2547,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2484,7 +2569,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2506,7 +2591,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2528,7 +2613,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2549,7 +2634,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2571,7 +2656,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2593,7 +2678,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-16T06:52:51+00:00",
+        "updated": "2026-11-17T06:52:44+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
