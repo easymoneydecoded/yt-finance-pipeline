@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T15:15:34+00:00",
+  "updated": "2026-11-17T19:15:40+00:00",
   "n_videos": 49,
   "videos": [
     {
@@ -68,10 +68,12 @@
         38656963
       ],
       "shorts_titles": [
-        "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap - Part 1"
+        "Nasdaq-100 Liquidity Evaporates. Why 27,197 Is a Deadly Institutional Trap - Part 1",
+        "CBOE Volatility Surge: 22.91 VIX Exposes Major Margin Pressures"
       ],
       "shorts_ids": [
-        "1dyey1yd-Qs"
+        "1dyey1yd-Qs",
+        "ukI2XBVGmCw"
       ],
       "publish_at": "2026-11-17T14:00+00:00",
       "shorts_publish_at": [],
@@ -83,11 +85,13 @@
       "shorts_commented": [],
       "cta_done": [
         "1dyey1yd-Qs",
-        "S38F4pGXPLs"
+        "S38F4pGXPLs",
+        "ukI2XBVGmCw"
       ],
       "tpl_done": [
         "1dyey1yd-Qs",
-        "S38F4pGXPLs"
+        "S38F4pGXPLs",
+        "ukI2XBVGmCw"
       ]
     },
     {
