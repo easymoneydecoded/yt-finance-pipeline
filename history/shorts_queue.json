@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-17T23:13:50+00:00",
-  "pending": 1,
+  "updated": "2026-11-17T23:17:17+00:00",
+  "pending": 0,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2463,19 +2463,21 @@
         "youtube": {
           "status": "done",
           "attempts": 0,
-          "id": "bFVbw37NJFQ",
-          "at": "2026-11-17T23:08+00:00"
+          "id": "MUwiJg_-2-Y",
+          "at": "2026-11-17T23:14+00:00"
         },
         "instagram": {
-          "status": "pending",
+          "status": "done",
           "attempts": 1,
-          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}",
+          "id": "18376278466213619",
+          "at": "2026-11-17T23:15+00:00"
         },
         "tiktok": {
           "status": "done",
           "attempts": 0,
-          "id": "v_inbox_file~v2.7709281713272440854",
-          "at": "2026-11-17T23:13+00:00"
+          "id": "v_inbox_file~v2.7709282476115658775",
+          "at": "2026-11-17T23:17+00:00"
         }
       },
       "youtube_title": "Gold Vaults to $3,876: Institutional Desks Abandon Growth for Hard Assets"
