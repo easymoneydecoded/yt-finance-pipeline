@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18T15:17:05+00:00",
-  "pending": 3,
+  "updated": "2026-11-18T19:17:52+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2483,6 +2483,51 @@
       "youtube_title": "Gold Vaults to $3,876: Institutional Desks Abandon Growth for Hard Assets"
     },
     {
+      "id": "2026-11-18_s2",
+      "created": "2026-11-18T07:30:39+00:00",
+      "date": "2026-11-18",
+      "asset_id": 762391843,
+      "size": 18427999,
+      "title": "How AI data centers are triggering voter and rate shock",
+      "text": "Fifty-six percent of voters in this month's midterm elections cited data centers as a major factor in their voting decisions according to exit polling. Communities are revolting against massive power demands as thirty-year mortgage rates hover at seven point eleven percent and consumer sentiment sits low at forty-eight point one. With high-flying AI hyperscalers borrowing heavily while ten-year Treasury yields sit at five point ten percent, grid bottlenecks directly threaten expected revenue. When public anger meets high interest rates, leveraged tech bets break quickly. Fifty-six percent of voters in this month's midterm elections cited data centers as a major factor in their voting decisions according to exit polling. Follow for a new market story every day.",
+      "parent_title": "Before December 1st, Check Your Portfolio for This Fed Risk",
+      "parent_video_id": "65ZJDMVkOrY",
+      "parent_url": "https://youtu.be/65ZJDMVkOrY",
+      "tags": [
+        "Fed AI risk survey",
+        "financial system threat AI",
+        "AI data center debt bubble",
+        "Federal Reserve systemic risk",
+        "market correction risk",
+        "hedge fund leverage 2013",
+        "tech stock valuation risk",
+        "S&P 500 tech debt",
+        "data center energy crisis",
+        "Federal Reserve survey 2026"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "done",
+          "attempts": 0,
+          "id": "83o8WY2DEFw",
+          "at": "2026-11-18T19:14+00:00"
+        },
+        "instagram": {
+          "status": "done",
+          "attempts": 0,
+          "id": "17878178139594165",
+          "at": "2026-11-18T19:15+00:00"
+        },
+        "tiktok": {
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7709592241124018198",
+          "at": "2026-11-18T19:17+00:00"
+        }
+      },
+      "youtube_title": "How AI data centers are triggering voter and rate shock"
+    },
+    {
       "id": "2026-11-18_s1",
       "created": "2026-11-18T07:30:37+00:00",
       "date": "2026-11-18",
@@ -2514,7 +2559,7 @@
         },
         "instagram": {
           "status": "pending",
-          "attempts": 1,
+          "attempts": 2,
           "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
@@ -2525,44 +2570,6 @@
         }
       },
       "youtube_title": "Why the Fed labeled AI the top danger to Wall Street"
-    },
-    {
-      "id": "2026-11-18_s2",
-      "created": "2026-11-18T07:30:39+00:00",
-      "date": "2026-11-18",
-      "asset_id": 762391843,
-      "size": 18427999,
-      "title": "How AI data centers are triggering voter and rate shock",
-      "text": "Fifty-six percent of voters in this month's midterm elections cited data centers as a major factor in their voting decisions according to exit polling. Communities are revolting against massive power demands as thirty-year mortgage rates hover at seven point eleven percent and consumer sentiment sits low at forty-eight point one. With high-flying AI hyperscalers borrowing heavily while ten-year Treasury yields sit at five point ten percent, grid bottlenecks directly threaten expected revenue. When public anger meets high interest rates, leveraged tech bets break quickly. Fifty-six percent of voters in this month's midterm elections cited data centers as a major factor in their voting decisions according to exit polling. Follow for a new market story every day.",
-      "parent_title": "Before December 1st, Check Your Portfolio for This Fed Risk",
-      "parent_video_id": "65ZJDMVkOrY",
-      "parent_url": "https://youtu.be/65ZJDMVkOrY",
-      "tags": [
-        "Fed AI risk survey",
-        "financial system threat AI",
-        "AI data center debt bubble",
-        "Federal Reserve systemic risk",
-        "market correction risk",
-        "hedge fund leverage 2013",
-        "tech stock valuation risk",
-        "S&P 500 tech debt",
-        "data center energy crisis",
-        "Federal Reserve survey 2026"
-      ],
-      "platforms": {
-        "youtube": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "instagram": {
-          "status": "pending",
-          "attempts": 0
-        },
-        "tiktok": {
-          "status": "pending",
-          "attempts": 0
-        }
-      }
     },
     {
       "id": "2026-11-18_s3",
