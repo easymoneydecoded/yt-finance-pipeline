@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T07:30:41+00:00",
+  "updated": "2026-11-18T15:17:05+00:00",
   "pending": 3,
   "items": [
     {
@@ -2507,18 +2507,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "_c6z0E__SB4",
+          "at": "2026-11-18T15:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7709530135661496342",
+          "at": "2026-11-18T15:17+00:00"
         }
-      }
+      },
+      "youtube_title": "Why the Fed labeled AI the top danger to Wall Street"
     },
     {
       "id": "2026-11-18_s2",

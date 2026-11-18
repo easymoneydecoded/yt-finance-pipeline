@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T07:30:41+00:00",
+  "updated": "2026-11-18T15:17:07+00:00",
   "n_videos": 50,
   "videos": [
     {
@@ -69,14 +69,28 @@
         8348900,
         8348904
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why the Fed labeled AI the top danger to Wall Street"
+      ],
+      "shorts_ids": [
+        "_c6z0E__SB4"
+      ],
       "publish_at": "2026-11-18T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you adjusting your tech exposure after the Fed's 87% risk warning, or holding firm?",
       "playlist": "Big Money Moves",
       "quality": 8.3,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugw5E4hLJl9wy8bbz8J4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "65ZJDMVkOrY",
+        "_c6z0E__SB4"
+      ],
+      "tpl_done": [
+        "65ZJDMVkOrY",
+        "_c6z0E__SB4"
+      ]
     },
     {
       "date": "2026-11-17",
