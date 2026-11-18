@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T19:17:53+00:00",
+  "updated": "2026-11-18T23:17:04+00:00",
   "n_videos": 50,
   "videos": [
     {
@@ -71,11 +71,13 @@
       ],
       "shorts_titles": [
         "Why the Fed labeled AI the top danger to Wall Street",
-        "How AI data centers are triggering voter and rate shock"
+        "How AI data centers are triggering voter and rate shock",
+        "Hedge fund leverage has just spiked to its highest point since two"
       ],
       "shorts_ids": [
         "_c6z0E__SB4",
-        "83o8WY2DEFw"
+        "83o8WY2DEFw",
+        "GX2fL6dxrko"
       ],
       "publish_at": "2026-11-18T14:00+00:00",
       "shorts_publish_at": [],
@@ -88,11 +90,13 @@
       "cta_done": [
         "65ZJDMVkOrY",
         "83o8WY2DEFw",
+        "GX2fL6dxrko",
         "_c6z0E__SB4"
       ],
       "tpl_done": [
         "65ZJDMVkOrY",
         "83o8WY2DEFw",
+        "GX2fL6dxrko",
         "_c6z0E__SB4"
       ]
     },

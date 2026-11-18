@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T22:37:28+00:00",
+  "updated": "2026-11-18T23:17:04+00:00",
   "pending": 1,
   "items": [
     {
@@ -2596,18 +2596,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "GX2fL6dxrko",
+          "at": "2026-11-18T23:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7709653546292250646",
+          "at": "2026-11-18T23:17+00:00"
         }
-      }
+      },
+      "youtube_title": "Hedge fund leverage has just spiked to its highest point since two"
     }
   ]
 }
