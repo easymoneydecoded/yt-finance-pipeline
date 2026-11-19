@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-19T04:33:29+00:00",
-  "pending": 0,
+  "updated": "2026-11-19T07:28:16+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2614,6 +2614,120 @@
         }
       },
       "youtube_title": "Hedge fund leverage has just spiked to its highest point since two"
+    },
+    {
+      "id": "2026-11-19_s1",
+      "created": "2026-11-19T07:28:13+00:00",
+      "date": "2026-11-19",
+      "asset_id": 766695356,
+      "size": 9876642,
+      "title": "Nvidia Just Lost $2 Trillion: What Options Traders Know",
+      "text": "Nvidia just wiped two trillion dollars off the board, shedding 35 percent of its value since October. According to CNBC, options traders are now pricing a 7 percent post-earnings move, the biggest implied swing since February 2025. With implied volatility hitting 68 and very few put contracts open below Monday's close of 157, any bad surprise leaves traders with zero downside protection. Check your tech portfolio before earnings drop. Follow for a new market story every day.",
+      "parent_title": "$2 Trillion Wiped: What Nvidia Options Traders Know Now",
+      "parent_video_id": "ZDB0s7DtuBs",
+      "parent_url": "https://youtu.be/ZDB0s7DtuBs",
+      "tags": [
+        "Nvidia stock drop",
+        "Nvidia options trading",
+        "NVDA market value",
+        "tech stock volatility",
+        "Nvidia earnings",
+        "options market",
+        "stock market news",
+        "Nasdaq 100",
+        "VIX volatility",
+        "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-19_s2",
+      "created": "2026-11-19T07:28:14+00:00",
+      "date": "2026-11-19",
+      "asset_id": 766695409,
+      "size": 9951969,
+      "title": "Why Nvidia's Options Volatility Just Hit 68",
+      "text": "Nvidia used to be the most reliable winner in the AI boom. Now, according to CNBC data, its implied volatility has surged to 68 from under 40 in early October. That makes it more volatile than all but 35 companies in the entire S&P 500. With 5 million options traded in a single day and 1.2 billion dollars tied to puts, derivatives markets are bracing for a massive shock. Are you prepared for the fallout? Follow for a new market story every day.",
+      "parent_title": "$2 Trillion Wiped: What Nvidia Options Traders Know Now",
+      "parent_video_id": "ZDB0s7DtuBs",
+      "parent_url": "https://youtu.be/ZDB0s7DtuBs",
+      "tags": [
+        "Nvidia stock drop",
+        "Nvidia options trading",
+        "NVDA market value",
+        "tech stock volatility",
+        "Nvidia earnings",
+        "options market",
+        "stock market news",
+        "Nasdaq 100",
+        "VIX volatility",
+        "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-19_s3",
+      "created": "2026-11-19T07:28:16+00:00",
+      "date": "2026-11-19",
+      "asset_id": 766695488,
+      "size": 7370200,
+      "title": "As bears take profits on their put options, a dangerous gap is opening up",
+      "text": "As bears take profits on their put options, a dangerous gap is opening up in Nvidia's market structure. According to SpotGamma data, there are very few open put contracts at or below the 157 dollar level where the stock closed Monday. That means any negative surprise from earnings will trigger a cascading drop with zero downside protection for retail holders. Check your risk exposure today. Follow for a new market story every day.",
+      "parent_title": "$2 Trillion Wiped: What Nvidia Options Traders Know Now",
+      "parent_video_id": "ZDB0s7DtuBs",
+      "parent_url": "https://youtu.be/ZDB0s7DtuBs",
+      "tags": [
+        "Nvidia stock drop",
+        "Nvidia options trading",
+        "NVDA market value",
+        "tech stock volatility",
+        "Nvidia earnings",
+        "options market",
+        "stock market news",
+        "Nasdaq 100",
+        "VIX volatility",
+        "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
