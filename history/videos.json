@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T07:28:16+00:00",
+  "updated": "2026-11-19T15:14:09+00:00",
   "n_videos": 51,
   "videos": [
     {
@@ -63,14 +63,28 @@
         5311422,
         8426053
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "$2 Trillion Wiped: What Nvidia Options Traders Know Now - Part 1"
+      ],
+      "shorts_ids": [
+        "WpO_MoEFDds"
+      ],
       "publish_at": "2026-11-19T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you holding through Nvidia's historic drop or cashing out before earnings?",
       "playlist": "Stock Market Explained",
       "quality": 7.4,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugxz_n6Sr7OIK9BrCzB4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "WpO_MoEFDds",
+        "ZDB0s7DtuBs"
+      ],
+      "tpl_done": [
+        "WpO_MoEFDds",
+        "ZDB0s7DtuBs"
+      ]
     },
     {
       "date": "2026-11-18",

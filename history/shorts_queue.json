@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-19T07:28:16+00:00",
-  "pending": 3,
+  "updated": "2026-11-19T15:14:08+00:00",
+  "pending": 2,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2640,18 +2640,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "WpO_MoEFDds",
+          "at": "2026-11-19T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18171662821484509",
+          "at": "2026-11-19T15:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7709900515274049558",
+          "at": "2026-11-19T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "$2 Trillion Wiped: What Nvidia Options Traders Know Now - Part 1"
     },
     {
       "id": "2026-11-19_s2",
