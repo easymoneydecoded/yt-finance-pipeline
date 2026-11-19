@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T15:14:09+00:00",
+  "updated": "2026-11-19T19:14:22+00:00",
   "n_videos": 51,
   "videos": [
     {
@@ -64,10 +64,12 @@
         8426053
       ],
       "shorts_titles": [
-        "$2 Trillion Wiped: What Nvidia Options Traders Know Now - Part 1"
+        "$2 Trillion Wiped: What Nvidia Options Traders Know Now - Part 1",
+        "Why Nvidia's Options Volatility Just Hit 68"
       ],
       "shorts_ids": [
-        "WpO_MoEFDds"
+        "WpO_MoEFDds",
+        "dohJntmFlM0"
       ],
       "publish_at": "2026-11-19T14:00+00:00",
       "shorts_publish_at": [],
@@ -79,11 +81,13 @@
       "shorts_commented": [],
       "cta_done": [
         "WpO_MoEFDds",
-        "ZDB0s7DtuBs"
+        "ZDB0s7DtuBs",
+        "dohJntmFlM0"
       ],
       "tpl_done": [
         "WpO_MoEFDds",
-        "ZDB0s7DtuBs"
+        "ZDB0s7DtuBs",
+        "dohJntmFlM0"
       ]
     },
     {
