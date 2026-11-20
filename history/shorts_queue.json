@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-19T23:03:02+00:00",
-  "pending": 0,
+  "updated": "2026-11-20T07:20:50+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2749,6 +2749,117 @@
         }
       },
       "youtube_title": "As bears take profits on their put options, a dangerous gap is opening up"
+    },
+    {
+      "id": "2026-11-20_s1",
+      "created": "2026-11-20T07:20:47+00:00",
+      "date": "2026-11-20",
+      "asset_id": 770868094,
+      "size": 15545027,
+      "title": "Why Anthropic's $81B IPO Failed to Save Tech Stocks",
+      "text": "Anthropic raised over eighty one billion dollars in the largest initial public offering in American history, but technology stocks still tanked. The S and P five hundred fell two percent while the Nasdaq composite dropped over two percent. A price war between Anthropic and OpenAI caused their combined quarterly losses to reach eight point four billion dollars in the third quarter. Meanwhile, quarterly revenue growth slowed from seventy five percent down to forty eight percent. Investors realize that buying the dip blindly no longer works when top companies burn billions in aggressive price wars. Check your tech allocations carefully. Follow for a new market story every day.",
+      "parent_title": "The $81B IPO That Triggered a Tech Selloff",
+      "parent_video_id": "kLHz8mp84RA",
+      "parent_url": "https://youtu.be/kLHz8mp84RA",
+      "tags": [
+        "Anthropic IPO",
+        "tech stock rout",
+        "AI stock valuation",
+        "technology sector crash",
+        "Nasdaq selloff",
+        "AMD stock news",
+        "AI price war",
+        "tech portfolio management",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-20_s2",
+      "created": "2026-11-20T07:20:49+00:00",
+      "date": "2026-11-20",
+      "asset_id": 770868141,
+      "size": 16798234,
+      "title": "How AMD Stock Dropped 7% on Government Export Claims",
+      "text": "Shares of chip maker AMD fell over seven percent following a short seller report by Hunterbrook Media alleging firmware turned up in blacklisted entities. AMD stated to CNBC that it complies with United States law. At the same time, House Foreign Affairs Committee documents revealed that government officials approved exports of more than eight hundred seventy nine thousand advanced chips to Chinese companies. These trade probes and export crackdown concerns are creating major shockwaves across semiconductor stocks. Keep an eye on supply chain disclosures before buying chip dips. Follow for a new market story every day.",
+      "parent_title": "The $81B IPO That Triggered a Tech Selloff",
+      "parent_video_id": "kLHz8mp84RA",
+      "parent_url": "https://youtu.be/kLHz8mp84RA",
+      "tags": [
+        "Anthropic IPO",
+        "tech stock rout",
+        "AI stock valuation",
+        "technology sector crash",
+        "Nasdaq selloff",
+        "AMD stock news",
+        "AI price war",
+        "tech portfolio management",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-20_s3",
+      "created": "2026-11-20T07:20:50+00:00",
+      "date": "2026-11-20",
+      "asset_id": 770868200,
+      "size": 13104654,
+      "title": "Why OpenAI and Anthropic Are Losing $8.4 Billion",
+      "text": "Fierce price competition between frontier laboratories OpenAI and Anthropic is draining corporate balance sheets. Investor Dan Niles revealed on CNBC that combined quarterly losses for both companies rose from seven point nine billion dollars in the second quarter to about eight point four billion dollars in the third quarter. Meanwhile, sequential revenue growth slowed from seventy five percent down to forty eight percent. Extreme discounting to win software market share is creating huge losses across the sector. Watch balance sheets closely as tech valuations reset across index funds. Follow for a new market story every day.",
+      "parent_title": "The $81B IPO That Triggered a Tech Selloff",
+      "parent_video_id": "kLHz8mp84RA",
+      "parent_url": "https://youtu.be/kLHz8mp84RA",
+      "tags": [
+        "Anthropic IPO",
+        "tech stock rout",
+        "AI stock valuation",
+        "technology sector crash",
+        "Nasdaq selloff",
+        "AMD stock news",
+        "AI price war",
+        "tech portfolio management",
+        "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
     }
   ]
 }
