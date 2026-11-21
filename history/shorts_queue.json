@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-20T07:20:50+00:00",
-  "pending": 3,
+  "updated": "2026-11-21T09:12:29+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2845,6 +2845,123 @@
         "AI price war",
         "tech portfolio management",
         "stock market news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-21_s1",
+      "created": "2026-11-21T09:12:24+00:00",
+      "date": "2026-11-21",
+      "asset_id": 775025874,
+      "size": 10999959,
+      "title": "Why Nvidia's SEC Probe Shocks Your 401k",
+      "text": "Nvidia just plunged fourteen percent on an unexpected SEC accounting investigation while the VIX volatility index surged to thirty five point eight nine. Your passive index funds hold massive exposure to this single name. When federal regulators start questioning revenue recognition at the top of the S and P five hundred, the entire tech sector feels the shockwave. Check your retirement portfolio allocation before the next trading session opens. Follow for a new market story every day.",
+      "parent_title": "Is Your 401k Exposed to Nvidia's SEC Probe?",
+      "parent_video_id": "fnJBjbG97oQ",
+      "parent_url": "https://youtu.be/fnJBjbG97oQ",
+      "tags": [
+        "Nvidia SEC probe",
+        "tech stock crash 2026",
+        "Nvidia accounting investigation",
+        "S&P 500 correction",
+        "Nasdaq 100 drop",
+        "401k risk",
+        "mega cap tech",
+        "stock market crash",
+        "VIX volatility",
+        "retirement account protection",
+        "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-21_s2",
+      "created": "2026-11-21T09:12:27+00:00",
+      "date": "2026-11-21",
+      "asset_id": 775025947,
+      "size": 10116896,
+      "title": "The S&P 500 Crash Nobody Saw Coming",
+      "text": "The S and P five hundred just dropped three point seven zero percent down to six thousand nine hundred ten point three nine during the worst tech week in eighteen years. Meanwhile, safe haven gold dropped four point six two percent to three thousand five hundred fifteen point four zero, leaving investors with zero places to hide. Concentration risk is real, and your retirement account is paying the price. Follow for a new market story every day.",
+      "parent_title": "Is Your 401k Exposed to Nvidia's SEC Probe?",
+      "parent_video_id": "fnJBjbG97oQ",
+      "parent_url": "https://youtu.be/fnJBjbG97oQ",
+      "tags": [
+        "Nvidia SEC probe",
+        "tech stock crash 2026",
+        "Nvidia accounting investigation",
+        "S&P 500 correction",
+        "Nasdaq 100 drop",
+        "401k risk",
+        "mega cap tech",
+        "stock market crash",
+        "VIX volatility",
+        "retirement account protection",
+        "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-21_s3",
+      "created": "2026-11-21T09:12:29+00:00",
+      "date": "2026-11-21",
+      "asset_id": 775026009,
+      "size": 9973355,
+      "title": "Nasdaq 100 Suffers Worst Week Since 2020",
+      "text": "The Nasdaq one hundred collapsed five point six one percent down to twenty five thousand twenty eight point ninety eight as institutional liquidity evaporated. With consumer sentiment stuck at forty eight and ten year yields holding at four point nine one percent, the macro pressure cooker is fully engaged. Understand your index exposure before market volatility tests your risk tolerance. Follow for a new market story every day.",
+      "parent_title": "Is Your 401k Exposed to Nvidia's SEC Probe?",
+      "parent_video_id": "fnJBjbG97oQ",
+      "parent_url": "https://youtu.be/fnJBjbG97oQ",
+      "tags": [
+        "Nvidia SEC probe",
+        "tech stock crash 2026",
+        "Nvidia accounting investigation",
+        "S&P 500 correction",
+        "Nasdaq 100 drop",
+        "401k risk",
+        "mega cap tech",
+        "stock market crash",
+        "VIX volatility",
+        "retirement account protection",
+        "Wall Street news"
       ],
       "platforms": {
         "youtube": {
