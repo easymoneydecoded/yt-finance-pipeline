@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T15:14:41+00:00",
+  "updated": "2026-11-21T19:16:55+00:00",
   "n_videos": 53,
   "videos": [
     {
@@ -161,10 +161,12 @@
         7947422
       ],
       "shorts_titles": [
-        "The $81B IPO That Triggered a Tech Selloff - Part 1"
+        "The $81B IPO That Triggered a Tech Selloff - Part 1",
+        "How AMD Stock Dropped 7% on Government Export Claims"
       ],
       "shorts_ids": [
-        "UXRHtf-J8EI"
+        "UXRHtf-J8EI",
+        "2t3y-Us8fto"
       ],
       "publish_at": "2026-11-20T14:00+00:00",
       "shorts_publish_at": [],
@@ -182,10 +184,12 @@
       "comment_id": "UgxoOCbIiMES8SO4YgZ4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "2t3y-Us8fto",
         "UXRHtf-J8EI",
         "kLHz8mp84RA"
       ],
       "tpl_done": [
+        "2t3y-Us8fto",
         "UXRHtf-J8EI",
         "kLHz8mp84RA"
       ]

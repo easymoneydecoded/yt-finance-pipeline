@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T15:14:40+00:00",
+  "updated": "2026-11-21T19:16:54+00:00",
   "pending": 5,
   "items": [
     {
@@ -2818,18 +2818,24 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "2t3y-Us8fto",
+          "at": "2026-11-21T19:11+00:00"
         },
         "instagram": {
           "status": "pending",
-          "attempts": 0
+          "attempts": 1,
+          "last_error": "400: {'debug_info': {'retriable': False, 'type': 'ProcessingFailedError', 'message': 'Request processing failed'}}"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7710705168627697686",
+          "at": "2026-11-21T19:16+00:00"
         }
-      }
+      },
+      "youtube_title": "How AMD Stock Dropped 7% on Government Export Claims"
     },
     {
       "id": "2026-11-20_s3",
