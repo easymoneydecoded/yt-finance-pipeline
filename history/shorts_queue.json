@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-21T20:54:45+00:00",
-  "pending": 4,
+  "updated": "2026-11-21T23:15:28+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2863,18 +2863,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "NiC-IZbTjKk",
+          "at": "2026-11-21T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18123180796964403",
+          "at": "2026-11-21T23:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7710766212896278550",
+          "at": "2026-11-21T23:15+00:00"
         }
-      }
+      },
+      "youtube_title": "Why OpenAI and Anthropic Are Losing $8.4 Billion"
     },
     {
       "id": "2026-11-21_s1",

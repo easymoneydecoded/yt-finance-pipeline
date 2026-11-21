@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T19:16:55+00:00",
+  "updated": "2026-11-21T23:15:29+00:00",
   "n_videos": 53,
   "videos": [
     {
@@ -162,11 +162,13 @@
       ],
       "shorts_titles": [
         "The $81B IPO That Triggered a Tech Selloff - Part 1",
-        "How AMD Stock Dropped 7% on Government Export Claims"
+        "How AMD Stock Dropped 7% on Government Export Claims",
+        "Why OpenAI and Anthropic Are Losing $8.4 Billion"
       ],
       "shorts_ids": [
         "UXRHtf-J8EI",
-        "2t3y-Us8fto"
+        "2t3y-Us8fto",
+        "NiC-IZbTjKk"
       ],
       "publish_at": "2026-11-20T14:00+00:00",
       "shorts_publish_at": [],
@@ -185,11 +187,13 @@
       "shorts_commented": [],
       "cta_done": [
         "2t3y-Us8fto",
+        "NiC-IZbTjKk",
         "UXRHtf-J8EI",
         "kLHz8mp84RA"
       ],
       "tpl_done": [
         "2t3y-Us8fto",
+        "NiC-IZbTjKk",
         "UXRHtf-J8EI",
         "kLHz8mp84RA"
       ]
