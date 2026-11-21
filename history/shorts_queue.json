@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-21T09:12:29+00:00",
-  "pending": 6,
+  "updated": "2026-11-21T15:14:40+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2774,18 +2774,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "UXRHtf-J8EI",
+          "at": "2026-11-21T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18089457173316540",
+          "at": "2026-11-21T15:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7710642795941218326",
+          "at": "2026-11-21T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "The $81B IPO That Triggered a Tech Selloff - Part 1"
     },
     {
       "id": "2026-11-20_s2",

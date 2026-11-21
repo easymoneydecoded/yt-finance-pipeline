@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T09:12:29+00:00",
+  "updated": "2026-11-21T15:14:41+00:00",
   "n_videos": 53,
   "videos": [
     {
@@ -81,7 +81,15 @@
       "pinned_comment": "Are you holding through the tech selloff, or trimming your index exposure right now?",
       "playlist": "Retirement & Your 401k",
       "quality": 6.8,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgwQ9mp3Ui_GTjeJ2eV4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "fnJBjbG97oQ"
+      ],
+      "tpl_done": [
+        "fnJBjbG97oQ"
+      ]
     },
     {
       "date": "2026-11-20",
@@ -152,8 +160,12 @@
         8275990,
         7947422
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "The $81B IPO That Triggered a Tech Selloff - Part 1"
+      ],
+      "shorts_ids": [
+        "UXRHtf-J8EI"
+      ],
       "publish_at": "2026-11-20T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "With Anthropic stock up seventeen percent while broader tech falls, are you buying this dip or holding cash?",
@@ -166,7 +178,17 @@
         "comments": 0,
         "updated": "2026-11-21T08:19:24+00:00",
         "source": "api"
-      }
+      },
+      "comment_id": "UgxoOCbIiMES8SO4YgZ4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "UXRHtf-J8EI",
+        "kLHz8mp84RA"
+      ],
+      "tpl_done": [
+        "UXRHtf-J8EI",
+        "kLHz8mp84RA"
+      ]
     },
     {
       "date": "2026-11-19",
