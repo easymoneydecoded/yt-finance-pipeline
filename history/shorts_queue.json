@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-22T19:14:21+00:00",
-  "pending": 4,
+  "updated": "2026-11-22T23:14:20+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3001,18 +3001,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "tHz_RFMgTlo",
+          "at": "2026-11-22T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18041139695889633",
+          "at": "2026-11-22T23:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7711137178546243606",
+          "at": "2026-11-22T23:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Nasdaq 100 Suffers Worst Week Since 2020"
     },
     {
       "id": "2026-11-22_s1",

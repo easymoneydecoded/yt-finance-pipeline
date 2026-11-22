@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T19:14:22+00:00",
+  "updated": "2026-11-22T23:14:21+00:00",
   "n_videos": 54,
   "videos": [
     {
@@ -164,11 +164,13 @@
       ],
       "shorts_titles": [
         "Is Your 401k Exposed to Nvidia's SEC Probe? - Part 1",
-        "The S&P 500 Crash Nobody Saw Coming"
+        "The S&P 500 Crash Nobody Saw Coming",
+        "Nasdaq 100 Suffers Worst Week Since 2020"
       ],
       "shorts_ids": [
         "EplMjBc9kPI",
-        "vMh_LzLIFKY"
+        "vMh_LzLIFKY",
+        "tHz_RFMgTlo"
       ],
       "publish_at": "2026-11-21T14:00+00:00",
       "shorts_publish_at": [],
@@ -181,11 +183,13 @@
       "cta_done": [
         "EplMjBc9kPI",
         "fnJBjbG97oQ",
+        "tHz_RFMgTlo",
         "vMh_LzLIFKY"
       ],
       "tpl_done": [
         "EplMjBc9kPI",
         "fnJBjbG97oQ",
+        "tHz_RFMgTlo",
         "vMh_LzLIFKY"
       ],
       "stats": {
