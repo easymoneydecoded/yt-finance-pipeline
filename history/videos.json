@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T07:14:19+00:00",
+  "updated": "2026-11-22T15:14:23+00:00",
   "n_videos": 54,
   "videos": [
     {
@@ -80,7 +80,15 @@
       "pinned_comment": "Are you holding onto your chip stocks through this short seller panic, or trimming your tech exposure?",
       "playlist": "Stock Market Explained",
       "quality": 8.0,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyAI89I5TkT0tACylx4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "pUNlvnMMsHg"
+      ],
+      "tpl_done": [
+        "pUNlvnMMsHg"
+      ]
     },
     {
       "date": "2026-11-21",
@@ -154,8 +162,12 @@
         10224109,
         6193787
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Is Your 401k Exposed to Nvidia's SEC Probe? - Part 1"
+      ],
+      "shorts_ids": [
+        "EplMjBc9kPI"
+      ],
       "publish_at": "2026-11-21T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you holding through the tech selloff, or trimming your index exposure right now?",
@@ -165,9 +177,11 @@
       "comment_id": "UgwQ9mp3Ui_GTjeJ2eV4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "EplMjBc9kPI",
         "fnJBjbG97oQ"
       ],
       "tpl_done": [
+        "EplMjBc9kPI",
         "fnJBjbG97oQ"
       ],
       "stats": {

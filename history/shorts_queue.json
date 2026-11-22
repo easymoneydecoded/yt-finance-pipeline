@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-22T07:14:19+00:00",
-  "pending": 6,
+  "updated": "2026-11-22T15:14:21+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2909,18 +2909,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "EplMjBc9kPI",
+          "at": "2026-11-22T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18112122683211158",
+          "at": "2026-11-22T15:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7711013688030971926",
+          "at": "2026-11-22T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Is Your 401k Exposed to Nvidia's SEC Probe? - Part 1"
     },
     {
       "id": "2026-11-21_s2",
