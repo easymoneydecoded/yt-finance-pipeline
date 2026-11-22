@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-21T23:15:28+00:00",
-  "pending": 3,
+  "updated": "2026-11-22T07:14:19+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2984,6 +2984,129 @@
         "VIX volatility",
         "retirement account protection",
         "Wall Street news"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-22_s1",
+      "created": "2026-11-22T07:14:15+00:00",
+      "date": "2026-11-22",
+      "asset_id": 778231844,
+      "size": 10464122,
+      "title": "How Short Sellers Target AMD's China Supply Chain",
+      "text": "A devastating short seller report just wiped out AMD's gains over alleged blacklisted Chinese tech exposure. With the VIX surging 26.20 percent to 35.89, institutional panic is spreading across the entire semiconductor sector. When supply chain choke points get exposed, growth stocks drop instantly. Check your portfolio concentration before the next regulatory crackdown hits your tech holdings. Watch this loop again to see how the mechanics work. Follow for a new market story every day.",
+      "parent_title": "AMD Short Seller Report Destroys Tech Gains",
+      "parent_video_id": "pUNlvnMMsHg",
+      "parent_url": "https://youtu.be/pUNlvnMMsHg",
+      "tags": [
+        "AMD short seller report",
+        "AMD China exposure",
+        "semiconductor stock drop",
+        "chip supply chain rules",
+        "AMD stock analysis",
+        "Nasdaq 100 drop",
+        "short seller allegations",
+        "semiconductor supply chain",
+        "chip export restrictions",
+        "tech stock correction",
+        "VIX volatility spike",
+        "portfolio risk management",
+        "wall street short reports"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-22_s2",
+      "created": "2026-11-22T07:14:17+00:00",
+      "date": "2026-11-22",
+      "asset_id": 778231908,
+      "size": 11495050,
+      "title": "Why the Nasdaq 100 Just Dropped 5.61 Percent",
+      "text": "The Nasdaq 100 just dropped 5.61 percent as regulatory scrutiny and short seller reports target major chipmakers. With the 10Y Yield at 4.91 and the Fed Funds Rate at 3.88, high-multiple tech stocks have zero room for compliance errors. Institutional capital is exiting faster than retail investors can react. Protect your retirement accounts by auditing your semiconductor exposure today. Watch this loop again to stay ahead of the next drop. Follow for a new market story every day.",
+      "parent_title": "AMD Short Seller Report Destroys Tech Gains",
+      "parent_video_id": "pUNlvnMMsHg",
+      "parent_url": "https://youtu.be/pUNlvnMMsHg",
+      "tags": [
+        "AMD short seller report",
+        "AMD China exposure",
+        "semiconductor stock drop",
+        "chip supply chain rules",
+        "AMD stock analysis",
+        "Nasdaq 100 drop",
+        "short seller allegations",
+        "semiconductor supply chain",
+        "chip export restrictions",
+        "tech stock correction",
+        "VIX volatility spike",
+        "portfolio risk management",
+        "wall street short reports"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-22_s3",
+      "created": "2026-11-22T07:14:19+00:00",
+      "date": "2026-11-22",
+      "asset_id": 778231978,
+      "size": 11337688,
+      "title": "The Hidden Risk in Your Semiconductor Portfolio",
+      "text": "Semiconductor short seller reports weaponize complex international supply chains against your favorite tech stocks. As the S&P 500 sits at 6,910.39 and consumer sentiment reads 48, market volatility is at a yearly high. Short sellers make millions betting on regulatory crackdowns while retail investors hold the bag. Know what you own before the next leak drops. Watch this loop again to master the warning signs. Follow for a new market story every day.",
+      "parent_title": "AMD Short Seller Report Destroys Tech Gains",
+      "parent_video_id": "pUNlvnMMsHg",
+      "parent_url": "https://youtu.be/pUNlvnMMsHg",
+      "tags": [
+        "AMD short seller report",
+        "AMD China exposure",
+        "semiconductor stock drop",
+        "chip supply chain rules",
+        "AMD stock analysis",
+        "Nasdaq 100 drop",
+        "short seller allegations",
+        "semiconductor supply chain",
+        "chip export restrictions",
+        "tech stock correction",
+        "VIX volatility spike",
+        "portfolio risk management",
+        "wall street short reports"
       ],
       "platforms": {
         "youtube": {
