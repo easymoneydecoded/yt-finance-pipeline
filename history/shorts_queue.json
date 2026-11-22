@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-22T15:14:21+00:00",
-  "pending": 5,
+  "updated": "2026-11-22T19:14:21+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -2955,18 +2955,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "vMh_LzLIFKY",
+          "at": "2026-11-22T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17965811256240434",
+          "at": "2026-11-22T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7711075540526204930",
+          "at": "2026-11-22T19:14+00:00"
         }
-      }
+      },
+      "youtube_title": "The S&P 500 Crash Nobody Saw Coming"
     },
     {
       "id": "2026-11-21_s3",
