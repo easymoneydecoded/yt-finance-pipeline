@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-23T19:14:18+00:00",
-  "pending": 4,
+  "updated": "2026-11-23T23:12:15+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3145,18 +3145,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "riGBKAr_dMM",
+          "at": "2026-11-23T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18040118861893243",
+          "at": "2026-11-23T23:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b04c83c78e484ab41d163ba",
+          "at": "2026-11-23T23:12+00:00"
         }
-      }
+      },
+      "youtube_title": "The Hidden Risk in Your Semiconductor Portfolio"
     },
     {
       "id": "2026-11-23_s1",

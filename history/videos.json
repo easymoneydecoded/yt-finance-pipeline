@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T19:14:19+00:00",
+  "updated": "2026-11-23T23:12:16+00:00",
   "n_videos": 55,
   "videos": [
     {
@@ -159,11 +159,13 @@
       ],
       "shorts_titles": [
         "How Short Sellers Target AMD's China Supply Chain",
-        "Why the Nasdaq 100 Just Dropped 5.61 Percent"
+        "Why the Nasdaq 100 Just Dropped 5.61 Percent",
+        "The Hidden Risk in Your Semiconductor Portfolio"
       ],
       "shorts_ids": [
         "N-boeifQTNo",
-        "Kzanov15Zrk"
+        "Kzanov15Zrk",
+        "riGBKAr_dMM"
       ],
       "publish_at": "2026-11-22T14:00+00:00",
       "shorts_publish_at": [],
@@ -176,12 +178,14 @@
       "cta_done": [
         "Kzanov15Zrk",
         "N-boeifQTNo",
-        "pUNlvnMMsHg"
+        "pUNlvnMMsHg",
+        "riGBKAr_dMM"
       ],
       "tpl_done": [
         "Kzanov15Zrk",
         "N-boeifQTNo",
-        "pUNlvnMMsHg"
+        "pUNlvnMMsHg",
+        "riGBKAr_dMM"
       ],
       "stats": {
         "views": 4,
