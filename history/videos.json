@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T15:14:18+00:00",
+  "updated": "2026-11-23T19:14:19+00:00",
   "n_videos": 55,
   "videos": [
     {
@@ -158,10 +158,12 @@
         33380680
       ],
       "shorts_titles": [
-        "How Short Sellers Target AMD's China Supply Chain"
+        "How Short Sellers Target AMD's China Supply Chain",
+        "Why the Nasdaq 100 Just Dropped 5.61 Percent"
       ],
       "shorts_ids": [
-        "N-boeifQTNo"
+        "N-boeifQTNo",
+        "Kzanov15Zrk"
       ],
       "publish_at": "2026-11-22T14:00+00:00",
       "shorts_publish_at": [],
@@ -172,10 +174,12 @@
       "comment_id": "UgyAI89I5TkT0tACylx4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "Kzanov15Zrk",
         "N-boeifQTNo",
         "pUNlvnMMsHg"
       ],
       "tpl_done": [
+        "Kzanov15Zrk",
         "N-boeifQTNo",
         "pUNlvnMMsHg"
       ],

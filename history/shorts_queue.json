@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-23T15:14:16+00:00",
-  "pending": 5,
+  "updated": "2026-11-23T19:14:18+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3097,18 +3097,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "Kzanov15Zrk",
+          "at": "2026-11-23T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18135600613690558",
+          "at": "2026-11-23T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7711446631543326742",
+          "at": "2026-11-23T19:14+00:00"
         }
-      }
+      },
+      "youtube_title": "Why the Nasdaq 100 Just Dropped 5.61 Percent"
     },
     {
       "id": "2026-11-22_s3",
