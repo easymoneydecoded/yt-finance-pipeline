@@ -109,19 +109,21 @@ def post_instagram(item: dict, video: Path) -> None:
 
 def post_tiktok(item: dict, video: Path) -> None:
     caption = sq.caption_tiktok(item)
+    published = False
     try:
-        publish_id = tiktok.upload(video, caption)
+        publish_id = tiktok.upload(video, caption, key=item["id"])
+        published = tiktok.MODE in ("direct", "zernio")
     except Exception as e:
         if tiktok.MODE == "direct":
             raise
-        # En modo borrador lo que de verdad usa el usuario es el video por Telegram: si la API de
-        # TikTok falla (a veces responde vacio), se manda igual y no se pierde la franja
-        print(f"   ! TikTok fallo ({str(e)[:100]}): el video va solo por Telegram")
+        # Borrador o Zernio caido: el video llega por Telegram para subirlo a mano y no se pierde la franja
+        print(f"   ! TikTok fallo ({str(e)[:160]}): el video va por Telegram")
         publish_id = "solo-telegram"
     _mark(item, "tiktok", True, publish_id)
-    if tiktok.MODE == "direct":
-        _summary("- TikTok: publicado")
-        TELEGRAM.append("🎵 TikTok: publicado")
+    if published:
+        link = publish_id if publish_id.startswith("http") else ""
+        _summary(f"- TikTok: publicado {link or '(' + publish_id + ')'}")
+        TELEGRAM.append(f"🎵 TikTok: publicado {link}".rstrip())
     else:
         # La app de TikTok del movil no siempre ensena el aviso del borrador: el video llega
         # tambien por Telegram para compartirlo a TikTok desde el movil en un toque

@@ -3,8 +3,11 @@
  tiktok.py - Envia los Shorts a TikTok (Content Posting API oficial)
 ================================================================================
 
- Modos (variable TIKTOK_MODE):
-   draft  (por defecto) -> el video llega a la bandeja de TikTok del canal
+ Modos (variable TIKTOK_MODE; si hay ZERNIO_API_KEY y no se indica otro, se usa zernio):
+   zernio              -> publicacion directa y PUBLICA a traves de Zernio (zernio.com), que
+                           tiene la app de TikTok ya auditada. Solo necesita ZERNIO_API_KEY
+                           (cuenta @tickerpress conectada en su panel). Desde 2026-11-23.
+   draft               -> el video llega a la bandeja de TikTok del canal
                            como borrador; se publica con un toque en la app.
                            Funciona sin que TikTok haya auditado la app.
    direct              -> publicacion directa con titulo. Hasta que TikTok
@@ -32,7 +35,9 @@ import secret_store
 load_dotenv()
 
 API          = "https://open.tiktokapis.com/v2"
-MODE         = os.getenv("TIKTOK_MODE", "draft")
+ZERNIO       = "https://zernio.com/api/v1"
+ZERNIO_KEY   = os.getenv("ZERNIO_API_KEY", "").strip()
+MODE         = os.getenv("TIKTOK_MODE", "").strip() or ("zernio" if ZERNIO_KEY else "draft")
 PRIVACY      = os.getenv("TIKTOK_PRIVACY", "PUBLIC_TO_EVERYONE")
 AIGC_LABEL   = os.getenv("TIKTOK_AIGC_LABEL", "false").lower() == "true"   # etiqueta "generado con IA"
 MAX_CHUNK    = 64 * 1024 * 1024
@@ -44,6 +49,8 @@ class TikTokError(RuntimeError):
 
 
 def enabled() -> bool:
+    if MODE == "zernio":
+        return bool(ZERNIO_KEY)
     return bool(os.getenv("TIKTOK_CLIENT_KEY") and os.getenv("TIKTOK_CLIENT_SECRET")
                 and (secret_store.get("tiktok").get("refresh_token") or os.getenv("TIKTOK_REFRESH_TOKEN")))
 
@@ -79,8 +86,55 @@ def _api(token: str, path: str, body: dict) -> dict:
     return data.get("data", {})
 
 
-def upload(video: Path, caption: str) -> str:
-    """Sube el video (borrador o directo segun TIKTOK_MODE). Devuelve el publish_id."""
+def _zernio(method: str, path: str, **kw) -> dict:
+    r = requests.request(method, f"{ZERNIO}{path}", timeout=120,
+                         headers={"Authorization": f"Bearer {ZERNIO_KEY}", **kw.pop("headers", {})}, **kw)
+    try:
+        data = r.json()
+    except ValueError:
+        data = {"raw": r.text[:300]}
+    if r.status_code >= 400:
+        raise TikTokError(f"Zernio {path}: {r.status_code} {str(data)[:300]}")
+    return data
+
+
+def zernio_account() -> str:
+    """_id de la cuenta de TikTok conectada en Zernio."""
+    accounts = [a for a in _zernio("GET", "/accounts").get("accounts", [])
+                if a.get("platform") == "tiktok" and a.get("isActive", True)]
+    if not accounts:
+        raise TikTokError("Zernio no tiene ninguna cuenta de TikTok conectada")
+    return accounts[0]["_id"]
+
+
+def zernio_upload(video: Path, caption: str, key: str = "") -> str:
+    """Publica el video en TikTok (publico) via Zernio. Devuelve 'zernio:<postId>' o la URL si ya la hay."""
+    account = zernio_account()
+    pre = _zernio("POST", "/media/presign", json={"filename": video.name, "contentType": "video/mp4",
+                                                   "size": video.stat().st_size})
+    with open(video, "rb") as fh:
+        r = requests.put(pre["uploadUrl"], data=fh, timeout=600, headers={"Content-Type": "video/mp4"})
+    if r.status_code not in (200, 201):
+        raise TikTokError(f"subida a Zernio fallo: {r.status_code} {r.text[:200]}")
+    headers = {"Idempotency-Key": f"tickerpress-{key}"} if key else {}
+    post = _zernio("POST", "/posts", headers=headers, json={
+        "content": caption[:2200],
+        "mediaItems": [{"type": "video", "url": pre["publicUrl"]}],
+        "platforms": [{"platform": "tiktok", "accountId": account}],
+        "tiktokSettings": {"privacy_level": PRIVACY, "allow_comment": True, "allow_duet": True,
+                           "allow_stitch": True, "content_preview_confirmed": True,
+                           "express_consent_given": True},
+        "publishNow": True}).get("post", {})
+    plat = next((p for p in post.get("platforms", []) if p.get("platform") == "tiktok"), {})
+    if plat.get("status") == "failed" or post.get("status") == "failed":
+        raise TikTokError(f"Zernio marco la publicacion como fallida: {str(post)[:300]}")
+    return plat.get("platformPostUrl") or f"zernio:{post.get('_id', '?')}"
+
+
+def upload(video: Path, caption: str, key: str = "") -> str:
+    """Sube el video segun TIKTOK_MODE. Devuelve el publish_id (o la URL/id de Zernio)."""
+    if MODE == "zernio":
+        return zernio_upload(video, caption, key)
     token = access_token()
     size = video.stat().st_size
     chunk, total = _chunks(size)
@@ -121,6 +175,11 @@ def upload(video: Path, caption: str) -> str:
 
 def check() -> None:
     """Comprueba credenciales sin subir nada (python tiktok.py check)."""
+    if MODE == "zernio":
+        if not ZERNIO_KEY:
+            raise SystemExit("Falta ZERNIO_API_KEY")
+        print(f"TikTok via Zernio: cuenta {zernio_account()} conectada - modo zernio (publicacion directa publica)")
+        return
     if not enabled():
         raise SystemExit("Faltan TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / TIKTOK_REFRESH_TOKEN")
     token = access_token()
