@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T07:21:04+00:00",
+  "updated": "2026-11-23T15:14:18+00:00",
   "n_videos": 55,
   "videos": [
     {
@@ -82,7 +82,9 @@
       ],
       "tpl_done": [
         "_CNBcJnFq3U"
-      ]
+      ],
+      "comment_id": "Ugzt_hVnPhIT8RFL-vl4AaABAg",
+      "shorts_commented": []
     },
     {
       "date": "2026-11-22",
@@ -155,8 +157,12 @@
         36005343,
         33380680
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "How Short Sellers Target AMD's China Supply Chain"
+      ],
+      "shorts_ids": [
+        "N-boeifQTNo"
+      ],
       "publish_at": "2026-11-22T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you holding onto your chip stocks through this short seller panic, or trimming your tech exposure?",
@@ -166,9 +172,11 @@
       "comment_id": "UgyAI89I5TkT0tACylx4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "N-boeifQTNo",
         "pUNlvnMMsHg"
       ],
       "tpl_done": [
+        "N-boeifQTNo",
         "pUNlvnMMsHg"
       ],
       "stats": {

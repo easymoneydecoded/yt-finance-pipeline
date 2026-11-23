@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-23T07:08:54+00:00",
-  "pending": 6,
+  "updated": "2026-11-23T15:14:16+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3049,18 +3049,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "N-boeifQTNo",
+          "at": "2026-11-23T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17880711546633898",
+          "at": "2026-11-23T15:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "v_inbox_file~v2.7711384750984382486",
+          "at": "2026-11-23T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "How Short Sellers Target AMD's China Supply Chain"
     },
     {
       "id": "2026-11-22_s2",
