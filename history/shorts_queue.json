@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-22T23:14:20+00:00",
-  "pending": 3,
+  "updated": "2026-11-23T07:08:54+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3128,6 +3128,120 @@
         "VIX volatility spike",
         "portfolio risk management",
         "wall street short reports"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-23_s1",
+      "created": "2026-11-23T07:08:51+00:00",
+      "date": "2026-11-23",
+      "asset_id": 781925433,
+      "size": 21304074,
+      "title": "Why Cathie Wood's $90M Anthropic Trade Harms Retail",
+      "text": "Cathie Wood just dropped ninety million dollars into Anthropic across six funds. But retail investors copying her trade are walking into a massive Wall Street trap. Today, the CBOE Volatility Index surged over twenty six percent to 35.89, driving options hedging costs to extreme levels. While big fund managers buy put options to protect institutional balance sheets, retail investors buying fund shares absorb full unhedged downside. With the Nasdaq 100 dropping five point six one percent today to 25,028.98, chasing institutional headline buys leaves you holding high risk tech equity without any safety net. Never confuse institutional marketing with downside risk management. Cathie Wood just dropped ninety million dollars into Anthropic across six funds. Follow for a new market story every day.",
+      "parent_title": "$90M Bet: Cathie Wood's Anthropic Trade Trap",
+      "parent_video_id": "_CNBcJnFq3U",
+      "parent_url": "https://youtu.be/_CNBcJnFq3U",
+      "tags": [
+        "cathie wood anthropic stock",
+        "ark invest anthropic buy",
+        "anthropic options hedging",
+        "tech IPO risks",
+        "nasdaq selloff",
+        "vix spike",
+        "ark invest trades",
+        "tech stock volatility",
+        "options premium risk",
+        "retail investor psychology"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-23_s2",
+      "created": "2026-11-23T07:08:53+00:00",
+      "date": "2026-11-23",
+      "asset_id": 781925531,
+      "size": 21271915,
+      "title": "How Options Hedging Costs Eat Your Tech Stock Gains",
+      "text": "Options traders are charging massive premiums on tech stocks right now. Market volatility spiked twenty six point two percent today as the S&P 500 fell three point seven zero percent to 6,910.39. When institutions like Ark Invest make headline moves, like buying ninety million dollars of Anthropic equity, they use derivative options to insulate their broad portfolio. But retail buyers in growth funds pay full expense fees while taking unhedged capital losses. When options premiums surge, buying raw tech equity leaves individual wallets exposed while institutions collect risk protection. Options traders are charging massive premiums on tech stocks right now. Follow for a new market story every day.",
+      "parent_title": "$90M Bet: Cathie Wood's Anthropic Trade Trap",
+      "parent_video_id": "_CNBcJnFq3U",
+      "parent_url": "https://youtu.be/_CNBcJnFq3U",
+      "tags": [
+        "cathie wood anthropic stock",
+        "ark invest anthropic buy",
+        "anthropic options hedging",
+        "tech IPO risks",
+        "nasdaq selloff",
+        "vix spike",
+        "ark invest trades",
+        "tech stock volatility",
+        "options premium risk",
+        "retail investor psychology"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-23_s3",
+      "created": "2026-11-23T07:08:54+00:00",
+      "date": "2026-11-23",
+      "asset_id": 781925613,
+      "size": 13167132,
+      "title": "Why Smart Money Is Buying Gold While Tech Crashes",
+      "text": "Smart money is dumping tech and rushing into safe havens today. Gold jumped three point one two percent to hit 3,625.00 dollars per ounce as stock market indexes collapsed. The Nasdaq 100 dropped over five percent while consumer sentiment stays stuck at a low reading of 48. While retail investors chase nineties million dollar private AI fund hype, institutional desks are shifting balance sheets into physical metals and Treasury yields. Don't fall for headline growth stories when smart capital is playing defense. Smart money is dumping tech and rushing into safe havens today. Follow for a new market story every day.",
+      "parent_title": "$90M Bet: Cathie Wood's Anthropic Trade Trap",
+      "parent_video_id": "_CNBcJnFq3U",
+      "parent_url": "https://youtu.be/_CNBcJnFq3U",
+      "tags": [
+        "cathie wood anthropic stock",
+        "ark invest anthropic buy",
+        "anthropic options hedging",
+        "tech IPO risks",
+        "nasdaq selloff",
+        "vix spike",
+        "ark invest trades",
+        "tech stock volatility",
+        "options premium risk",
+        "retail investor psychology"
       ],
       "platforms": {
         "youtube": {
