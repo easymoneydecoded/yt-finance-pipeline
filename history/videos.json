@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T07:08:54+00:00",
+  "updated": "2026-11-23T07:21:04+00:00",
   "n_videos": 55,
   "videos": [
     {
@@ -76,7 +76,13 @@
       "pinned_comment": "Are you buying tech dips during high volatility, or waiting for options premiums to cool down?",
       "playlist": "Stock Market Explained",
       "quality": 8.3,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "cta_done": [
+        "_CNBcJnFq3U"
+      ],
+      "tpl_done": [
+        "_CNBcJnFq3U"
+      ]
     },
     {
       "date": "2026-11-22",
