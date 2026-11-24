@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T15:13:54+00:00",
+  "updated": "2026-11-24T19:12:28+00:00",
   "n_videos": 56,
   "videos": [
     {
@@ -156,10 +156,12 @@
         8058351
       ],
       "shorts_titles": [
-        "$90M Bet: Cathie Wood's Anthropic Trade Trap - Part 1"
+        "$90M Bet: Cathie Wood's Anthropic Trade Trap - Part 1",
+        "How Options Hedging Costs Eat Your Tech Stock Gains"
       ],
       "shorts_ids": [
-        "J5L9pXJdOIM"
+        "J5L9pXJdOIM",
+        "oWD2uVWSpDI"
       ],
       "publish_at": "2026-11-23T14:00+00:00",
       "shorts_publish_at": [],
@@ -169,11 +171,13 @@
       "voice": "af_heart",
       "cta_done": [
         "J5L9pXJdOIM",
-        "_CNBcJnFq3U"
+        "_CNBcJnFq3U",
+        "oWD2uVWSpDI"
       ],
       "tpl_done": [
         "J5L9pXJdOIM",
-        "_CNBcJnFq3U"
+        "_CNBcJnFq3U",
+        "oWD2uVWSpDI"
       ],
       "comment_id": "Ugzt_hVnPhIT8RFL-vl4AaABAg",
       "shorts_commented": [],

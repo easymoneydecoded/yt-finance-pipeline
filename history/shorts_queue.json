@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-24T15:13:53+00:00",
-  "pending": 5,
+  "updated": "2026-11-24T19:12:28+00:00",
+  "pending": 4,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3235,18 +3235,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "oWD2uVWSpDI",
+          "at": "2026-11-24T19:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18016440725768656",
+          "at": "2026-11-24T19:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b05e18d453b0c455b451208",
+          "at": "2026-11-24T19:12+00:00"
         }
-      }
+      },
+      "youtube_title": "How Options Hedging Costs Eat Your Tech Stock Gains"
     },
     {
       "id": "2026-11-23_s3",
