@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-24T07:39:17+00:00",
-  "pending": 6,
+  "updated": "2026-11-24T15:13:53+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3190,18 +3190,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "J5L9pXJdOIM",
+          "at": "2026-11-24T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18103706909426919",
+          "at": "2026-11-24T15:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b05a9a2ade82a8427666c63",
+          "at": "2026-11-24T15:13+00:00"
         }
-      }
+      },
+      "youtube_title": "$90M Bet: Cathie Wood's Anthropic Trade Trap - Part 1"
     },
     {
       "id": "2026-11-23_s2",

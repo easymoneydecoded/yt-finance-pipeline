@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T07:39:17+00:00",
+  "updated": "2026-11-24T15:13:54+00:00",
   "n_videos": 56,
   "videos": [
     {
@@ -78,7 +78,15 @@
       "pinned_comment": "Do you hold broad S&P 500 index funds in your 401k, or do you prefer picking individual stocks to avoid rebalancing traps?",
       "playlist": "Stock Market Explained",
       "quality": 7.3,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyXybsMLsIu9Ov4t-14AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "AVZzzrOJUes"
+      ],
+      "tpl_done": [
+        "AVZzzrOJUes"
+      ]
     },
     {
       "date": "2026-11-23",
@@ -147,8 +155,12 @@
         6800489,
         8058351
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "$90M Bet: Cathie Wood's Anthropic Trade Trap - Part 1"
+      ],
+      "shorts_ids": [
+        "J5L9pXJdOIM"
+      ],
       "publish_at": "2026-11-23T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you buying tech dips during high volatility, or waiting for options premiums to cool down?",
@@ -156,9 +168,11 @@
       "quality": 8.3,
       "voice": "af_heart",
       "cta_done": [
+        "J5L9pXJdOIM",
         "_CNBcJnFq3U"
       ],
       "tpl_done": [
+        "J5L9pXJdOIM",
         "_CNBcJnFq3U"
       ],
       "comment_id": "Ugzt_hVnPhIT8RFL-vl4AaABAg",
