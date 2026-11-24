@@ -6,7 +6,7 @@ Cada guia es (slug, titulo, descripcion, html). Los huecos {example} se rellenan
 del dia (ver insider_site.guide_example), asi el ejemplo siempre coincide con un Form 4 de verdad.
 """
 
-UPDATED = "November 16, 2026"
+UPDATED = "November 24, 2026"
 
 FORM4 = ("how-to-read-form-4", "How to Read an SEC Form 4 (Insider Trading Filing)",
          "A plain-English walk through SEC Form 4: who files it, the deadline, each column of Table I, "
@@ -234,4 +234,160 @@ left blank, do not show the tag even if a plan was used (sometimes only a footno
 minimum count rather than a complete one.</p>
 """)
 
-GUIDES = [FORM4, SIGNAL, CLUSTER, PLANS]
+SELLING = ("insider-buying-vs-selling", "Insider Buying vs. Insider Selling: Why Sales Say Less",
+           "Insiders sell far more often than they buy, and usually for reasons that have nothing to do with the "
+           "company's prospects. How to read insider sales, and the few that deserve attention.", """
+<p>Look at the Form 4 filings of almost any large company and you will see many more sales than purchases. That is
+normal. Executives are paid largely in stock, so selling shares is how they turn their pay into money they can spend.
+This guide explains why Ticker Press focuses on purchases and how to think about sales when you see them.</p>
+
+<h2>Why insiders sell</h2>
+<ul>
+<li><b>Paying taxes.</b> When restricted stock vests, it counts as income. Many insiders sell part of it, or have
+shares withheld by the company (transaction code <b>F</b>), just to pay the tax bill.</li>
+<li><b>Diversifying.</b> A founder or long-time executive can have most of their wealth in one company. Selling some
+of it is basic risk management, not a forecast.</li>
+<li><b>Life.</b> Houses, school fees, divorces, gifts to charity and estate planning all show up as sales or
+dispositions.</li>
+<li><b>Pre-scheduled plans.</b> Many sales happen under <a href="/guides/10b5-1-plans-explained/">Rule 10b5-1
+plans</a>, set up months in advance.</li>
+</ul>
+<p>Because there are so many ordinary reasons to sell, a single sale usually tells you very little. A purchase on the
+open market has essentially one reason: the insider thinks the shares are worth more than the price. That asymmetry
+is why research on insider trading has generally found purchases to be more informative than sales (see
+<a href="/guides/why-insider-buying-matters/">why insider buying matters</a>).</p>
+
+<h2>Sales that may deserve attention</h2>
+<ul>
+<li><b>Several insiders selling at the same time</b>, outside of their usual schedule and not under trading plans.</li>
+<li><b>Large sales relative to the holding</b>: an executive selling most of their shares is different from one
+selling 5%.</li>
+<li><b>An insider who usually buys</b> and suddenly sells.</li>
+</ul>
+
+<h2>What you will not see on Ticker Press</h2>
+<p>We only list purchases reported with transaction code P, so option exercises, grants, gifts, tax withholding and
+sales are left out on purpose. If you want to check whether insiders of a company are also selling, follow the SEC link
+of any purchase on our site to the company's filings, or search the company on
+<a href="https://www.sec.gov/edgar/search/" rel="nofollow">EDGAR full-text search</a>. Affiliates who plan to sell
+restricted or control shares usually also file a <b>Form 144</b> notice around the time of the sale.</p>
+
+<h2>Bottom line</h2>
+<p>Treat insider sales as background noise unless there is a clear pattern. Treat insider purchases, especially
+several at once, as a reason to look closer. Neither is a reason on its own to buy or sell a stock.</p>
+""")
+
+HOWTO = ("how-to-use-ticker-press", "How to Use Ticker Press: A Quick Tour",
+         "What each page and each column on Ticker Press means, and a simple routine to follow insider buying "
+         "in a few minutes a day.", """
+<p>Ticker Press turns SEC Form 4 filings into readable tables of insider purchases. Here is what you will find on each
+page and how to read it.</p>
+
+<h2>The home page: latest insider buys</h2>
+<p>The <a href="/">home page</a> lists every open-market or private purchase of {min_buy} or more filed in the last
+few days, the newest first. Each row has:</p>
+<ul>
+<li><b>Filed</b>: the day the Form 4 reached the SEC.</li>
+<li><b>Stock</b>: the ticker and company. Click it to see every purchase of that stock.</li>
+<li><b>Insider</b>: who bought and their role (CEO, director, 10% owner...). Names with several purchases link to
+their own page.</li>
+<li><b>Value, Shares, Price</b>: how much was bought, in dollars and shares, and the (average) price paid.</li>
+<li><b>Since buy</b>: how the stock has moved from the insider's price to the latest close, adjusted for splits.</li>
+<li><b>Stake</b>: how much the purchase increased the insider's holding, or "new" for a first position.</li>
+<li><b>Trade</b>: the date of the trade itself, which can be a day or two before the filing.</li>
+<li><b>SEC</b>: a link to the original filing on EDGAR.</li>
+</ul>
+<p>Small grey tags mark purchases that deserve a second look: <span class="tag">indirect</span> (bought through a
+fund, trust or relative), <span class="tag">private</span> (a private placement or offering) and
+<span class="tag">10b5-1</span> (pre-scheduled). The <a href="/guides/how-to-read-form-4/">Form 4 guide</a> explains
+each one.</p>
+
+<h2>Other pages</h2>
+<ul>
+<li><a href="/cluster-buys/">Cluster buys</a>: stocks where two or more different insiders bought in the last
+{cluster_days} days. See <a href="/guides/what-is-a-cluster-buy/">what a cluster buy is</a>.</li>
+<li><a href="/stocks/">All stocks</a>: an A to Z directory of every company with insider purchases on record.</li>
+<li><a href="/insiders/">Top insiders</a>: the executives and funds that put the most money into their own
+companies' stock in the last 12 months.</li>
+<li>Daily pages: every purchase filed on a given day, linked from the latest buys.</li>
+</ul>
+
+<h2>A five-minute routine</h2>
+<ol>
+<li>Check the <a href="/cluster-buys/">cluster buys</a> for new names.</li>
+<li>Scan the latest buys for large purchases by officers (CEO, CFO) that increase their stake meaningfully.</li>
+<li>Open the stock page to see the insider's history and whether others are buying too.</li>
+<li>Read the original filing and its footnotes before drawing any conclusion.</li>
+</ol>
+<p>Prefer not to check every day? The free Telegram channel sends a daily recap (the "Free alerts" button at the
+top). Everything on this site is information, not investment advice.</p>
+""")
+
+GLOSSARY = ("insider-trading-glossary", "Insider Trading Glossary: Form 4 Terms Explained",
+            "Plain-English definitions of the terms you meet in insider trading filings: Section 16, beneficial "
+            "ownership, transaction codes, 10b5-1, Form 144, short-swing profits and more.", """
+<p>Insider filings use a lot of legal shorthand. These are the terms you will meet most often, in plain English.</p>
+<dl>
+<dt><b>Insider (Section 16 reporting person)</b></dt>
+<dd>A director, an officer, or a beneficial owner of more than 10% of a class of a company's registered equity.
+They must report their trades in the company's shares to the SEC.</dd>
+<dt><b>Officer</b></dt>
+<dd>For these rules, the president, the principal financial and accounting officers, vice presidents in charge of a
+main business unit and anyone else with a policy-making role.</dd>
+<dt><b>10% owner</b></dt>
+<dd>Anyone, often an investment fund, who beneficially owns more than 10% of a class of the company's registered
+equity securities.</dd>
+<dt><b>Beneficial ownership</b></dt>
+<dd>Owning the economic interest in shares even if they are held in another name, for example through a trust, a
+company you control or a family member's account.</dd>
+<dt><b>Direct / indirect ownership</b></dt>
+<dd>Shares held in your own name are direct (D). Shares held through another person or entity are indirect (I), and
+the filing must say how they are held.</dd>
+<dt><b>Form 3</b></dt>
+<dd>The first report a new insider files, listing what they own.</dd>
+<dt><b>Form 4</b></dt>
+<dd>The report of a change in an insider's holdings, due before the end of the second business day after the trade.
+<a href="/guides/how-to-read-form-4/">How to read one</a>.</dd>
+<dt><b>Form 5</b></dt>
+<dd>An annual report, due within 45 days after the company's fiscal year end, for certain exempt or previously
+unreported transactions.</dd>
+<dt><b>Form 144</b></dt>
+<dd>A notice filed by affiliates who plan to sell restricted or control securities, usually around the time of the
+sale.</dd>
+<dt><b>Transaction code</b></dt>
+<dd>The letter that says what kind of trade a Form 4 reports: P (open market or private purchase), S (sale), A
+(grant or award), M (option exercise or conversion), F (shares withheld for taxes or the exercise price), G (gift)
+and others.</dd>
+<dt><b>Open-market purchase</b></dt>
+<dd>Buying shares on the stock exchange at the market price with your own money. The purchases this site tracks.</dd>
+<dt><b>Private placement</b></dt>
+<dd>A sale of new shares by the company directly to selected investors instead of on the market.</dd>
+<dt><b>Derivative securities</b></dt>
+<dd>Options, warrants, restricted stock units and convertible securities. They are reported in Table II of Form 4.</dd>
+<dt><b>Rule 10b5-1 plan</b></dt>
+<dd>A written plan, set up in advance, that schedules future trades so they can happen even when the insider later
+has inside information. <a href="/guides/10b5-1-plans-explained/">More on 10b5-1 plans</a>.</dd>
+<dt><b>Cooling-off period</b></dt>
+<dd>The waiting time between adopting a 10b5-1 plan and its first trade (at least 90 days for directors and
+officers since the 2023 rule changes).</dd>
+<dt><b>Material non-public information (MNPI)</b></dt>
+<dd>Information that has not been made public and that a reasonable investor would consider important. Trading on it
+is illegal insider trading.</dd>
+<dt><b>Trading window / blackout period</b></dt>
+<dd>Most companies only let insiders trade during set windows, typically after quarterly results are published, and
+forbid it in the weeks before.</dd>
+<dt><b>Short-swing profit rule (Section 16(b))</b></dt>
+<dd>Insiders who buy and sell, or sell and buy, the company's shares within six months must give any profit back
+to the company.</dd>
+<dt><b>Cluster buy</b></dt>
+<dd>Several different insiders of the same company buying within a short period ({cluster_days} days on this site).
+<a href="/guides/what-is-a-cluster-buy/">More on cluster buys</a>.</dd>
+<dt><b>EDGAR and CIK</b></dt>
+<dd>EDGAR is the SEC's public filing system. Every company and filer has a CIK, a unique Central Index Key number.</dd>
+<dt><b>Split-adjusted</b></dt>
+<dd>Prices corrected for later stock splits, so a purchase made before a 2-for-1 split can be compared with today's
+price.</dd>
+</dl>
+""")
+
+GUIDES = [FORM4, SIGNAL, CLUSTER, PLANS, SELLING, HOWTO, GLOSSARY]

@@ -569,7 +569,7 @@ def guide_example(rows: list[dict], today: date) -> str:
 
 def guide_pages(rows: list[dict], today: date, sitemap: list) -> None:
     """Seccion /guides/: texto propio que explica como leer los datos (insider_guides.py)."""
-    fill = {"example": guide_example(rows, today), "cluster_days": CLUSTER_DAYS}
+    fill = {"example": guide_example(rows, today), "cluster_days": CLUSTER_DAYS, "min_buy": ia.money(ia.SITE_MIN_BUY)}
     cards = []
     for gslug, title, desc, content in insider_guides.GUIDES:
         others = "".join(f"<li><a href=\"/guides/{s}/\">{esc(t)}</a></li>"
