@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-24T19:12:28+00:00",
-  "pending": 4,
+  "updated": "2026-11-24T23:12:01+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3280,18 +3280,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "1zEbFMFP6kU",
+          "at": "2026-11-24T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18653767186045540",
+          "at": "2026-11-24T23:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b0619bdb89c5d788a566a9a",
+          "at": "2026-11-24T23:12+00:00"
         }
-      }
+      },
+      "youtube_title": "Why Smart Money Is Buying Gold While Tech Crashes"
     },
     {
       "id": "2026-11-24_s1",
