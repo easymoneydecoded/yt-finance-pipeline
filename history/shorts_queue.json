@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-23T23:12:15+00:00",
-  "pending": 3,
+  "updated": "2026-11-24T07:39:17+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3263,6 +3263,120 @@
         "tech stock volatility",
         "options premium risk",
         "retail investor psychology"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-24_s1",
+      "created": "2026-11-24T07:39:14+00:00",
+      "date": "2026-11-24",
+      "asset_id": 786191486,
+      "size": 21953773,
+      "title": "How S&P 500 rebalancing quietly drains your 401k",
+      "text": "Passive investing is actually an automated tax paid directly to Wall Street arbitrage desks. On December 2, 2026, SharkNinja joins the S&P 500, replacing AES Corp. S&P Dow Jones Indices announced the change, forcing every passive index fund to buy SharkNinja shares automatically. Institutional hedge funds buy up the stock beforehand and sell it to index funds at peak valuations. Meanwhile, funds are forced to dump AES Corp at a discount. This structural mechanism transfers capital directly from retail index investors to institutional traders. Check your broad market exposure before major rebalance dates so index rebalancing doesn't quietly drain your 401k. Follow for a new market story every day.",
+      "parent_title": "How S&P 500 Rebalancing Actually Transfers $420 From Every Passive Investor",
+      "parent_video_id": "AVZzzrOJUes",
+      "parent_url": "https://youtu.be/AVZzzrOJUes",
+      "tags": [
+        "SharkNinja S&P 500",
+        "index rebalancing trap",
+        "SN stock analysis",
+        "passive investing risk",
+        "S&P 500 index inclusion",
+        "AES Corp stock",
+        "index fund front running",
+        "401k investing traps",
+        "S&P Dow Jones Indices",
+        "passive ETF risks"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-24_s2",
+      "created": "2026-11-24T07:39:16+00:00",
+      "date": "2026-11-24",
+      "asset_id": 786191575,
+      "size": 12448097,
+      "title": "Why Wall Street front runs your index fund buys",
+      "text": "Your safe index fund is actually handing guaranteed profits to algorithmic traders. When S&P Dow Jones Indices announced SharkNinja would join the S&P 500 on December 2, 2026, quantitative algorithms instantly began buying shares. Passive funds holding your 401k are legally mandated to purchase SN stock on the entry date, regardless of price. Hedge funds accumulate the shares early and dump them onto index managers at top dollar. Passive investors pay the inflated price while receiving none of the upside. Understanding index inclusion rules keeps you from overpaying for momentum stocks inside passive funds. Follow for a new market story every day.",
+      "parent_title": "How S&P 500 Rebalancing Actually Transfers $420 From Every Passive Investor",
+      "parent_video_id": "AVZzzrOJUes",
+      "parent_url": "https://youtu.be/AVZzzrOJUes",
+      "tags": [
+        "SharkNinja S&P 500",
+        "index rebalancing trap",
+        "SN stock analysis",
+        "passive investing risk",
+        "S&P 500 index inclusion",
+        "AES Corp stock",
+        "index fund front running",
+        "401k investing traps",
+        "S&P Dow Jones Indices",
+        "passive ETF risks"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-24_s3",
+      "created": "2026-11-24T07:39:17+00:00",
+      "date": "2026-11-24",
+      "asset_id": 786191628,
+      "size": 19034859,
+      "title": "SharkNinja joining the S&P 500 is a retail trap",
+      "text": "Buying your favorite consumer brand inside a retirement fund is secretly destroying your returns. Effective December 2, 2026, SharkNinja replaces AES Corp in the benchmark index. While retail investors love the consumer brand, the swap replaces a utility company with a discretionary appliance maker. With consumer sentiment down at 48, passive funds are dumping stable cash flows to buy momentum at high valuations. When index funds are forced to buy at peak prices, performance drops once passive demand clears out. Watch how index changes alter your portfolio risk before retail traps wipe out your gains. Follow for a new market story every day.",
+      "parent_title": "How S&P 500 Rebalancing Actually Transfers $420 From Every Passive Investor",
+      "parent_video_id": "AVZzzrOJUes",
+      "parent_url": "https://youtu.be/AVZzzrOJUes",
+      "tags": [
+        "SharkNinja S&P 500",
+        "index rebalancing trap",
+        "SN stock analysis",
+        "passive investing risk",
+        "S&P 500 index inclusion",
+        "AES Corp stock",
+        "index fund front running",
+        "401k investing traps",
+        "S&P Dow Jones Indices",
+        "passive ETF risks"
       ],
       "platforms": {
         "youtube": {
