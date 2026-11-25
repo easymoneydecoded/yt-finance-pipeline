@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T15:15:13+00:00",
+  "updated": "2026-11-25T19:11:59+00:00",
   "n_videos": 57,
   "videos": [
     {
@@ -155,10 +155,12 @@
         6700643
       ],
       "shorts_titles": [
-        "How S&P 500 rebalancing quietly drains your 401k"
+        "How S&P 500 rebalancing quietly drains your 401k",
+        "Why Wall Street front runs your index fund buys"
       ],
       "shorts_ids": [
-        "LqnMGkGYJyw"
+        "LqnMGkGYJyw",
+        "8R1AIRbbe9E"
       ],
       "publish_at": "2026-11-24T14:00+00:00",
       "shorts_publish_at": [],
@@ -169,10 +171,12 @@
       "comment_id": "UgyXybsMLsIu9Ov4t-14AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "8R1AIRbbe9E",
         "AVZzzrOJUes",
         "LqnMGkGYJyw"
       ],
       "tpl_done": [
+        "8R1AIRbbe9E",
         "AVZzzrOJUes",
         "LqnMGkGYJyw"
       ],
