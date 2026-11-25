@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-25T07:23:22+00:00",
-  "pending": 6,
+  "updated": "2026-11-25T15:15:12+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3325,18 +3325,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "LqnMGkGYJyw",
+          "at": "2026-11-25T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18109255481365149",
+          "at": "2026-11-25T15:15+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b06fb7b3aa49ac8b070ea4e",
+          "at": "2026-11-25T15:15+00:00"
         }
-      }
+      },
+      "youtube_title": "How S&P 500 rebalancing quietly drains your 401k"
     },
     {
       "id": "2026-11-24_s2",

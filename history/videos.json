@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T07:23:22+00:00",
+  "updated": "2026-11-25T15:15:13+00:00",
   "n_videos": 57,
   "videos": [
     {
@@ -75,7 +75,15 @@
       "pinned_comment": "Would you keep holding a tech stock after seeing management quietly spike their personal security budgets?",
       "playlist": "Stock Market Explained",
       "quality": 6.8,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "UgyDEijzQkiaQ7GHg2Z4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "YxevTE87FKI"
+      ],
+      "tpl_done": [
+        "YxevTE87FKI"
+      ]
     },
     {
       "date": "2026-11-24",
@@ -146,8 +154,12 @@
         4393593,
         6700643
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "How S&P 500 rebalancing quietly drains your 401k"
+      ],
+      "shorts_ids": [
+        "LqnMGkGYJyw"
+      ],
       "publish_at": "2026-11-24T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Do you hold broad S&P 500 index funds in your 401k, or do you prefer picking individual stocks to avoid rebalancing traps?",
@@ -157,10 +169,12 @@
       "comment_id": "UgyXybsMLsIu9Ov4t-14AaABAg",
       "shorts_commented": [],
       "cta_done": [
-        "AVZzzrOJUes"
+        "AVZzzrOJUes",
+        "LqnMGkGYJyw"
       ],
       "tpl_done": [
-        "AVZzzrOJUes"
+        "AVZzzrOJUes",
+        "LqnMGkGYJyw"
       ],
       "stats": {
         "views": 1,
