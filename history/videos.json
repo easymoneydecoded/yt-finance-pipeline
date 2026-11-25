@@ -1,7 +1,82 @@
 {
-  "updated": "2026-11-24T23:12:01+00:00",
-  "n_videos": 56,
+  "updated": "2026-11-25T07:23:22+00:00",
+  "n_videos": 57,
   "videos": [
+    {
+      "date": "2026-11-25",
+      "video_id": "YxevTE87FKI",
+      "url": "https://youtu.be/YxevTE87FKI",
+      "title": "Before December 1st, Check Your Tech Stocks for This 2,000% Micron Warning",
+      "thumbnail_text": "2,000% SECURITY SPIKE",
+      "topic_key": "micron ceo security budget filing risk",
+      "entities": [
+        "Micron",
+        "Sanjay Mehrotra"
+      ],
+      "format": "news breakdown",
+      "title_style": "DIRECT QUESTION to the viewer about their money (e.g. 'Is Your 401k Quietly Betting on One Stock?')",
+      "keywords": [
+        "Micron CEO security budget",
+        "executive compensation filing risk",
+        "insider defense tech stocks",
+        "Micron Sanjay Mehrotra package"
+      ],
+      "source_headlines": [
+        "Micron boosted CEO Sanjay Mehrotra’s security budget by 2,000%, new filing shows — Steeply higher security expenses of $764,748 for Mehrotra were part of a $39.7 million total compensation package in the latest fiscal year."
+      ],
+      "source_urls": [],
+      "thumb_layout": "box",
+      "thumb_color": "green",
+      "thumb_pexels_id": 7552419,
+      "broll_pexels_ids": [
+        4319375,
+        39886150,
+        8480290,
+        30445103,
+        8425701,
+        7821660,
+        12690707,
+        7252685,
+        38600650,
+        38771102,
+        7552419,
+        6951601,
+        8572188,
+        8572184,
+        6780089,
+        7821857,
+        10288594,
+        32386623,
+        34711279,
+        34711276,
+        856181,
+        29719113,
+        20258041,
+        39057380,
+        36394017,
+        7055340,
+        38892332,
+        7947406,
+        38395150,
+        30445099,
+        38586213,
+        38586218,
+        30445100,
+        38725025,
+        38581104,
+        7055341,
+        10166813,
+        4928880
+      ],
+      "shorts_titles": [],
+      "shorts_ids": [],
+      "publish_at": "2026-11-25T14:00+00:00",
+      "shorts_publish_at": [],
+      "pinned_comment": "Would you keep holding a tech stock after seeing management quietly spike their personal security budgets?",
+      "playlist": "Stock Market Explained",
+      "quality": 6.8,
+      "voice": "af_heart"
+    },
     {
       "date": "2026-11-24",
       "video_id": "AVZzzrOJUes",
@@ -86,7 +161,14 @@
       ],
       "tpl_done": [
         "AVZzzrOJUes"
-      ]
+      ],
+      "stats": {
+        "views": 1,
+        "likes": 0,
+        "comments": 1,
+        "updated": "2026-11-25T06:52:37+00:00",
+        "source": "api"
+      }
     },
     {
       "date": "2026-11-23",
@@ -186,11 +268,12 @@
       "comment_id": "Ugzt_hVnPhIT8RFL-vl4AaABAg",
       "shorts_commented": [],
       "stats": {
-        "views": 2,
+        "views": 3,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
-        "source": "api"
+        "updated": "2026-11-25T06:52:37+00:00",
+        "source": "api",
+        "shorts_views": 75
       }
     },
     {
@@ -298,9 +381,12 @@
         "views": 6,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 152
+        "shorts_views": 216,
+        "avg_view_sec": 77.0,
+        "avg_view_pct": 15.9,
+        "subs_gained": 0
       }
     },
     {
@@ -409,9 +495,9 @@
         "views": 3,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 319,
+        "shorts_views": 321,
         "avg_view_sec": 49.0,
         "avg_view_pct": 12.1,
         "subs_gained": 0
@@ -506,11 +592,11 @@
         "views": 4,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 72,
-        "avg_view_sec": 11.0,
-        "avg_view_pct": 2.6,
+        "avg_view_sec": 8.0,
+        "avg_view_pct": 2.0,
         "subs_gained": 0
       },
       "comment_id": "UgxoOCbIiMES8SO4YgZ4AaABAg",
@@ -623,11 +709,11 @@
         "views": 3,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 94,
-        "avg_view_sec": 0.0,
-        "avg_view_pct": 0.0,
+        "shorts_views": 95,
+        "avg_view_sec": 3.0,
+        "avg_view_pct": 0.9,
         "subs_gained": 0
       }
     },
@@ -729,12 +815,12 @@
         "_c6z0E__SB4"
       ],
       "stats": {
-        "views": 4,
+        "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 4,
+        "shorts_views": 5,
         "avg_view_sec": 14.0,
         "avg_view_pct": 3.2,
         "subs_gained": 0
@@ -839,11 +925,11 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 32,
-        "avg_view_sec": 0.0,
-        "avg_view_pct": 0.0,
+        "avg_view_sec": 445.0,
+        "avg_view_pct": 99.9,
         "subs_gained": 0
       }
     },
@@ -946,7 +1032,7 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 6,
         "avg_view_sec": 0.0,
@@ -1054,9 +1140,9 @@
         "views": 0,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 108,
+        "shorts_views": 109,
         "avg_view_sec": 0.0,
         "avg_view_pct": 0.0,
         "subs_gained": 0
@@ -1163,11 +1249,11 @@
         "views": 3,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 104,
-        "avg_view_sec": 83.0,
-        "avg_view_pct": 19.5,
+        "avg_view_sec": 71.0,
+        "avg_view_pct": 16.8,
         "subs_gained": 0
       }
     },
@@ -1272,7 +1358,7 @@
         "views": 6,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 187,
         "avg_view_sec": 0.0,
@@ -1384,7 +1470,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 89,
         "avg_view_sec": 0.0,
@@ -1494,7 +1580,7 @@
         "views": 129,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 264,
         "avg_view_sec": 115.0,
@@ -1600,14 +1686,14 @@
         "z_8oRXd28mQ"
       ],
       "stats": {
-        "views": 563,
+        "views": 568,
         "likes": 3,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 133,
+        "shorts_views": 134,
         "avg_view_sec": 101.0,
-        "avg_view_pct": 22.7,
+        "avg_view_pct": 22.6,
         "subs_gained": 4
       }
     },
@@ -1713,7 +1799,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 126,
         "avg_view_sec": 0.0,
@@ -1820,7 +1906,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 107,
         "avg_view_sec": 17.0,
@@ -1931,7 +2017,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 705,
         "avg_view_sec": 8.0,
@@ -2023,7 +2109,7 @@
         "views": 2,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 364,
         "avg_view_sec": 0.0,
@@ -2146,7 +2232,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 220,
         "avg_view_sec": 0.0,
@@ -2257,7 +2343,7 @@
         "views": 10,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 110,
         "avg_view_sec": 142.0,
@@ -2360,7 +2446,7 @@
         "views": 7,
         "likes": 1,
         "comments": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 86,
         "avg_view_sec": 117.0,
@@ -2475,7 +2561,7 @@
         "views": 1,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 178,
         "avg_view_sec": 35.0,
@@ -2587,9 +2673,9 @@
         "views": 5,
         "likes": 0,
         "comments": 21,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
-        "shorts_views": 193,
+        "shorts_views": 194,
         "avg_view_sec": 59.0,
         "avg_view_pct": 12.4,
         "subs_gained": 0
@@ -2690,7 +2776,7 @@
         "views": 5,
         "likes": 0,
         "comments": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 207,
         "avg_view_sec": 145.0,
@@ -2796,7 +2882,7 @@
         "views": 5,
         "likes": 0,
         "comments": 0,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "shorts_views": 216,
         "avg_view_sec": 92.0,
@@ -2826,7 +2912,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2847,7 +2933,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2868,7 +2954,7 @@
       "seed": true,
       "stats": {
         "views": 14,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -2889,7 +2975,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
@@ -2908,7 +2994,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2929,7 +3015,7 @@
       "seed": true,
       "stats": {
         "views": 5,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2951,7 +3037,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2972,7 +3058,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -2994,12 +3080,12 @@
       "seed": true,
       "stats": {
         "views": 56,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 1,
-        "avg_view_sec": 208.0,
-        "avg_view_pct": 42.5,
+        "avg_view_sec": 202.0,
+        "avg_view_pct": 41.2,
         "subs_gained": 1
       }
     },
@@ -3017,7 +3103,7 @@
       "seed": true,
       "stats": {
         "views": 4,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3039,7 +3125,7 @@
       "seed": true,
       "stats": {
         "views": 21,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3062,7 +3148,7 @@
       "seed": true,
       "stats": {
         "views": 6,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -3085,7 +3171,7 @@
       "seed": true,
       "stats": {
         "views": 13,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -3108,7 +3194,7 @@
       "seed": true,
       "stats": {
         "views": 18,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -3131,7 +3217,7 @@
       "seed": true,
       "stats": {
         "views": 58,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3153,7 +3239,7 @@
       "seed": true,
       "stats": {
         "views": 1,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3175,7 +3261,7 @@
       "seed": true,
       "stats": {
         "views": 38,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 1,
         "comments": 0,
@@ -3197,7 +3283,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3219,7 +3305,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3241,7 +3327,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3264,7 +3350,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3286,7 +3372,7 @@
       "seed": true,
       "stats": {
         "views": 11,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3308,7 +3394,7 @@
       "seed": true,
       "stats": {
         "views": 23,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3330,7 +3416,7 @@
       "seed": true,
       "stats": {
         "views": 9,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3352,7 +3438,7 @@
       "seed": true,
       "stats": {
         "views": 22,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3374,7 +3460,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3396,7 +3482,7 @@
       "seed": true,
       "stats": {
         "views": 3,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3417,7 +3503,7 @@
       "seed": true,
       "stats": {
         "views": 8,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3439,7 +3525,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
@@ -3461,7 +3547,7 @@
       "seed": true,
       "stats": {
         "views": 2,
-        "updated": "2026-11-24T06:52:32+00:00",
+        "updated": "2026-11-25T06:52:37+00:00",
         "source": "api",
         "likes": 0,
         "comments": 0,
