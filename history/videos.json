@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T19:11:59+00:00",
+  "updated": "2026-11-25T23:15:20+00:00",
   "n_videos": 57,
   "videos": [
     {
@@ -156,11 +156,13 @@
       ],
       "shorts_titles": [
         "How S&P 500 rebalancing quietly drains your 401k",
-        "Why Wall Street front runs your index fund buys"
+        "Why Wall Street front runs your index fund buys",
+        "SharkNinja joining the S&P 500 is a retail trap"
       ],
       "shorts_ids": [
         "LqnMGkGYJyw",
-        "8R1AIRbbe9E"
+        "8R1AIRbbe9E",
+        "52mo2ooTMQI"
       ],
       "publish_at": "2026-11-24T14:00+00:00",
       "shorts_publish_at": [],
@@ -171,11 +173,13 @@
       "comment_id": "UgyXybsMLsIu9Ov4t-14AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "52mo2ooTMQI",
         "8R1AIRbbe9E",
         "AVZzzrOJUes",
         "LqnMGkGYJyw"
       ],
       "tpl_done": [
+        "52mo2ooTMQI",
         "8R1AIRbbe9E",
         "AVZzzrOJUes",
         "LqnMGkGYJyw"

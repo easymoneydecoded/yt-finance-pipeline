@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-25T19:11:59+00:00",
-  "pending": 4,
+  "updated": "2026-11-25T23:15:19+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3415,18 +3415,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "52mo2ooTMQI",
+          "at": "2026-11-25T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18508161553098988",
+          "at": "2026-11-25T23:15+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b076c02b9021efcc65afd2d",
+          "at": "2026-11-25T23:15+00:00"
         }
-      }
+      },
+      "youtube_title": "SharkNinja joining the S&P 500 is a retail trap"
     },
     {
       "id": "2026-11-25_s1",
