@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-26T07:14:37+00:00",
-  "pending": 6,
+  "updated": "2026-11-26T15:13:17+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3460,18 +3460,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "Yon25COBSt8",
+          "at": "2026-11-26T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18119239859164944",
+          "at": "2026-11-26T15:13+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b084c8947655b1336f2d9ee",
+          "at": "2026-11-26T15:13+00:00"
         }
-      }
+      },
+      "youtube_title": "Why Micron Just Boosted CEO Security By 2,000%"
     },
     {
       "id": "2026-11-25_s2",

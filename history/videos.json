@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T07:14:37+00:00",
+  "updated": "2026-11-26T15:13:18+00:00",
   "n_videos": 58,
   "videos": [
     {
@@ -76,7 +76,15 @@
       "pinned_comment": "Are you auditing credit default swaps and debt levels in your tech holdings, or relying on chip demand to pull them through?",
       "playlist": "Stock Market Explained",
       "quality": 8.1,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugw94n3gsnPUHGKK7jd4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "xQkt-KLmuTk"
+      ],
+      "tpl_done": [
+        "xQkt-KLmuTk"
+      ]
     },
     {
       "date": "2026-11-25",
@@ -144,8 +152,12 @@
         10166813,
         4928880
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why Micron Just Boosted CEO Security By 2,000%"
+      ],
+      "shorts_ids": [
+        "Yon25COBSt8"
+      ],
       "publish_at": "2026-11-25T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Would you keep holding a tech stock after seeing management quietly spike their personal security budgets?",
@@ -155,9 +167,11 @@
       "comment_id": "UgyDEijzQkiaQ7GHg2Z4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "Yon25COBSt8",
         "YxevTE87FKI"
       ],
       "tpl_done": [
+        "Yon25COBSt8",
         "YxevTE87FKI"
       ],
       "stats": {
