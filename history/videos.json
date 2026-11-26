@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T19:12:06+00:00",
+  "updated": "2026-11-26T23:11:59+00:00",
   "n_videos": 58,
   "videos": [
     {
@@ -154,11 +154,13 @@
       ],
       "shorts_titles": [
         "Why Micron Just Boosted CEO Security By 2,000%",
-        "Most retail investors ignore proxy statements and focus entirely on"
+        "Most retail investors ignore proxy statements and focus entirely on",
+        "What Insiders Know That Retail Investors Miss"
       ],
       "shorts_ids": [
         "Yon25COBSt8",
-        "HwucWM_QP2A"
+        "HwucWM_QP2A",
+        "ZLyfw80Te-4"
       ],
       "publish_at": "2026-11-25T14:00+00:00",
       "shorts_publish_at": [],
@@ -171,12 +173,14 @@
       "cta_done": [
         "HwucWM_QP2A",
         "Yon25COBSt8",
-        "YxevTE87FKI"
+        "YxevTE87FKI",
+        "ZLyfw80Te-4"
       ],
       "tpl_done": [
         "HwucWM_QP2A",
         "Yon25COBSt8",
-        "YxevTE87FKI"
+        "YxevTE87FKI",
+        "ZLyfw80Te-4"
       ],
       "stats": {
         "views": 1,

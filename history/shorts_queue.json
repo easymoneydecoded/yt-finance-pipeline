@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-26T19:12:06+00:00",
-  "pending": 4,
+  "updated": "2026-11-26T23:11:58+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3550,18 +3550,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "ZLyfw80Te-4",
+          "at": "2026-11-26T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "18120394042819358",
+          "at": "2026-11-26T23:11+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b08bcba0278fc6e3ec86a8a",
+          "at": "2026-11-26T23:11+00:00"
         }
-      }
+      },
+      "youtube_title": "What Insiders Know That Retail Investors Miss"
     },
     {
       "id": "2026-11-26_s1",
