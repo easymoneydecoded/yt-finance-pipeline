@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-25T23:15:19+00:00",
-  "pending": 3,
+  "updated": "2026-11-26T07:14:37+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3533,6 +3533,120 @@
         "insider trading signals",
         "tech stock portfolio",
         "Wall Street insider moves"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-26_s1",
+      "created": "2026-11-26T07:14:34+00:00",
+      "date": "2026-11-26",
+      "asset_id": 794730009,
+      "size": 11049492,
+      "title": "CoreWeave's 17% Bond Yield Exposes AI Debt Risk",
+      "text": "CoreWeave bond yields just topped 17% as Wall Street credit fears spiked. According to CNBC reports, the yield on CoreWeave's 9.75% bond due in 2031 hit record highs while its stock dropped 13%. At the same time, five-year credit default swap spreads jumped 8.5% over 1,200 basis points. When data center debt yields reach these levels, financing artificial intelligence hardware gets brutally expensive. Check your tech portfolio before borrowing costs pull down broader market valuations. Follow for a new market story every day.",
+      "parent_title": "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks",
+      "parent_video_id": "xQkt-KLmuTk",
+      "parent_url": "https://youtu.be/xQkt-KLmuTk",
+      "tags": [
+        "AI debt market risk",
+        "data center financing bubble",
+        "tech sector corporate debt",
+        "portfolio debt audit",
+        "CoreWeave bond yield",
+        "Nvidia credit default swap",
+        "Oracle debt exposure",
+        "Jensen Huang return",
+        "Nasdaq 100 risk",
+        "corporate bond yield spike"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-26_s2",
+      "created": "2026-11-26T07:14:35+00:00",
+      "date": "2026-11-26",
+      "asset_id": 794730070,
+      "size": 9483133,
+      "title": "How Trump and Nvidia Shifted Corporate Credit Markets",
+      "text": "Jensen Huang returned as Nvidia CEO on Monday after stepping down November 12. President Donald Trump told CNBC he convinced the board to bring Huang back. While tech stocks initially rallied, credit markets quickly shuddered on Tuesday. Ben Emons of FedWatch Advisors warned that markets see government intervention as carrying real credit and interest rate risks. Meanwhile, Nvidia CFO Colette Kress signaled the company will rigorously evaluate future investments. Watch corporate credit spreads closely when leadership drama shifts financing plans. Follow for a new market story every day.",
+      "parent_title": "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks",
+      "parent_video_id": "xQkt-KLmuTk",
+      "parent_url": "https://youtu.be/xQkt-KLmuTk",
+      "tags": [
+        "AI debt market risk",
+        "data center financing bubble",
+        "tech sector corporate debt",
+        "portfolio debt audit",
+        "CoreWeave bond yield",
+        "Nvidia credit default swap",
+        "Oracle debt exposure",
+        "Jensen Huang return",
+        "Nasdaq 100 risk",
+        "corporate bond yield spike"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-26_s3",
+      "created": "2026-11-26T07:14:37+00:00",
+      "date": "2026-11-26",
+      "asset_id": 794730125,
+      "size": 11514176,
+      "title": "Why Oracle's CDS Spread Spike Warns Tech Investors",
+      "text": "Oracle credit default swap spreads just jumped 7% to reach 355.68. Credit default swaps act as Wall Street insurance against nonpayment, meaning rising spreads signal higher perceived corporate risk. CNBC data shows Meta Platforms and Amazon also saw spreads widen by over 2%, while Nvidia added 3.4%. When mega-cap tech debt risk rises simultaneously, institutional credit investors tiptoe away from risky balance sheets. Audit your tech holdings for hidden debt exposure today. Follow for a new market story every day.",
+      "parent_title": "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks",
+      "parent_video_id": "xQkt-KLmuTk",
+      "parent_url": "https://youtu.be/xQkt-KLmuTk",
+      "tags": [
+        "AI debt market risk",
+        "data center financing bubble",
+        "tech sector corporate debt",
+        "portfolio debt audit",
+        "CoreWeave bond yield",
+        "Nvidia credit default swap",
+        "Oracle debt exposure",
+        "Jensen Huang return",
+        "Nasdaq 100 risk",
+        "corporate bond yield spike"
       ],
       "platforms": {
         "youtube": {
