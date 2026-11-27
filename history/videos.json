@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T15:14:56+00:00",
+  "updated": "2026-11-27T19:12:55+00:00",
   "n_videos": 59,
   "videos": [
     {
@@ -153,10 +153,12 @@
         7687652
       ],
       "shorts_titles": [
-        "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks - Part 1"
+        "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks - Part 1",
+        "How Trump and Nvidia Shifted Corporate Credit Markets"
       ],
       "shorts_ids": [
-        "7-XS0aL361s"
+        "7-XS0aL361s",
+        "z3UXUCaQUys"
       ],
       "publish_at": "2026-11-26T14:00+00:00",
       "shorts_publish_at": [],
@@ -168,11 +170,13 @@
       "shorts_commented": [],
       "cta_done": [
         "7-XS0aL361s",
-        "xQkt-KLmuTk"
+        "xQkt-KLmuTk",
+        "z3UXUCaQUys"
       ],
       "tpl_done": [
         "7-XS0aL361s",
-        "xQkt-KLmuTk"
+        "xQkt-KLmuTk",
+        "z3UXUCaQUys"
       ],
       "stats": {
         "views": 4,
