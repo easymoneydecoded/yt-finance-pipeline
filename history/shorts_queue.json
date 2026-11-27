@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T19:12:54+00:00",
-  "pending": 4,
+  "updated": "2026-11-27T23:12:07+00:00",
+  "pending": 3,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3685,18 +3685,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "q-5KmDYObjg",
+          "at": "2026-11-27T23:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17890522947690454",
+          "at": "2026-11-27T23:12+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b0a0e4267b73e0d1fd769d9",
+          "at": "2026-11-27T23:12+00:00"
         }
-      }
+      },
+      "youtube_title": "Why Oracle's CDS Spread Spike Warns Tech Investors"
     },
     {
       "id": "2026-11-27_s1",
