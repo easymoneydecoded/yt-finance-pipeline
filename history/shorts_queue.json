@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-26T23:11:58+00:00",
-  "pending": 3,
+  "updated": "2026-11-27T07:30:51+00:00",
+  "pending": 6,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3668,6 +3668,132 @@
         "Jensen Huang return",
         "Nasdaq 100 risk",
         "corporate bond yield spike"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-27_s1",
+      "created": "2026-11-27T07:30:47+00:00",
+      "date": "2026-11-27",
+      "asset_id": 799452313,
+      "size": 21517488,
+      "title": "Why Nvidia's hidden page 42 SEC filing spells trouble for your tech stocks",
+      "text": "Buried on page 42 of Nvidia's latest confidential SEC filing, management quietly admitted to thermal threshold anomalies in early Blackwell batches. Retail investors rushed into AI chipmakers assuming infinite demand and flawless execution. That thesis just hit a brick wall inside the latest corporate disclosures. With the Nasdaq trading at 26,046.90 and volatility hovering at 26.80, tech valuations are hanging by a thread. Nvidia cannot easily sweep multi-billion-dollar architectural revisions under the rug as tier-one cloud providers demand immediate remediation. This persistent friction invalidates hyper-growth playbooks, proving that buried page 42 disclosures spell trouble for your tech stocks. Follow for a new market story every day.",
+      "parent_title": "3.8% Inflation vs Your Portfolio: The Fed's New Trap",
+      "parent_video_id": "-0z6KoknKFI",
+      "parent_url": "https://youtu.be/-0z6KoknKFI",
+      "tags": [
+        "Nvidia SEC filing leak",
+        "Blackwell chip vulnerabilities",
+        "Nvidia stock analysis 2026",
+        "insider selling Nvidia",
+        "semiconductor supply chain shock",
+        "Nasdaq 100 tech selloff",
+        "Nvidia inventory risks",
+        "corporate governance leak",
+        "chip manufacturing bottleneck",
+        "institutional portfolio defense",
+        "tech earnings shock",
+        "chip sector bankruptcy risk",
+        "market correction catalysts",
+        "financial disclosures"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-27_s2",
+      "created": "2026-11-27T07:30:49+00:00",
+      "date": "2026-11-27",
+      "asset_id": 799452431,
+      "size": 18348244,
+      "title": "How gold surging to $3,677 exposes the cracks in your tech portfolio",
+      "text": "Gold is surging to 3,677.00 dollars per ounce as capital rotates straight out of volatile tech equities and into safe-haven assets. If you thought tech stocks were immune to operational gravity, the math just broke when the S&P 500 trades at 7,182.78 while the VIX sits at 26.80. High valuation multiples are not a temporary glitch when execution stumbles on semiconductor supply chain pushback. Momentum traders are trapped in an unprecedented valuation squeeze, forcing financial advisors to completely rewrite retirement equity allocation strategies. Check your portfolio exposure today because gold surging to 3,677.00 dollars per ounce exposes the cracks in your tech portfolio. Follow for a new market story every day.",
+      "parent_title": "3.8% Inflation vs Your Portfolio: The Fed's New Trap",
+      "parent_video_id": "-0z6KoknKFI",
+      "parent_url": "https://youtu.be/-0z6KoknKFI",
+      "tags": [
+        "Nvidia SEC filing leak",
+        "Blackwell chip vulnerabilities",
+        "Nvidia stock analysis 2026",
+        "insider selling Nvidia",
+        "semiconductor supply chain shock",
+        "Nasdaq 100 tech selloff",
+        "Nvidia inventory risks",
+        "corporate governance leak",
+        "chip manufacturing bottleneck",
+        "institutional portfolio defense",
+        "tech earnings shock",
+        "chip sector bankruptcy risk",
+        "market correction catalysts",
+        "financial disclosures"
+      ],
+      "platforms": {
+        "youtube": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "instagram": {
+          "status": "pending",
+          "attempts": 0
+        },
+        "tiktok": {
+          "status": "pending",
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "id": "2026-11-27_s3",
+      "created": "2026-11-27T07:30:51+00:00",
+      "date": "2026-11-27",
+      "asset_id": 799452510,
+      "size": 17683102,
+      "title": "Why Bitcoin at $61,583 proves investors are fleeing overvalued tech",
+      "text": "Cryptocurrencies like Bitcoin are seeing renewed interest as digital hedges, trading around 61,583.55 dollars as participants seek alternative stores of value. Institutional asset allocators are frantically rotating away from overvalued semiconductor plays while the ten-year yield hovers around 4.85 percent. Stock portfolios face severe valuation compression if discount rates climb further and systemic market jitters compound downside pressure. Traditional diversification fails when growth stocks react to semiconductor bellwethers stumbling. Check your portfolio exposure today before the broader market digests why Bitcoin at 61,583.55 dollars proves investors are fleeing overvalued tech. Follow for a new market story every day.",
+      "parent_title": "3.8% Inflation vs Your Portfolio: The Fed's New Trap",
+      "parent_video_id": "-0z6KoknKFI",
+      "parent_url": "https://youtu.be/-0z6KoknKFI",
+      "tags": [
+        "Nvidia SEC filing leak",
+        "Blackwell chip vulnerabilities",
+        "Nvidia stock analysis 2026",
+        "insider selling Nvidia",
+        "semiconductor supply chain shock",
+        "Nasdaq 100 tech selloff",
+        "Nvidia inventory risks",
+        "corporate governance leak",
+        "chip manufacturing bottleneck",
+        "institutional portfolio defense",
+        "tech earnings shock",
+        "chip sector bankruptcy risk",
+        "market correction catalysts",
+        "financial disclosures"
       ],
       "platforms": {
         "youtube": {
