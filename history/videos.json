@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T07:30:51+00:00",
+  "updated": "2026-11-27T15:14:56+00:00",
   "n_videos": 59,
   "videos": [
     {
@@ -75,7 +75,15 @@
       "pinned_comment": "Are you trimming your Nvidia exposure after this SEC filing drop, or holding through the Blackwell supply shock?",
       "playlist": "Stock Market Explained",
       "quality": 7.9,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "comment_id": "Ugx-WPd9gm7zWx3uEXh4AaABAg",
+      "shorts_commented": [],
+      "cta_done": [
+        "-0z6KoknKFI"
+      ],
+      "tpl_done": [
+        "-0z6KoknKFI"
+      ]
     },
     {
       "date": "2026-11-26",
@@ -144,8 +152,12 @@
         8069626,
         7687652
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks - Part 1"
+      ],
+      "shorts_ids": [
+        "7-XS0aL361s"
+      ],
       "publish_at": "2026-11-26T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you auditing credit default swaps and debt levels in your tech holdings, or relying on chip demand to pull them through?",
@@ -155,9 +167,11 @@
       "comment_id": "Ugw94n3gsnPUHGKK7jd4AaABAg",
       "shorts_commented": [],
       "cta_done": [
+        "7-XS0aL361s",
         "xQkt-KLmuTk"
       ],
       "tpl_done": [
+        "7-XS0aL361s",
         "xQkt-KLmuTk"
       ],
       "stats": {

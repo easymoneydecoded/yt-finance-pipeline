@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T07:30:51+00:00",
-  "pending": 6,
+  "updated": "2026-11-27T15:14:55+00:00",
+  "pending": 5,
   "items": [
     {
       "id": "2026-10-31_s1",
@@ -3595,18 +3595,25 @@
       ],
       "platforms": {
         "youtube": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "7-XS0aL361s",
+          "at": "2026-11-27T15:11+00:00"
         },
         "instagram": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "17993689599081429",
+          "at": "2026-11-27T15:14+00:00"
         },
         "tiktok": {
-          "status": "pending",
-          "attempts": 0
+          "status": "done",
+          "attempts": 0,
+          "id": "zernio:6b099e6b9bc097a032e178f7",
+          "at": "2026-11-27T15:14+00:00"
         }
-      }
+      },
+      "youtube_title": "CoreWeave's 17% Debt Surge Threatens Your Tech Stocks - Part 1"
     },
     {
       "id": "2026-11-26_s2",
