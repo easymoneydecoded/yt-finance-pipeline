@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T07:08:04+00:00",
+  "updated": "2026-11-28T07:32:37+00:00",
   "n_videos": 60,
   "videos": [
     {
@@ -78,7 +78,13 @@
       "pinned_comment": "Have you ever held a leveraged single-stock fund through a volatile month, or do you stick strictly to standard index funds?",
       "playlist": "Stock Market Explained",
       "quality": 7.6,
-      "voice": "af_heart"
+      "voice": "af_heart",
+      "cta_done": [
+        "-bSk5YNBB4U"
+      ],
+      "tpl_done": [
+        "-bSk5YNBB4U"
+      ]
     },
     {
       "date": "2026-11-27",
