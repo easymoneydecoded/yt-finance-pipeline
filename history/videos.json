@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T07:32:37+00:00",
+  "updated": "2026-11-28T15:14:52+00:00",
   "n_videos": 60,
   "videos": [
     {
@@ -84,7 +84,9 @@
       ],
       "tpl_done": [
         "-bSk5YNBB4U"
-      ]
+      ],
+      "comment_id": "UgxDpIMuox9sBf37LuJ4AaABAg",
+      "shorts_commented": []
     },
     {
       "date": "2026-11-27",
@@ -152,8 +154,12 @@
         34771081,
         4061880
       ],
-      "shorts_titles": [],
-      "shorts_ids": [],
+      "shorts_titles": [
+        "Why Nvidia's hidden page 42 SEC filing spells trouble for your tech stocks"
+      ],
+      "shorts_ids": [
+        "1g7SLM9FUN8"
+      ],
       "publish_at": "2026-11-27T14:00+00:00",
       "shorts_publish_at": [],
       "pinned_comment": "Are you trimming your Nvidia exposure after this SEC filing drop, or holding through the Blackwell supply shock?",
@@ -163,10 +169,12 @@
       "comment_id": "Ugx-WPd9gm7zWx3uEXh4AaABAg",
       "shorts_commented": [],
       "cta_done": [
-        "-0z6KoknKFI"
+        "-0z6KoknKFI",
+        "1g7SLM9FUN8"
       ],
       "tpl_done": [
-        "-0z6KoknKFI"
+        "-0z6KoknKFI",
+        "1g7SLM9FUN8"
       ],
       "stats": {
         "views": 0,
